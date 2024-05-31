@@ -11,7 +11,7 @@ export default function Features() {
   return (
     <>
       {/* Icon Blocks */}
-      <div className="container py-24 lg:py-32">
+      <div id="features" className="container py-24 lg:py-36">
         <div className="max-w-4xl mx-auto">
           {/* Title */}
           <div className="max-w-2xl mx-auto text-center mb-10 lg:mb-14">

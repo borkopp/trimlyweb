@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,7 @@ export default function LoginPage() {
           <TypingAnimation
             className="p-12 text-lg font-semibold"
             text="Keep your loyal customers happy and satisfied."
-            duration={130}
+            duration={90}
           />
         </div>
       </div>

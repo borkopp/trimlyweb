@@ -36,7 +36,7 @@ export default function Pricing() {
   return (
     <>
       {/* Pricing */}
-      <div className="container py-24 lg:py-32">
+      <div id="pricing" className="container py-24 lg:py-32">
         {/* Title */}
         <div className="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
           <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
@@ -86,7 +86,7 @@ export default function Pricing() {
               <span className="font-bold text-5xl">€39</span>
             </CardHeader>
             <CardDescription className="text-center  w-11/12 mx-auto">
-              Everything you need for a growing business
+              The basics
             </CardDescription>
             <CardContent>
               <ul className="mt-7 space-y-2.5 text-sm">
@@ -119,11 +119,11 @@ export default function Pricing() {
               <Badge className="uppercase w-max self-center mb-3">
                 Most popular
               </Badge>
-              <CardTitle className="!mb-7">Pro</CardTitle>
+              <CardTitle className="!mb-7">Plus</CardTitle>
               <span className="font-bold text-5xl">€79</span>
             </CardHeader>
             <CardDescription className="text-center w-11/12 mx-auto">
-              All the basics for your loyal customers
+              Everything you need for a growing business
             </CardDescription>
             <CardContent>
               <ul className="mt-7 space-y-2.5 text-sm">
@@ -136,16 +136,20 @@ export default function Pricing() {
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
                   <span className="text-muted-foreground">
-                    Appointment booking with notifications
+                    Appointment booking
                   </span>
                 </li>
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
-                  <span className="text-muted-foreground">Gallery</span>
+                  <span className="text-muted-foreground">
+                    Notifications & Reminders
+                  </span>
                 </li>
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
-                  <span className="text-muted-foreground">Gallery</span>
+                  <span className="text-muted-foreground">
+                    Feedback and rating system
+                  </span>
                 </li>
               </ul>
             </CardContent>
@@ -157,8 +161,8 @@ export default function Pricing() {
           {/* Card */}
           <Card>
             <CardHeader className="text-center pb-2">
-              <CardTitle className="mb-7">Enterprise</CardTitle>
-              <span className="font-bold text-5xl">149</span>
+              <CardTitle className="mb-7">Ultra</CardTitle>
+              <span className="font-bold text-5xl">€149</span>
             </CardHeader>
             <CardDescription className="text-center  w-11/12 mx-auto">
               Advanced features for scaling your business
@@ -167,15 +171,21 @@ export default function Pricing() {
               <ul className="mt-7 space-y-2.5 text-sm">
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
-                  <span className="text-muted-foreground">10 user</span>
+                  <span className="text-muted-foreground">
+                    All features from <b>Plus</b>
+                  </span>
                 </li>
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
-                  <span className="text-muted-foreground">Plan features</span>
+                  <span className="text-muted-foreground">
+                    Custom features on demand
+                  </span>
                 </li>
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
-                  <span className="text-muted-foreground">Product support</span>
+                  <span className="text-muted-foreground">
+                    <b>24/7</b> Support
+                  </span>
                 </li>
               </ul>
             </CardContent>
