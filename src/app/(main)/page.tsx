@@ -1,9 +1,16 @@
-import Image from "next/image";
+import Hero from "@/components/Hero";
+import Features from "@/components/features";
+import Pricing from "@/components/pricing";
 
 export default function Home() {
   return (
     <main>
-      <div>Welcome test font</div>
+      {/* Hero */}
+      <Hero />
+      {/* Features */}
+      <Features />
+      {/* Pricing */}
+      <Pricing />
     </main>
   );
 }

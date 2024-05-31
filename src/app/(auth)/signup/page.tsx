@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import WordPullUp from "@/components/ui/word-pull-up";
 import TypingAnimation from "@/components/ui/typing-animation";
 
 export default function LoginPage() {
