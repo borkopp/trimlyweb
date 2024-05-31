@@ -1,9 +1,9 @@
 import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import TypingAnimation from "@/components/ui/typing-animation";
+import { login, signup } from "./actions";
 
 export default function LoginPage() {
   return (
@@ -51,7 +51,7 @@ export default function LoginPage() {
               </div>
               <Input id="password" type="password" required />
             </div>
-            <Button type="submit" className="w-full">
+            <Button className="w-full" formAction={login}>
               Login
             </Button>
             <Button variant="outline" className="w-full">
