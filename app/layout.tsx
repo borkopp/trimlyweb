@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const filmfiction = localfont({
   src: [
     {
-      path: "../../public/fonts/FilmFiction-Bold.otf",
+      path: "../public/fonts/FilmFiction-Bold.otf",
     },
   ],
   variable: "--font-ff",

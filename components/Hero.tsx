@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { FlipWords } from "./ui/word-flip";
-import HeroImage from "../../public/hero1.png";
+import HeroImage from "@/public/hero1.png";
 import Link from "next/link";
 
 export default function Hero() {
