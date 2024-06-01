@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import localfont from "next/font/local";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${filmfiction.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

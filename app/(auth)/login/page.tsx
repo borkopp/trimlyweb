@@ -1,9 +1,9 @@
 import Link from "next/link";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import TypingAnimation from "@/components/ui/typing-animation";
+import { login } from "../actions";
 
 export default function LoginPage() {
   return (
@@ -35,7 +35,8 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="yourname@example.com"
+                name="email"
+                placeholder="your.name@example.com"
                 required
               />
             </div>
@@ -49,9 +50,9 @@ export default function LoginPage() {
                   Forgot your password?
                 </Link>
               </div>
-              <Input id="password" type="password" required />
+              <Input id="password" name="password" type="password" required />
             </div>
-            <Button type="submit" className="w-full">
+            <Button formAction={login} className="w-full">
               Login
             </Button>
             <Button variant="outline" className="w-full">

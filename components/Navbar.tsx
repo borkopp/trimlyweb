@@ -1,11 +1,14 @@
 import React from "react";
-import Image from "next/image";
 import { ModeToggle } from "./theme-toggle";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { LanguageToggle } from "./language-toggle";
+import { createClient } from "@/utils/supabase/server";
 
-export default function Navbar() {
+export default async function Navbar() {
+  const supabase = createClient();
+  const { data, error } = await supabase.auth.getUser();
+
   return (
     <div className="w-full h-14 sticky top-0 backdrop-filter backdrop-blur-sm bg-black/20 z-50 flex items-center justify-between border-b px-72">
       <div className="w-full h-full flex justify-between items-center">
@@ -17,16 +20,21 @@ export default function Navbar() {
             <LanguageToggle />
             <ModeToggle />
           </div>
-          <Link href={"/login"}>
-            <Button size={"sm"} variant="link">
-              Log in
+          {data.user ? (
+            <Button
+              variant="outline"
+              className="w-32"
+              onClick={() => supabase.auth.signOut()}
+            >
+              Sign Out
             </Button>
-          </Link>
-          <Link href="/signup">
-            <Button size={"sm"} variant="secondary">
-              Sign up
-            </Button>
-          </Link>
+          ) : (
+            <Link href={"/login"}>
+              <Button size={"sm"} variant="link">
+                Log in
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </div>
