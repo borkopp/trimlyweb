@@ -123,3 +123,29 @@ export async function getServicesById(ids: number[]): Promise<Service[]> {
   
     return data;
   }
+
+  export async function getBarbers(): Promise<Barber[]> {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("barbers")
+      .select("*");
+
+    if (error) {
+      console.error('Error fetching barbers:', error);
+      return [];
+    }
+    return data;
+  }
+
+  export async function getServices(): Promise<Service[]> {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("services")
+      .select("*");
+
+    if (error) {
+      console.error('Error fetching services:', error);
+      return [];
+    }
+    return data;
+  }

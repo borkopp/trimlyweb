@@ -2,24 +2,21 @@ import Image from "next/image";
 import Link from "next/link";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
-import {Calendar, ChevronLeft, ChevronRight, Clock, Copy, File, Home, LineChart, ListFilter, MoreVertical, Scissors, Search, Settings, ShoppingCart, Users, Users2} from "lucide-react";
-import {Badge} from "@/components/ui/badge";
+import {Calendar, File, Home, LineChart, ListFilter, Scissors, Search, Settings, Users2} from "lucide-react";
 import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {Input} from "@/components/ui/input";
-import {Pagination, PaginationContent, PaginationItem} from "@/components/ui/pagination";
 import {Progress} from "@/components/ui/progress";
-import {Separator} from "@/components/ui/separator";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
-import {getCurrentMonthRevenue, getTodayAppointments, getWeekAppointments} from "@/lib/supabase/queries";
+import {getBarbers, getCurrentMonthRevenue, getServices, getTodayAppointments, getWeekAppointments} from "@/lib/supabase/queries";
 import {AppointmentsProvider} from "@/components/AppointmentsContext";
 import AppointmentsSection from "@/components/AppointmentsSection";
 import {AppointmentDetails} from "@/components/AppointmentDetails";
+import {NewAppointmentDialog} from "@/components/NewAppointmentDialog";
 
 export default async function DashboardPage() {
   const supabase = createClient();
@@ -34,6 +31,9 @@ export default async function DashboardPage() {
   const todayAppointments = await getTodayAppointments();
   const currentMonthRevenue = await getCurrentMonthRevenue();
   const weekAppointments = await getWeekAppointments();
+
+  const barbers = await getBarbers();
+  const services = await getServices();
 
   return (
     <AppointmentsProvider>
@@ -169,10 +169,7 @@ export default async function DashboardPage() {
                     <CardDescription className="max-w-lg text-balance leading-relaxed">Welcome to your barbershop dashboard. Manage appointments, clients, and analytics with ease.</CardDescription>
                   </CardHeader>
                   <CardFooter>
-                    <Button>
-                      <Calendar className="mr-2 h-4 w-4" />
-                      New Appointment
-                    </Button>
+                    <NewAppointmentDialog initialBarbers={barbers} initialServices={services} user_id={user.id} />
                   </CardFooter>
                 </Card>
                 <Card>
@@ -190,12 +187,14 @@ export default async function DashboardPage() {
                 <Card>
                   <CardHeader className="pb-2">
                     <CardDescription>This Month&apos;s Revenue</CardDescription>
-                    <CardTitle className="text-4xl">${currentMonthRevenue.toFixed(2)}</CardTitle>
+                    <CardTitle className="text-4xl">€ {currentMonthRevenue.toFixed(2)}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-xs text-muted-foreground">Revenue from services</div>
                   </CardContent>
-                  <CardFooter>{/* You can add a progress bar or other visual element here if needed */}</CardFooter>
+                  <CardFooter>
+                    <Progress value={(currentMonthRevenue / 1000) * 100} aria-label={`${currentMonthRevenue} revenue this month`} />
+                  </CardFooter>
                 </Card>
               </div>
               <Tabs defaultValue="week">

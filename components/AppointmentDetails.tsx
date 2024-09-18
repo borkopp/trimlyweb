@@ -11,7 +11,6 @@ import {Pagination, PaginationContent, PaginationItem} from "@/components/ui/pag
 import {Separator} from "@/components/ui/separator";
 import {Database} from "@/database.types";
 
-type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
 
@@ -112,11 +111,11 @@ export function AppointmentDetails() {
           <ul className="grid gap-3">
             <li className="flex items-center justify-between">
               <span className="text-muted-foreground">Price</span>
-              <span>${totalPrice.toFixed(2)}</span>
+              <span>€ {totalPrice.toFixed(2)}</span>
             </li>
             <li className="flex items-center justify-between font-semibold">
               <span className="text-muted-foreground">Total</span>
-              <span>${totalPrice.toFixed(2)}</span>
+              <span>€ {totalPrice.toFixed(2)}</span>
             </li>
           </ul>
         </div>
@@ -126,18 +125,22 @@ export function AppointmentDetails() {
           <dl className="grid gap-3">
             <div className="flex items-center justify-between">
               <dt className="text-muted-foreground">Name</dt>
-              <dd>{selectedAppointment.user_id}</dd>
+              <dd>{selectedAppointment.client.full_name}</dd>
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-muted-foreground">Email</dt>
               <dd>
-                <a href={`mailto:${selectedAppointment.user_id}`}>{selectedAppointment.user_id}</a>
+                <a className="hover:underline" href={`mailto:${selectedAppointment.client.email}`}>
+                  {selectedAppointment.client.email}
+                </a>
               </dd>
             </div>
             <div className="flex items-center justify-between">
               <dt className="text-muted-foreground">Phone</dt>
               <dd>
-                <a href={`tel:+1234567890`}>+1 234 567 890</a>
+                <a className="hover:underline" href={`tel:+1234567890`}>
+                  +1 234 567 890
+                </a>
               </dd>
             </div>
           </dl>

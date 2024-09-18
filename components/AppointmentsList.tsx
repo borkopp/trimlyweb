@@ -35,7 +35,7 @@ export default function AppointmentsList({appointments}: Props) {
                 <div className="text-sm text-muted-foreground">{appointment.client.email}</div>
               </TableCell>
               <TableCell>
-                <Badge variant={isConfirmed ? "secondary" : "outline"}>{isConfirmed ? "Confirmed" : "Pending"}</Badge>
+                <Badge variant={isConfirmed ? "secondary" : "outline"}>{isConfirmed ? "Completed" : "Upcoming"}</Badge>
               </TableCell>
               <TableCell>{appointment.date}</TableCell>
               <TableCell>{appointment.time}</TableCell>
