@@ -1,3 +1,4 @@
+import {DashboardSidebar} from "@/components/DashboardSidebar";
 import Navbar from "@/components/Navbar";
 import {TooltipProvider} from "@/components/ui/tooltip";
 
@@ -7,11 +8,11 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <section>
+    <div className="flex min-h-screen w-full flex-col">
       <TooltipProvider>
-        {/* <Navbar /> */}
-        {children}
+        <DashboardSidebar />
+        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">{children}</div>
       </TooltipProvider>
-    </section>
+    </div>
   );
 }

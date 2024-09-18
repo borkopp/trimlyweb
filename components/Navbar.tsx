@@ -12,9 +12,9 @@ export default async function Navbar() {
   const {data} = await supabase.auth.getUser();
 
   return (
-    <div className="w-full h-14 sticky top-0 backdrop-filter backdrop-blur-sm bg-black/20 z-50 flex items-center justify-between border-b px-4 sm:px-8 md:px-16 lg:px-72">
+    <div className="w-full h-16 sticky top-0 backdrop-filter backdrop-blur-sm bg-black/20 z-50 flex items-center justify-between border-b px-4 sm:px-8 md:px-16 lg:px-72">
       <div className="w-full h-full flex justify-between items-center">
-        <Link href="/" className="font-ff text-2xl cursor-pointer">
+        <Link href="/" className="font-ff text-2xl cursor-pointer text-[#EA580C]">
           trimly
         </Link>
         <div className="flex gap-2 items-center">
@@ -25,12 +25,12 @@ export default async function Navbar() {
           {data.user ? (
             <>
               <Link href="/dashboard">
-                <Button variant="ghost" size="sm">
+                <Button variant="default" size="sm">
                   Dashboard
                 </Button>
               </Link>
               <form action={signOut}>
-                <Button variant="outline" size="sm" type="submit">
+                <Button variant="ghost" size="sm" type="submit">
                   Sign Out
                 </Button>
               </form>
