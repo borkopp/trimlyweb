@@ -18,6 +18,13 @@ import AppointmentsSection from "@/components/AppointmentsSection";
 import {AppointmentDetails} from "@/components/AppointmentDetails";
 import {NewAppointmentDialog} from "@/components/NewAppointmentDialog";
 
+async function getImageUrl(path: string) {
+  const supabase = createClient();
+  const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
+
+  return data?.publicUrl || null;
+}
+
 export default async function DashboardPage() {
   const supabase = createClient();
   const {
@@ -27,6 +34,17 @@ export default async function DashboardPage() {
   if (!user) {
     redirect("/login");
   }
+
+  const {data: profile} = await supabase.from("profiles").select("*").eq("id", user.id).single();
+
+  const avatarUrl = profile?.avatar_url ? await getImageUrl(profile.avatar_url) : null;
+
+  const handleLogout = async () => {
+    "use server";
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    redirect("/login");
+  };
 
   const todayAppointments = await getTodayAppointments();
   const currentMonthRevenue = await getCurrentMonthRevenue();
@@ -147,16 +165,20 @@ export default async function DashboardPage() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-                  <Image src="/placeholder-user.jpg" width={36} height={36} alt="Avatar" className="overflow-hidden rounded-full" />
+                  <Image src={avatarUrl || "/placeholder-user.jpg"} width={36} height={36} alt="Avatar" className="overflow-hidden rounded-full object-cover" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>{profile?.full_name || "My Account"}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/settings">Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/support">Support</Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem onSelect={handleLogout}>Logout</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </header>
