@@ -54,7 +54,7 @@ export default function Pricing() {
           <Card>
             <CardHeader className="text-center pb-2">
               <CardTitle className="mb-7">Basic</CardTitle>
-              <span className="font-bold text-5xl">€39</span>
+              <span className="font-bold text-5xl">€79</span>
             </CardHeader>
             <CardDescription className="text-center  w-11/12 mx-auto">The basics</CardDescription>
             <CardContent>
@@ -65,11 +65,11 @@ export default function Pricing() {
                 </li>
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
-                  <span className="text-muted-foreground">Gallery</span>
+                  <span className="text-muted-foreground">Appointment booking</span>
                 </li>
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
-                  <span className="text-muted-foreground">Product support</span>
+                  <span className="text-muted-foreground">Gallery</span>
                 </li>
               </ul>
             </CardContent>
@@ -85,26 +85,32 @@ export default function Pricing() {
             <CardHeader className="text-center pb-2">
               <Badge className="uppercase w-max self-center mb-3">Most popular</Badge>
               <CardTitle className="!mb-7">Plus</CardTitle>
-              <span className="font-bold text-5xl">€79</span>
+              <span className="font-bold text-5xl">€119</span>
             </CardHeader>
             <CardDescription className="text-center w-11/12 mx-auto">Everything you need for a growing business</CardDescription>
             <CardContent>
               <ul className="mt-7 space-y-2.5 text-sm">
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
-                  <span className="text-muted-foreground">iOS and Android App</span>
+                  <span className="text-muted-foreground">
+                    All features from <b>Basic</b>
+                  </span>
                 </li>
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
-                  <span className="text-muted-foreground">Appointment booking</span>
+                  <span className="text-muted-foreground">Loyalty program</span>
                 </li>
-                <li className="flex space-x-2">
+                {/* <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
                   <span className="text-muted-foreground">Notifications & Reminders</span>
-                </li>
+                </li> */}
                 <li className="flex space-x-2">
                   <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
                   <span className="text-muted-foreground">Feedback and rating system</span>
+                </li>
+                <li className="flex space-x-2">
+                  <CheckIcon className="flex-shrink-0 mt-0.5 h-4 w-4" />
+                  <span className="text-muted-foreground">Admin Dashboard</span>
                 </li>
               </ul>
             </CardContent>
@@ -116,8 +122,8 @@ export default function Pricing() {
           {/* Card */}
           <Card>
             <CardHeader className="text-center pb-2">
-              <CardTitle className="mb-7">Ultra</CardTitle>
-              <span className="font-bold text-5xl">€149</span>
+              <CardTitle className="mb-7">One-Time-Payment</CardTitle>
+              <span className="font-bold text-5xl">Let&apos;s talk</span>
             </CardHeader>
             <CardDescription className="text-center  w-11/12 mx-auto">Advanced features for scaling your business</CardDescription>
             <CardContent>
