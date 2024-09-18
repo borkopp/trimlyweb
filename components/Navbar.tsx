@@ -1,4 +1,3 @@
-("");
 import React from "react";
 import {ModeToggle} from "./theme-toggle";
 import Link from "next/link";

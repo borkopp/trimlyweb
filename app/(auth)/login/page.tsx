@@ -16,6 +16,10 @@ export default function LoginPage() {
     setIsLoading(true);
     const result = await login(formData);
     setIsLoading(false);
+    toast({
+      title: "Login successful",
+      description: "You have been logged in",
+    });
 
     if (result?.error) {
       toast({
@@ -56,7 +60,7 @@ export default function LoginPage() {
               </div>
               <Input id="password" name="password" type="password" required />
             </div>
-            <Button type="submit" className="w-full text-white" disabled={isLoading}>
+            <Button type="submit" className={`${isLoading ? "bg-gray-500" : "bg-[#EA580C]"}`} disabled={isLoading}>
               {isLoading ? "Logging in..." : "Login"}
             </Button>
           </form>
