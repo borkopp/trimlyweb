@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import HeroMockup from "@/components/HeroMockup";
 import {BackgroundBeamsDemo} from "@/components/HeroTest";
 import Features from "@/components/features";
+import {FeaturesSection} from "@/components/features-new";
 import Pricing from "@/components/pricing";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -23,7 +24,8 @@ export default function Home() {
       <BackgroundBeamsDemo />
       <HeroMockup />
       {/* Features */}
-      <Features />
+      {/* <Features /> */}
+      <FeaturesSection />
       {/* Pricing */}
       <Pricing />
     </main>

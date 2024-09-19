@@ -19,7 +19,6 @@ export default async function Navbar() {
         <div className="flex gap-2 items-center">
           <div className="mr-4 items-center flex">
             <LanguageToggle />
-            <ModeToggle />
           </div>
           {data.user ? (
             <>
