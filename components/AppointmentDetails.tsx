@@ -7,17 +7,20 @@ import {ChevronLeft, ChevronRight, Clock, Copy, MoreVertical, Users} from "lucid
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import {Pagination, PaginationContent, PaginationItem} from "@/components/ui/pagination";
 import {Separator} from "@/components/ui/separator";
 import {Database} from "@/database.types";
+import {adminRemoveAppointment} from "@/lib/supabase/clientQueries";
+import {toast} from "@/components/ui/use-toast";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
 
 export function AppointmentDetails() {
-  const {selectedAppointment} = useAppointments();
+  const {selectedAppointment, removeAppointment} = useAppointments();
   const [services, setServices] = useState<Service[]>([]);
   const [barber, setBarber] = useState<Barber | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -51,7 +54,9 @@ export function AppointmentDetails() {
       <Card className="overflow-hidden">
         <CardHeader className="pb-3">
           <CardTitle>Select an appointment to see details</CardTitle>
-          <CardDescription className="max-w-lg text-balance leading-relaxed">Click on an appointment from the list to view its details.</CardDescription>
+          <CardDescription className="max-w-lg text-balance leading-relaxed">
+            Click on an appointment from the list to view its details.
+          </CardDescription>
         </CardHeader>
       </Card>
     );
@@ -59,6 +64,26 @@ export function AppointmentDetails() {
 
   const totalDuration = services.reduce((total, service) => total + (service.time || 0), 0);
   const totalPrice = services.reduce((total, service) => total + service.price, 0);
+
+  const handleRemoveAppointment = async (): Promise<void> => {
+    if (!selectedAppointment) return;
+
+    try {
+      await adminRemoveAppointment(selectedAppointment.id);
+      removeAppointment(selectedAppointment.id);
+      setIsDeleteDialogOpen(false);
+      toast({
+        title: "Appointment removed",
+        description: "The appointment has been successfully removed.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to remove the appointment. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <Card className="overflow-hidden">
@@ -87,7 +112,9 @@ export function AppointmentDetails() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>Cancel</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-red-500">
+                Cancel
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>View Client History</DropdownMenuItem>
             </DropdownMenuContent>
@@ -163,7 +190,7 @@ export function AppointmentDetails() {
         <div className="text-xs text-muted-foreground">
           Created <time dateTime={selectedAppointment.date}>{selectedAppointment.date}</time>
         </div>
-        <Pagination className="ml-auto mr-0 w-auto">
+        {/* <Pagination className="ml-auto mr-0 w-auto">
           <PaginationContent>
             <PaginationItem>
               <Button size="icon" variant="outline" className="h-6 w-6">
@@ -178,8 +205,24 @@ export function AppointmentDetails() {
               </Button>
             </PaginationItem>
           </PaginationContent>
-        </Pagination>
+        </Pagination> */}
       </CardFooter>
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Appointment Cancellation</DialogTitle>
+            <DialogDescription>Are you sure you want to cancel this appointment? This action cannot be undone.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              No, Keep Appointment
+            </Button>
+            <Button variant="destructive" onClick={handleRemoveAppointment}>
+              Yes, Cancel Appointment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

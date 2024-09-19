@@ -11,14 +11,29 @@ type AppointmentWithClient = Appointment & {client: Profile};
 type AppointmentsContextType = {
   selectedAppointment: AppointmentWithClient | null;
   setSelectedAppointment: (appointment: AppointmentWithClient | null) => void;
+  removeAppointment: (id: number) => void;
+  appointments: AppointmentWithClient[];
+  setAppointments: React.Dispatch<React.SetStateAction<AppointmentWithClient[]>>;
 };
 
 const AppointmentsContext = createContext<AppointmentsContextType | undefined>(undefined);
 
 export function AppointmentsProvider({children}: {children: ReactNode}) {
   const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithClient | null>(null);
+  const [appointments, setAppointments] = useState<AppointmentWithClient[]>([]);
 
-  return <AppointmentsContext.Provider value={{selectedAppointment, setSelectedAppointment}}>{children}</AppointmentsContext.Provider>;
+  const removeAppointment = (id: number) => {
+    setAppointments((prevAppointments) => prevAppointments.filter((appointment) => appointment.id !== id));
+    if (selectedAppointment?.id === id) {
+      setSelectedAppointment(null);
+    }
+  };
+
+  return (
+    <AppointmentsContext.Provider value={{selectedAppointment, setSelectedAppointment, removeAppointment, appointments, setAppointments}}>
+      {children}
+    </AppointmentsContext.Provider>
+  );
 }
 
 export function useAppointments() {

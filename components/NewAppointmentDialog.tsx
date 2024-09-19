@@ -1,7 +1,7 @@
 "use client";
 
 import {useState} from "react";
-import {format} from "date-fns";
+import {format, isBefore, isSameDay, set} from "date-fns";
 import {CalendarIcon} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar";
@@ -55,19 +55,35 @@ export function NewAppointmentDialog({initialBarbers, initialServices, user_id}:
         variant: "destructive",
       });
     } else {
-      console.log("Appointment created:", data);
       toast({
         title: "Appointment created",
         description: "The appointment has been created successfully.",
       });
-      setOpen(false); // Close the dialog
-      // Reset form fields
+      setOpen(false);
       setDate(undefined);
       setBarber("");
       setService("");
       setTime("");
     }
     setLoading(false);
+  };
+
+  const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = 9; hour <= 20; hour++) {
+      for (let minute of [0, 30]) {
+        slots.push(`${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`);
+      }
+    }
+    return slots;
+  };
+
+  const isTimeSlotAvailable = (timeSlot: string) => {
+    if (!date) return true;
+    const [hours, minutes] = timeSlot.split(":").map(Number);
+    const slotDate = set(date, {hours, minutes});
+    const now = new Date();
+    return isSameDay(date, now) ? !isBefore(slotDate, now) : true;
   };
 
   return (
@@ -125,13 +141,16 @@ export function NewAppointmentDialog({initialBarbers, initialServices, user_id}:
               </Label>
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button id="date" variant={"outline"} className={`col-span-3 justify-start text-left font-normal ${!date && "text-muted-foreground"}`}>
+                  <Button
+                    id="date"
+                    variant={"outline"}
+                    className={`col-span-3 justify-start text-left font-normal ${!date && "text-muted-foreground"}`}>
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {date ? format(date, "PPP") : <span>Pick a date</span>}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+                  <Calendar mode="single" selected={date} onSelect={setDate} fromDate={new Date()} initialFocus />
                 </PopoverContent>
               </Popover>
             </div>
@@ -144,11 +163,14 @@ export function NewAppointmentDialog({initialBarbers, initialServices, user_id}:
                   <SelectValue placeholder="Select a time" />
                 </SelectTrigger>
                 <SelectContent>
-                  {["9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"].map((t) => (
-                    <SelectItem key={t} value={t}>
-                      {t}
-                    </SelectItem>
-                  ))}
+                  {generateTimeSlots().map(
+                    (t) =>
+                      isTimeSlotAvailable(t) && (
+                        <SelectItem key={t} value={t}>
+                          {t}
+                        </SelectItem>
+                      )
+                  )}
                 </SelectContent>
               </Select>
             </div>
