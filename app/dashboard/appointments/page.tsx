@@ -13,6 +13,9 @@ import {formatDate, formatTime} from "@/utils/dateUtils";
 
 type Appointment = Database["public"]["Tables"]["appointments"]["Row"] & {
   client: Database["public"]["Tables"]["profiles"]["Row"];
+  date: string;
+  time: string;
+  duration?: number;
 };
 
 export default function FullPageCalendar() {
@@ -25,7 +28,6 @@ export default function FullPageCalendar() {
   const daysInWeek = eachDayOfInterval({start: weekStart, end: weekEnd});
 
   const hours = Array.from({length: 12}, (_, i) => i + 8); // 8 AM to 7 PM
-
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 
   React.useEffect(() => {
@@ -72,10 +74,13 @@ export default function FullPageCalendar() {
     };
 
     fetchAppointments();
-  }, [date, supabase, view, weekEnd, weekStart]);
+  }, [view, date, supabase, weekStart, weekEnd]);
 
   const getAppointmentsForDay = (day: Date) => {
-    return appointments.filter((apt) => isSameDay(new Date(apt.date), day));
+    return appointments.filter((apt) => {
+      const aptDate = new Date(apt.date);
+      return aptDate.getFullYear() === day.getFullYear() && aptDate.getMonth() === day.getMonth() && aptDate.getDate() === day.getDate();
+    });
   };
 
   const formatAppointmentTime = (time: string) => {
@@ -141,24 +146,28 @@ export default function FullPageCalendar() {
               {daysInWeek.map((day) => (
                 <div key={`${day}-${hour}`} className="border relative h-16">
                   {getAppointmentsForDay(day).map((apt) => {
-                    if (dayjs(apt.time, "HH:mm:ss").hour() === hour) {
+                    const aptDateTime = new Date(`${apt.date}T${apt.time}`);
+                    const aptHour = aptDateTime.getHours();
+                    const aptMinute = aptDateTime.getMinutes();
+                    const duration = apt.duration || 60;
+
+                    if (aptHour === hour) {
+                      const topPosition = (aptMinute / 60) * 100;
+                      const height = (duration / 60) * 100;
+
                       return (
                         <div
                           key={apt.id}
-                          className="absolute inset-0 bg-[#EA580B] rounded p-1 text-xs overflow-hidden z-10"
+                          className="bg-[#EA580B] rounded p-1 text-xs absolute left-0 right-0 overflow-hidden z-10"
                           style={{
-                            top: `${(dayjs(apt.time, "HH:mm:ss").minute() / 60) * 100}%`,
-                            height: `${
-                              (dayjs(apt.time, "HH:mm:ss")
-                                .add(apt.duration ?? 0, "minute")
-                                .diff(dayjs(apt.time, "HH:mm:ss"), "minute") /
-                                60) *
-                              100
-                            }%`,
+                            top: `${topPosition}%`,
+                            height: `${height}%`,
+                            minHeight: "16px", // Ensure very short appointments are still visible
                           }}>
-                          <div className="font-semibold">{apt.client.full_name}</div>
-                          <div>{apt.service_ids.join(", ")}</div>
-                          <div>{formatAppointmentTime(apt.time)}</div>
+                          <div className="font-semibold truncate">{apt.client.full_name}</div>
+                          <div className="truncate">
+                            {formatTime(apt.time)} - {formatTime(apt.end_time || "")}
+                          </div>
                         </div>
                       );
                     }
