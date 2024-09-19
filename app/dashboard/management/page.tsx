@@ -27,12 +27,11 @@ export default function ManagementPage() {
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Fetch services on component mount
   useEffect(() => {
     const fetchServices = async () => {
       try {
         const fetchedServices = await getServices();
-        setServices(fetchedServices || []); // Ensure it's an array
+        setServices(fetchedServices || []);
       } catch (error) {
         toast({
           title: "Error",
@@ -44,7 +43,6 @@ export default function ManagementPage() {
     fetchServices();
   }, []);
 
-  // Handle clicks outside the dropdown to close it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -63,7 +61,7 @@ export default function ManagementPage() {
     if (query.trim().length > 1) {
       try {
         const results = await searchUsers(query);
-        setSearchResults((results as User[]) || []); // Ensure it's an array
+        setSearchResults((results as User[]) || []);
         setIsDropdownOpen(true);
       } catch (error) {
         toast({
@@ -197,7 +195,7 @@ export default function ManagementPage() {
               <Input id="serviceDuration" type="number" placeholder="30" />
             </div>
             <div>
-              <Label htmlFor="servicePrice">Price ($)</Label>
+              <Label htmlFor="servicePrice">Price (€)</Label>
               <Input id="servicePrice" type="number" placeholder="25" />
             </div>
           </div>
@@ -213,21 +211,16 @@ export default function ManagementPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              {id: 1, name: "Haircut", image: "/haircut.jpg", description: "Standard haircut", duration: 30, price: 25},
-              {id: 2, name: "Beard Trim", image: "/beard-trim.jpg", description: "Beard grooming", duration: 20, price: 15},
-              {id: 3, name: "Hair Coloring", image: "/hair-coloring.jpg", description: "Full hair coloring", duration: 90, price: 80},
-            ].map((service) => (
+            {services.map((service) => (
               <Card key={service.id}>
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-4">
                     <Image src={service.image} alt={service.name} width={64} height={64} className="w-16 h-16 object-cover rounded" />
                     <div>
                       <h3 className="font-semibold">{service.name}</h3>
-                      <p className="text-sm text-gray-500">{service.description}</p>
                       <div className="flex items-center space-x-2 mt-2">
                         <Clock3Icon className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm">{service.duration} min</span>
+                        <span className="text-sm">{service.time} min</span>
                         <DollarSignIcon className="h-4 w-4 text-gray-400 ml-2" />
                         <span className="text-sm">${service.price}</span>
                       </div>

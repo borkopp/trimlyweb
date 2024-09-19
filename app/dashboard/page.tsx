@@ -6,12 +6,19 @@ import {Calendar, File, Home, LineChart, ListFilter, Scissors, Search, Settings,
 import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {Input} from "@/components/ui/input";
 import {Progress} from "@/components/ui/progress";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 import {getBarbers, getCurrentMonthRevenue, getServices, getTodayAppointments, getWeekAppointments} from "@/lib/supabase/queries";
 import {AppointmentsProvider} from "@/components/AppointmentsContext";
 import AppointmentsSection from "@/components/AppointmentsSection";
@@ -46,6 +53,11 @@ export default async function DashboardPage() {
     redirect("/login");
   };
 
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(":");
+    return `${hours}:${minutes}`;
+  };
+
   const todayAppointments = await getTodayAppointments();
   const currentMonthRevenue = await getCurrentMonthRevenue();
   const weekAppointments = await getWeekAppointments();
@@ -67,7 +79,9 @@ export default async function DashboardPage() {
               </SheetTrigger>
               <SheetContent side="left" className="sm:max-w-xs">
                 <nav className="grid gap-6 text-lg font-medium">
-                  <Link href="#" className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base">
+                  <Link
+                    href="#"
+                    className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base">
                     <Scissors className="h-5 w-5 transition-all group-hover:scale-110" />
                     <span className="sr-only">Barbershop Dashboard</span>
                   </Link>
@@ -110,7 +124,13 @@ export default async function DashboardPage() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-                  <Image src={avatarUrl || "/placeholder-user.jpg"} width={36} height={36} alt="Avatar" className="overflow-hidden rounded-full object-cover" />
+                  <Image
+                    src={avatarUrl || "/placeholder-user.jpg"}
+                    width={36}
+                    height={36}
+                    alt="Avatar"
+                    className="overflow-hidden rounded-full object-cover"
+                  />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -133,7 +153,9 @@ export default async function DashboardPage() {
                 <Card className="sm:col-span-2">
                   <CardHeader className="pb-3">
                     <CardTitle>Barbershop Overview</CardTitle>
-                    <CardDescription className="max-w-lg text-balance leading-relaxed">Welcome to your barbershop dashboard. Manage appointments, clients, and analytics with ease.</CardDescription>
+                    <CardDescription className="max-w-lg text-balance leading-relaxed">
+                      Welcome to your barbershop dashboard. Manage appointments, clients, and analytics with ease.
+                    </CardDescription>
                   </CardHeader>
                   <CardFooter>
                     <NewAppointmentDialog initialBarbers={barbers} initialServices={services} user_id={user.id} />
@@ -145,7 +167,10 @@ export default async function DashboardPage() {
                     <CardTitle className="text-4xl">{todayAppointments.length}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-xs text-muted-foreground">{todayAppointments.length > 0 ? `Next appointment at ${todayAppointments[0].time}` : "No appointments today"}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {/* format: HH:MM */}
+                      {todayAppointments.length > 0 ? `Next appointment at ${formatTime(todayAppointments[0].time)}` : "No appointments today"}
+                    </div>
                   </CardContent>
                   <CardFooter>
                     <Progress value={(todayAppointments.length / 20) * 100} aria-label={`${todayAppointments.length} appointments today`} />
@@ -157,7 +182,7 @@ export default async function DashboardPage() {
                     <CardTitle className="text-4xl">€ {currentMonthRevenue.toFixed(2)}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-xs text-muted-foreground">Revenue from services</div>
+                    <div className="text-xs text-muted-foreground">23 days left</div>
                   </CardContent>
                   <CardFooter>
                     <Progress value={(currentMonthRevenue / 1000) * 100} aria-label={`${currentMonthRevenue} revenue this month`} />

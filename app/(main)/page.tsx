@@ -1,10 +1,11 @@
 "use client";
 import Hero from "@/components/Hero";
+import {BackgroundBeamsDemo} from "@/components/HeroTest";
 import Features from "@/components/features";
 import Pricing from "@/components/pricing";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { useEffect } from "react";
+import {useEffect} from "react";
 
 export default function Home() {
   useEffect(() => {
@@ -17,7 +18,8 @@ export default function Home() {
   return (
     <main>
       {/* Hero */}
-      <Hero />
+      {/* <Hero /> */}
+      <BackgroundBeamsDemo />
       {/* Features */}
       <Features />
       {/* Pricing */}
