@@ -1,27 +1,12 @@
-import {createClient} from "@/utils/supabase/server";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Badge} from "@/components/ui/badge";
-import {formatDate, formatTime} from "@/utils/dateUtils";
+import {Table, TableBody, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import AppointmentRow from "@/components/AppointmentRow";
+import {Database} from "@/database.types";
 
-export default async function AppointmentsList() {
-  const supabase = createClient();
-  const {data: appointments, error} = await supabase
-    .from("appointments")
-    .select(
-      `
-      *,
-      client:profiles!appointments_user_id_fkey(full_name, email)
-    `
-    )
-    .order("date", {ascending: true})
-    .order("time", {ascending: true});
+type Appointment = Database["public"]["Tables"]["appointments"]["Row"] & {
+  client: Database["public"]["Tables"]["profiles"]["Row"];
+};
 
-  if (error) {
-    console.error("Error fetching appointments:", error);
-    return <div>Error loading appointments</div>;
-  }
-
+export default async function AppointmentsList({appointments}: {appointments: Appointment[]}) {
   return (
     <Table>
       <TableHeader>
