@@ -13,6 +13,7 @@ export type Database = {
         Row: {
           barber_id: number
           date: string
+          duration: number | null
           end_time: string | null
           id: number
           is_archived: boolean | null
@@ -24,6 +25,7 @@ export type Database = {
         Insert: {
           barber_id: number
           date: string
+          duration?: number | null
           end_time?: string | null
           id?: number
           is_archived?: boolean | null
@@ -35,6 +37,7 @@ export type Database = {
         Update: {
           barber_id?: number
           date?: string
+          duration?: number | null
           end_time?: string | null
           id?: number
           is_archived?: boolean | null

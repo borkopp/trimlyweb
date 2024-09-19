@@ -19,11 +19,13 @@ import {Input} from "@/components/ui/input";
 import {Progress} from "@/components/ui/progress";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {getBarbers, getCurrentMonthRevenue, getServices, getTodayAppointments, getWeekAppointments} from "@/lib/supabase/queries";
+import {getBarbers, getCurrentMonthRevenue, getDayAppointments, getServices, getTodayAppointments, getWeekAppointments} from "@/lib/supabase/queries";
 import {AppointmentsProvider} from "@/components/AppointmentsContext";
 import AppointmentsSection from "@/components/AppointmentsSection";
 import {AppointmentDetails} from "@/components/AppointmentDetails";
 import {NewAppointmentDialog} from "@/components/NewAppointmentDialog";
+import {formatTime} from "@/utils/dateUtils";
+import {getDaysInMonth} from "date-fns";
 
 async function getImageUrl(path: string) {
   const supabase = createClient();
@@ -53,17 +55,15 @@ export default async function DashboardPage() {
     redirect("/login");
   };
 
-  const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(":");
-    return `${hours}:${minutes}`;
-  };
-
   const todayAppointments = await getTodayAppointments();
   const currentMonthRevenue = await getCurrentMonthRevenue();
   const weekAppointments = await getWeekAppointments();
-
+  const dayAppointments = await getDayAppointments(new Date().toISOString().split("T")[0]);
   const barbers = await getBarbers();
   const services = await getServices();
+
+  const nextAppointment = dayAppointments.find((appointment) => new Date(`${appointment.date}T${appointment.time}`) > new Date());
+  const daysOfMonthLeft = getDaysInMonth(new Date().getMonth()) - new Date().getDate();
 
   return (
     <AppointmentsProvider>
@@ -168,8 +168,7 @@ export default async function DashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-xs text-muted-foreground">
-                      {/* format: HH:MM */}
-                      {todayAppointments.length > 0 ? `Next appointment at ${formatTime(todayAppointments[0].time)}` : "No appointments today"}
+                      {nextAppointment ? `Next appointment at ${formatTime(nextAppointment.time)}` : "No next appointment"}
                     </div>
                   </CardContent>
                   <CardFooter>
@@ -178,22 +177,22 @@ export default async function DashboardPage() {
                 </Card>
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardDescription>This Month&apos;s Revenue</CardDescription>
+                    <CardDescription>Estimated Revenue</CardDescription>
                     <CardTitle className="text-4xl">€ {currentMonthRevenue.toFixed(2)}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-xs text-muted-foreground">23 days left</div>
+                    <div className="text-xs text-muted-foreground">{daysOfMonthLeft} days left</div>
                   </CardContent>
                   <CardFooter>
                     <Progress value={(currentMonthRevenue / 1000) * 100} aria-label={`${currentMonthRevenue} revenue this month`} />
                   </CardFooter>
                 </Card>
               </div>
-              <Tabs defaultValue="week">
+              <Tabs defaultValue="today">
                 <div className="flex items-center">
                   <TabsList>
+                    <TabsTrigger value="today">Today</TabsTrigger>
                     <TabsTrigger value="week">Week</TabsTrigger>
-                    <TabsTrigger value="month">Month</TabsTrigger>
                   </TabsList>
                   <div className="ml-auto flex items-center gap-2">
                     <DropdownMenu>
@@ -219,6 +218,9 @@ export default async function DashboardPage() {
                 </div>
                 <TabsContent value="week">
                   <AppointmentsSection appointments={weekAppointments} />
+                </TabsContent>
+                <TabsContent value="today">
+                  <AppointmentsSection appointments={dayAppointments} />
                 </TabsContent>
               </Tabs>
             </div>

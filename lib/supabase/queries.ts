@@ -71,7 +71,6 @@ export async function getWeekAppointments(): Promise<(Appointment & { client: Pr
     const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay()).toISOString().split('T')[0];
     const endOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() + 6).toISOString().split('T')[0];
   
-    console.log('Fetching appointments from', startOfWeek, 'to', endOfWeek);
   
     const { data, error } = await supabase
       .from('appointments')
@@ -88,7 +87,25 @@ export async function getWeekAppointments(): Promise<(Appointment & { client: Pr
       console.error('Error fetching week appointments:', error);
       return [];
   }
-  console.log('Fetched appointments:', data);
+
+  return data as (Appointment & { client: Profile })[];
+}
+
+export async function getDayAppointments(date: string): Promise<(Appointment & { client: Profile })[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('appointments')
+    .select(`
+      *,
+      client:profiles!appointments_user_id_fkey(full_name, email)
+    `)
+    .eq('date', date)
+    .order('time', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching day appointments:', error);
+    return [];
+  }
 
   return data as (Appointment & { client: Profile })[];
 }
@@ -149,3 +166,5 @@ export async function getServicesById(ids: number[]): Promise<Service[]> {
     }
     return data;
   }
+
+

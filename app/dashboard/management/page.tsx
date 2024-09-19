@@ -81,7 +81,6 @@ export default function ManagementPage() {
     setSelectedUser(user);
     setSearchQuery(user.full_name || "");
     setIsDropdownOpen(false);
-    console.log(selectedUser);
   };
 
   // Handle service checkbox toggle
@@ -155,7 +154,11 @@ export default function ManagementPage() {
                   {services &&
                     services.map((service) => (
                       <div key={service.id} className="flex items-center space-x-2">
-                        <Checkbox id={`service-${service.id}`} checked={selectedServices.some((s) => s.id === service.id)} onCheckedChange={(checked: boolean) => handleServiceToggle(service, checked)} />
+                        <Checkbox
+                          id={`service-${service.id}`}
+                          checked={selectedServices.some((s) => s.id === service.id)}
+                          onCheckedChange={(checked: boolean) => handleServiceToggle(service, checked)}
+                        />
                         <Label htmlFor={`service-${service.id}`}>{service.name}</Label>
                       </div>
                     ))}
