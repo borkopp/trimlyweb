@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import {BackgroundBeams} from "@/components/ui/background-beams";
+import {HeroButton} from "./HeroButton";
 
 export function BackgroundBeamsDemo() {
   return (
@@ -12,6 +13,10 @@ export function BackgroundBeamsDemo() {
         <p className="text-neutral-500 text-[1.2rem] max-w-lg mx-auto my-2 text-center relative z-10">
           Own an app for your business, without paying thousands. Stand out from the competition. Gain loyal customers.
         </p>
+        <div className="flex flex-row gap-4 justify-center mt-10">
+          <HeroButton href="#pricing" text="Check pricing" />
+          <HeroButton href="#features" text="Learn more" />
+        </div>
       </div>
       <BackgroundBeams />
     </div>

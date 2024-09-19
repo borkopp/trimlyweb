@@ -1,5 +1,6 @@
 "use client";
 import Hero from "@/components/Hero";
+import HeroMockup from "@/components/HeroMockup";
 import {BackgroundBeamsDemo} from "@/components/HeroTest";
 import Features from "@/components/features";
 import Pricing from "@/components/pricing";
@@ -20,6 +21,7 @@ export default function Home() {
       {/* Hero */}
       {/* <Hero /> */}
       <BackgroundBeamsDemo />
+      <HeroMockup />
       {/* Features */}
       <Features />
       {/* Pricing */}

@@ -76,6 +76,9 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      fontFamily: {
+        ff: ['var(--font-ff)'],
+      },
     },
   },
   plugins: [require("tailwindcss-animate"), addVariablesForColors],
