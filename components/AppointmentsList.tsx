@@ -1,19 +1,26 @@
-"use client";
-import {useAppointments} from "@/components/AppointmentsContext";
+import {createClient} from "@/utils/supabase/server";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Badge} from "@/components/ui/badge";
-import {Database} from "@/database.types";
 import {formatDate, formatTime} from "@/utils/dateUtils";
+import AppointmentRow from "@/components/AppointmentRow";
 
-type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+export default async function AppointmentsList() {
+  const supabase = createClient();
+  const {data: appointments, error} = await supabase
+    .from("appointments")
+    .select(
+      `
+      *,
+      client:profiles!appointments_user_id_fkey(full_name, email)
+    `
+    )
+    .order("date", {ascending: true})
+    .order("time", {ascending: true});
 
-type Props = {
-  appointments: (Appointment & {client: Profile})[];
-};
-
-export default function AppointmentsList({appointments}: Props) {
-  const {selectedAppointment, setSelectedAppointment} = useAppointments();
+  if (error) {
+    console.error("Error fetching appointments:", error);
+    return <div>Error loading appointments</div>;
+  }
 
   return (
     <Table>
@@ -26,26 +33,9 @@ export default function AppointmentsList({appointments}: Props) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {appointments.map((appointment) => {
-          const isConfirmed = new Date(`${appointment.date}T${appointment.time}`) < new Date();
-          const isSelected = selectedAppointment?.id === appointment.id;
-          return (
-            <TableRow
-              key={appointment.id}
-              onClick={() => setSelectedAppointment(appointment)}
-              className={`cursor-pointer transition-colors ${isSelected ? "bg-muted/50" : "hover:bg-muted/50"}`}>
-              <TableCell>
-                <div className="font-medium">{appointment.client.full_name}</div>
-                <div className="text-sm text-muted-foreground">{appointment.client.email}</div>
-              </TableCell>
-              <TableCell>
-                <Badge variant={isConfirmed ? "secondary" : "outline"}>{isConfirmed ? "Completed" : "Upcoming"}</Badge>
-              </TableCell>
-              <TableCell>{formatDate(appointment.date)}</TableCell>
-              <TableCell>{formatTime(appointment.time)}</TableCell>
-            </TableRow>
-          );
-        })}
+        {appointments.map((appointment) => (
+          <AppointmentRow key={appointment.id} appointment={appointment} />
+        ))}
       </TableBody>
     </Table>
   );

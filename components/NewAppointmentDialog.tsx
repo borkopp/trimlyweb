@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useState, useTransition} from "react";
 import {format, isBefore, isSameDay, set} from "date-fns";
 import {CalendarIcon} from "lucide-react";
 import {Button} from "@/components/ui/button";
@@ -9,9 +9,9 @@ import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, Di
 import {Label} from "@/components/ui/label";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {createClient} from "@/utils/supabase/client";
 import {Database} from "@/database.types";
 import {toast} from "./ui/use-toast";
+import {createAppointment} from "@/app/actions/appointment-actions";
 
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
 type Service = Database["public"]["Tables"]["services"]["Row"];
@@ -28,44 +28,43 @@ export function NewAppointmentDialog({initialBarbers, initialServices, user_id}:
   const [barber, setBarber] = useState("");
   const [service, setService] = useState("");
   const [time, setTime] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setLoading(true);
-    const supabase = createClient();
 
     if (!date || !barber || !service || !time) {
       return;
     }
 
-    const {data, error} = await supabase.from("appointments").insert({
-      barber_id: parseInt(barber),
-      service_ids: [parseInt(service)],
-      date: date.toISOString().split("T")[0],
-      time: time,
-      user_id: user_id,
-    });
+    startTransition(async () => {
+      try {
+        await createAppointment({
+          barber_id: parseInt(barber),
+          service_ids: [parseInt(service)],
+          date: format(date, "yyyy-MM-dd"), // Use date-fns to format the date
+          time: time,
+          user_id: user_id,
+        });
 
-    if (error) {
-      console.error("Error creating appointment:", error);
-      toast({
-        title: "Error",
-        description: "An error occurred while creating the appointment.",
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Appointment created",
-        description: "The appointment has been created successfully.",
-      });
-      setOpen(false);
-      setDate(undefined);
-      setBarber("");
-      setService("");
-      setTime("");
-    }
-    setLoading(false);
+        toast({
+          title: "Appointment created",
+          description: "The appointment has been created successfully.",
+        });
+        setOpen(false);
+        setDate(undefined);
+        setBarber("");
+        setService("");
+        setTime("");
+      } catch (error) {
+        console.error("Error creating appointment:", error);
+        toast({
+          title: "Error",
+          description: "An error occurred while creating the appointment.",
+          variant: "destructive",
+        });
+      }
+    });
   };
 
   const generateTimeSlots = () => {
@@ -176,8 +175,8 @@ export function NewAppointmentDialog({initialBarbers, initialServices, user_id}:
             </div>
           </div>
           <DialogFooter>
-            <Button disabled={loading || !date || !barber || !service || !time} type="submit">
-              {loading ? "Creating..." : "Create Appointment"}
+            <Button disabled={isPending || !date || !barber || !service || !time} type="submit">
+              {isPending ? "Creating..." : "Create Appointment"}
             </Button>
           </DialogFooter>
         </form>

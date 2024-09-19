@@ -1,17 +1,17 @@
 "use client";
-
 import React, {useEffect, useState} from "react";
 import {useAppointments} from "@/components/AppointmentsContext";
 import {createClient} from "@/utils/supabase/client";
-import {ChevronLeft, ChevronRight, Clock, Copy, MoreVertical, Users} from "lucide-react";
+import {Clock, Copy, MoreVertical, Users} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {Separator} from "@/components/ui/separator";
 import {Database} from "@/database.types";
-import {adminRemoveAppointment} from "@/lib/supabase/clientQueries";
 import {toast} from "@/components/ui/use-toast";
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {useTransition} from "react";
+import {deleteAppointment} from "@/app/actions/appointment-actions";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
@@ -21,6 +21,7 @@ export function AppointmentDetails() {
   const [services, setServices] = useState<Service[]>([]);
   const [barber, setBarber] = useState<Barber | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const supabase = createClient();
 
   useEffect(() => {
@@ -69,12 +70,14 @@ export function AppointmentDetails() {
     if (!selectedAppointment) return;
 
     try {
-      await adminRemoveAppointment(selectedAppointment.id);
-      removeAppointment(selectedAppointment.id);
-      setIsDeleteDialogOpen(false);
-      toast({
-        title: "Appointment removed",
-        description: "The appointment has been successfully removed.",
+      startTransition(async () => {
+        await deleteAppointment(selectedAppointment.id);
+        removeAppointment(selectedAppointment.id);
+        setIsDeleteDialogOpen(false);
+        toast({
+          title: "Appointment removed",
+          description: "The appointment has been successfully removed.",
+        });
       });
     } catch (error) {
       toast({
