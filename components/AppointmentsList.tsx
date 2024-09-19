@@ -1,4 +1,4 @@
-import {Table, TableBody, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import AppointmentRow from "@/components/AppointmentRow";
 import {Database} from "@/database.types";
 
@@ -18,9 +18,15 @@ export default async function AppointmentsList({appointments}: {appointments: Ap
         </TableRow>
       </TableHeader>
       <TableBody>
-        {appointments.map((appointment) => (
-          <AppointmentRow key={appointment.id} appointment={appointment} />
-        ))}
+        {appointments.length > 0 ? (
+          appointments.map((appointment) => <AppointmentRow key={appointment.id} appointment={appointment} />)
+        ) : (
+          <TableRow>
+            <TableCell colSpan={4} className="text-center text-muted-foreground">
+              No appointments to display.
+            </TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

@@ -22,16 +22,18 @@ export default function FullPageCalendar() {
   const [date, setDate] = React.useState<Date>(new Date());
   const [view, setView] = React.useState<"day" | "week">("week");
   const [appointments, setAppointments] = React.useState<Appointment[]>([]);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const weekStart = startOfWeek(date);
   const weekEnd = endOfWeek(date);
-  const daysInWeek = eachDayOfInterval({start: weekStart, end: weekEnd});
+  const daysToDisplay = view === "week" ? eachDayOfInterval({start: weekStart, end: weekEnd}) : [date];
 
   const hours = Array.from({length: 12}, (_, i) => i + 8); // 8 AM to 7 PM
   const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 
   React.useEffect(() => {
     const fetchAppointments = async () => {
+      setIsLoading(true);
       if (view === "week") {
         const {data, error} = await supabase
           .from("appointments")
@@ -74,25 +76,41 @@ export default function FullPageCalendar() {
     };
 
     fetchAppointments();
+    setIsLoading(false);
   }, [view, date, supabase, weekStart, weekEnd]);
 
   const getAppointmentsForDay = (day: Date) => {
     return appointments.filter((apt) => {
       const aptDate = new Date(apt.date);
-      return aptDate.getFullYear() === day.getFullYear() && aptDate.getMonth() === day.getMonth() && aptDate.getDate() === day.getDate();
+      return isSameDay(aptDate, day);
     });
   };
 
-  const formatAppointmentTime = (time: string) => {
-    return dayjs(time, "HH:mm:ss").format("h:mm A");
-  };
-
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-muted/20">
       <aside className="border-r p-4 flex flex-col">
-        <h2 className="text-lg font-semibold mb-4">Barbershop Calendar</h2>
         <div className="mb-4">
-          <Calendar mode="single" selected={date} onSelect={(newDate) => newDate && setDate(newDate)} className="rounded-md border" />
+          {view === "week" ? (
+            <Calendar
+              mode="range"
+              selected={{
+                from: weekStart,
+                to: weekEnd,
+              }}
+              disabled
+              disableNavigation
+              showOutsideDays={true}
+              className="rounded-md border bg-background"
+            />
+          ) : (
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={(newDate) => newDate && setDate(newDate)}
+              showOutsideDays={true}
+              className="rounded-md border bg-background"
+            />
+          )}
         </div>
         <Select value={view} onValueChange={(value: "day" | "week") => setView(value)}>
           <SelectTrigger>
@@ -118,22 +136,27 @@ export default function FullPageCalendar() {
         </div>
       </aside>
       <main className="flex-1 p-4 overflow-auto">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">
-            {format(weekStart, "MMMM d")} - {format(weekEnd, "MMMM d, yyyy")}
+        <div className="flex justify-end items-center gap-6 mb-4">
+          <h2 className="text-2xl font-bold ml-12">
+            {view === "week" ? `${format(weekStart, "MMMM d")} - ${format(weekEnd, "MMMM d, yyyy")}` : format(date, "MMMM d, yyyy")}
           </h2>
           <div className="flex gap-2">
-            <Button variant="outline" size="icon" onClick={() => setDate(addDays(date, -7))}>
+            <Button variant="outline" size="icon" onClick={() => setDate(addDays(date, view === "week" ? -7 : -1))}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <Button variant="outline" size="icon" onClick={() => setDate(addDays(date, 7))}>
+            <Button variant="outline" size="icon" onClick={() => setDate(addDays(date, view === "week" ? 7 : 1))}>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
-        <div className="grid grid-cols-8 gap-2">
+        <div className={`grid ${view === "week" ? "grid-cols-8" : "grid-cols-2"} gap-2 relative`}>
+          {isLoading && (
+            <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-50">
+              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+            </div>
+          )}
           <div className="col-span-1"></div>
-          {daysInWeek.map((day) => (
+          {daysToDisplay.map((day) => (
             <div key={day.toString()} className="text-center font-semibold">
               {format(day, "EEE")}
               <br />
@@ -143,7 +166,7 @@ export default function FullPageCalendar() {
           {hours.map((hour) => (
             <React.Fragment key={hour}>
               <div className="text-right pr-2 text-sm text-muted-foreground">{format(new Date().setHours(hour, 0), "h a")}</div>
-              {daysInWeek.map((day) => (
+              {daysToDisplay.map((day) => (
                 <div key={`${day}-${hour}`} className="border relative h-16">
                   {getAppointmentsForDay(day).map((apt) => {
                     const aptDateTime = new Date(`${apt.date}T${apt.time}`);
@@ -158,11 +181,12 @@ export default function FullPageCalendar() {
                       return (
                         <div
                           key={apt.id}
-                          className="bg-[#EA580B] rounded p-1 text-xs absolute left-0 right-0 overflow-hidden z-10"
+                          className="bg-muted border-l-4 border-[#EA580B] pl-2 rounded p-1 text-xs absolute left-0 right-0 z-10 overflow-hidden transition-all duration-300 ease-in-out"
                           style={{
                             top: `${topPosition}%`,
                             height: `${height}%`,
-                            minHeight: "16px", // Ensure very short appointments are still visible
+                            minHeight: "16px",
+                            opacity: isLoading ? 0 : 1,
                           }}>
                           <div className="font-semibold truncate">{apt.client.full_name}</div>
                           <div className="truncate">
