@@ -7,24 +7,36 @@ import TypingAnimation from "@/components/ui/typing-animation";
 import {login} from "../actions";
 import {useState} from "react";
 import {useToast} from "@/components/ui/use-toast";
+import AnimatedGridPattern from "@/components/magicui/animated-grid-pattern";
+import {cn} from "@/lib/utils";
+import {useFormStatus} from "react-dom";
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const {toast} = useToast();
 
   async function handleSubmit(formData: FormData) {
-    setIsLoading(true);
-    const result = await login(formData);
-    setIsLoading(false);
-    toast({
-      title: "Login successful",
-      description: "You have been logged in",
-    });
-
-    if (result?.error) {
+    setError(null);
+    try {
+      const result = await login(formData);
+      if (result?.error) {
+        setError(result.error);
+        toast({
+          title: "Login failed",
+          description: result.error,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Login successful",
+          description: "You have been logged in",
+        });
+      }
+    } catch (error) {
+      setError("An unexpected error occurred");
       toast({
         title: "Login failed",
-        description: result.error,
+        description: "An unexpected error occurred",
         variant: "destructive",
       });
     }
@@ -32,21 +44,33 @@ export default function LoginPage() {
 
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
-      <div className="hidden h-screen bg-muted lg:block w-2/3">
-        <div className="flex flex-col justify-between items-start h-full">
-          <Link href={"/"} className="font-ff text-3xl p-12">
+      <div className="hidden h-screen bg-muted w-2/3 lg:block relative overflow-hidden">
+        <div className="flex flex-col justify-between items-start h-full relative z-10 p-12">
+          <Link href={"/"} className="font-ff text-3xl">
             trimly
           </Link>
-          <TypingAnimation className="p-12 text-lg font-semibold" text="Keep your loyal customers happy and satisfied." duration={90} />
+          <TypingAnimation className="text-lg font-semibold" text="Keep your loyal customers happy and satisfied." duration={90} />
         </div>
+        <AnimatedGridPattern
+          numSquares={30}
+          maxOpacity={0.5}
+          duration={3}
+          repeatDelay={1}
+          className={cn(
+            "absolute inset-0 z-0 inset-y-[-40%]",
+            "[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]",
+            "h-[200%] w-full skew-y-12"
+          )}
+        />
       </div>
-      <div className="flex items-center justify-center w-2/3 py-12">
+
+      <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[400px] gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Login</h1>
             <p className="text-balance text-muted-foreground">Enter your email below to login to your account</p>
           </div>
-          <form action={handleSubmit} className="grid gap-4">
+          <form action={handleSubmit}>
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input id="email" type="email" name="email" placeholder="your.name@example.com" required />
@@ -60,21 +84,35 @@ export default function LoginPage() {
               </div>
               <Input id="password" name="password" type="password" required />
             </div>
-            <Button type="submit" className={`${isLoading ? "bg-gray-500" : "bg-[#EA580C]"}`} disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}
+            <SubmitButton />
+            <Button variant="outline" className="w-full">
+              Login with Google
             </Button>
+            <div className="mt-4 text-center text-sm">
+              Don&apos;t have an account?{" "}
+              <Link href="/signup" className="underline">
+                Sign up
+              </Link>
+            </div>
           </form>
-          <Button variant="outline" className="w-full">
-            Login with Google
-          </Button>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="underline">
-              Sign up
-            </Link>
-          </div>
         </div>
       </div>
     </div>
+  );
+}
+
+function SubmitButton() {
+  const {pending} = useFormStatus();
+
+  return (
+    <Button type="submit" className={`w-full mb-4 mt-8 ${pending ? "bg-gray-500" : "bg-[#EA580C]"}`} disabled={pending}>
+      {pending ? (
+        <div className="flex items-center justify-center">
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary self-center"></div>
+        </div>
+      ) : (
+        "Login"
+      )}
+    </Button>
   );
 }

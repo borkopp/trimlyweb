@@ -26,6 +26,8 @@ import {AppointmentDetails} from "@/components/AppointmentDetails";
 import {NewAppointmentDialog} from "@/components/NewAppointmentDialog";
 import {formatTime} from "@/utils/dateUtils";
 import {getDaysInMonth} from "date-fns";
+import {signOut} from "../(auth)/actions";
+import {LogoutButton} from "@/components/LogoutButton";
 
 async function getImageUrl(path: string) {
   const supabase = createClient();
@@ -143,7 +145,7 @@ export default async function DashboardPage() {
                   <Link href="/dashboard/support">Support</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onSelect={handleLogout}>Logout</DropdownMenuItem>
+                <LogoutButton />
               </DropdownMenuContent>
             </DropdownMenu>
           </header>

@@ -47,5 +47,5 @@ export async function signOut() {
   const supabase = createClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
-  redirect("/");
+  return { success: true };
 }
