@@ -3,26 +3,16 @@ import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
 import {Switch} from "@/components/ui/switch";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {CheckIcon, MinusIcon} from "lucide-react";
 import ShinyButton from "./ui/shiny-button";
-
-interface PlanFeature {
-  type: string;
-  features: {
-    name: string;
-    free: boolean;
-    startup: boolean;
-    team: boolean;
-    enterprise: boolean;
-  }[];
-}
+import AnimatedGridPattern from "./magicui/animated-grid-pattern";
+import {cn} from "@/lib/utils";
 
 export default function Pricing() {
   return (
-    <>
+    <section className="w-full mx-auto py-12 md:py-24 lg:py-24 relative">
       {/* Pricing */}
-      <div id="pricing" className="container py-16 lg:py-24">
+      <div className="container py-16 lg:py-24 bg-background-secondary relative">
         {/* Title */}
         <div className="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
           <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Pricing</h2>
@@ -55,7 +45,7 @@ export default function Pricing() {
         {/* Grid */}
         <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:items-center">
           {/* Card */}
-          <Card>
+          <Card className="bg-background z-10">
             <CardHeader className="text-center pb-2">
               <CardTitle className="mb-7">Basic</CardTitle>
               <span className="font-bold text-5xl">€79</span>
@@ -85,7 +75,7 @@ export default function Pricing() {
           </Card>
           {/* End Card */}
           {/* Card */}
-          <Card className="border-primary">
+          <Card className="border-primary bg-background z-10">
             <CardHeader className="text-center pb-2">
               <Badge className="uppercase w-max self-center mb-3">Most popular</Badge>
               <CardTitle className="!mb-7">Plus</CardTitle>
@@ -124,7 +114,7 @@ export default function Pricing() {
           </Card>
           {/* End Card */}
           {/* Card */}
-          <Card>
+          <Card className="bg-background z-10">
             <CardHeader className="text-center pb-2">
               <CardTitle className="mb-7">One-Time-Payment</CardTitle>
               <span className="font-bold text-5xl">Let&apos;s talk</span>
@@ -162,6 +152,13 @@ export default function Pricing() {
         {/* End Comparison table */}
       </div>
       {/* End Pricing */}
-    </>
+      {/* <AnimatedGridPattern
+        numSquares={30}
+        maxOpacity={1} // Keep this at 1 or adjust as needed for visibility
+        duration={3}
+        repeatDelay={1}
+        className={cn("[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]", "inset-x-0 inset-y-[-100%] h-[200%] skew-y-12")}
+      /> */}
+    </section>
   );
 }
