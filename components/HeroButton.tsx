@@ -3,10 +3,22 @@ import React from "react";
 import {HoverBorderGradient} from "@/components/ui/hover-border-gradient";
 import Link from "next/link";
 
-export function HeroButton({text, href}: {text: string; href: string}) {
+export function HeroButton({
+  text,
+  href,
+  dataAos,
+  dataAosDelay,
+  dataAosDuration,
+}: {
+  text: string;
+  href: string;
+  dataAos: string;
+  dataAosDelay: string;
+  dataAosDuration: string;
+}) {
   return (
     <Link href={href}>
-      <div className="flex justify-center text-center">
+      <div data-aos={dataAos} data-aos-delay={dataAosDelay} data-aos-duration={dataAosDuration} className="flex justify-center text-center">
         <HoverBorderGradient
           containerClassName="rounded-full"
           as="button"

@@ -2,6 +2,8 @@
 import Hero from "@/components/Hero";
 import HeroMockup from "@/components/HeroMockup";
 import {BackgroundBeamsDemo} from "@/components/HeroTest";
+import ProblemSection from "@/components/ProblemSection";
+import SolutionSection from "@/components/SolutionSection";
 import Features from "@/components/features";
 import {FeaturesSection} from "@/components/features-new";
 import Pricing from "@/components/pricing";
@@ -12,17 +14,18 @@ import {useEffect} from "react";
 export default function Home() {
   useEffect(() => {
     AOS.init({
-      disable: "phone",
       duration: 500,
-      easing: "ease-out-cubic",
+      easing: "ease-in-out",
     });
-  });
+  }, []);
   return (
     <main>
       {/* Hero */}
       {/* <Hero /> */}
       <BackgroundBeamsDemo />
       <HeroMockup />
+      <ProblemSection />
+      <SolutionSection />
       {/* Features */}
       {/* <Features /> */}
       <FeaturesSection />
