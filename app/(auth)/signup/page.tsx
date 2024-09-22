@@ -29,7 +29,7 @@ export default function LoginPage() {
           )}
         />
       </div>
-      <div className="flex items-center justify-center w-2/3 py-12">
+      {/* <div className="flex items-center justify-center w-2/3 py-12">
         <div className="mx-auto grid w-[400px] gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Sign up</h1>
@@ -62,6 +62,18 @@ export default function LoginPage() {
               Login
             </Link>
           </div>
+        </div>
+      </div> */}
+      <div className="flex flex-col items-center justify-center w-2/3 py-12 gap-4">
+        <span className="text-3xl font-bold font-ff text-primary">trimly</span>
+        <div className="text-2xl font-bold">New accounts are not allowed at the moment.</div>
+        <div className="flex gap-4 mt-4">
+          <Button className="w-32">
+            <Link href="/login">Login</Link>
+          </Button>
+          <Button variant="outline" className="w-32">
+            <Link href="/">Home</Link>
+          </Button>
         </div>
       </div>
     </div>

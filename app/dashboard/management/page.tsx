@@ -225,7 +225,7 @@ export default function ManagementPage() {
               <Input id="serviceDuration" type="number" placeholder="30" />
             </div>
             <div>
-              <Label htmlFor="servicePrice">Price (���)</Label>
+              <Label htmlFor="servicePrice">Price (€)</Label>
               <Input id="servicePrice" type="number" placeholder="25" />
             </div>
           </div>
@@ -243,7 +243,7 @@ export default function ManagementPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {services.map((service) => (
               <Card key={service.id}>
-                <CardContent className="p-4">
+                <CardContent className="p-4 flex flex-row justify-between">
                   <div className="flex items-center space-x-4">
                     <Image
                       src={serviceImages[service.id] || "/placeholder-image.jpg"}
