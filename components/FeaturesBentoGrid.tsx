@@ -70,7 +70,7 @@ const features = [
     href: "/",
     delay: 150,
     cta: "Learn more",
-    background: <Iphone15Pro src="/gallery.png" className="absolute -right-10 -top-[430px] scale-[0.65] opacity-50" />,
+    background: <Iphone15Pro src="/images/gallery.png" className="absolute -right-10 -top-[430px] scale-[0.65] opacity-50" />,
     className: "lg:col-start-3 lg:col-end-3 lg:row-start-2 lg:row-end-4",
   },
 ];
