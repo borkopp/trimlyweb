@@ -1,6 +1,5 @@
 "use client";
-
-import {useState, useRef, useEffect} from "react";
+import {useState, useRef, useEffect, useCallback} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
@@ -10,12 +9,22 @@ import {Label} from "@/components/ui/label";
 import {toast} from "@/components/ui/use-toast";
 import {assignBarberRole, searchUsers, getServices} from "@/app/actions/barber-actions";
 import {Database} from "@/database.types";
-import {Clock3Icon, DollarSignIcon, PlusIcon, TrashIcon} from "lucide-react";
+import {Clock3Icon, Euro, PlusIcon, TrashIcon} from "lucide-react";
 import {Textarea} from "@/components/ui/textarea";
 import Image from "next/image";
+import {createClient} from "@/utils/supabase/client";
 
 type User = Database["public"]["Tables"]["profiles"]["Row"];
 type Service = Database["public"]["Tables"]["services"]["Row"];
+
+async function getImageUrl(path: string) {
+  const supabase = createClient();
+  const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
+
+  return data?.publicUrl || null;
+}
+
+const blurHash = "L3GAB+00p6y~qRj[N+t7RPWB";
 
 export default function ManagementPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,12 +35,13 @@ export default function ManagementPage() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [serviceImages, setServiceImages] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
         const fetchedServices = await getServices();
-        setServices(fetchedServices || []);
+        setServices(fetchedServices);
       } catch (error) {
         toast({
           title: "Error",
@@ -55,6 +65,23 @@ export default function ManagementPage() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const fetchImageUrls = useCallback(async () => {
+    const imageUrls: Record<string, string> = {};
+    for (const service of services) {
+      if (service.image) {
+        const imageUrl = await getImageUrl(service.image);
+        if (imageUrl) {
+          imageUrls[service.id] = imageUrl;
+        }
+      }
+    }
+    setServiceImages(imageUrls);
+  }, [services]);
+
+  useEffect(() => {
+    fetchImageUrls();
+  }, [fetchImageUrls]);
 
   // Handle search input changes
   const handleSearch = async (query: string) => {
@@ -198,7 +225,7 @@ export default function ManagementPage() {
               <Input id="serviceDuration" type="number" placeholder="30" />
             </div>
             <div>
-              <Label htmlFor="servicePrice">Price (€)</Label>
+              <Label htmlFor="servicePrice">Price (���)</Label>
               <Input id="servicePrice" type="number" placeholder="25" />
             </div>
           </div>
@@ -218,14 +245,22 @@ export default function ManagementPage() {
               <Card key={service.id}>
                 <CardContent className="p-4">
                   <div className="flex items-center space-x-4">
-                    <Image src={service.image} alt={service.name} width={64} height={64} className="w-16 h-16 object-cover rounded" />
+                    <Image
+                      src={serviceImages[service.id] || "/placeholder-image.jpg"}
+                      alt={service.name}
+                      placeholder="blur"
+                      blurDataURL={blurHash}
+                      width={64}
+                      height={64}
+                      className="w-16 h-16 object-cover rounded"
+                    />
                     <div>
                       <h3 className="font-semibold">{service.name}</h3>
                       <div className="flex items-center space-x-2 mt-2">
                         <Clock3Icon className="h-4 w-4 text-gray-400" />
                         <span className="text-sm">{service.time} min</span>
-                        <DollarSignIcon className="h-4 w-4 text-gray-400 ml-2" />
-                        <span className="text-sm">${service.price}</span>
+                        <Euro className="h-4 w-4 text-gray-400 ml-2" />
+                        <span className="text-sm">{service.price}</span>
                       </div>
                     </div>
                   </div>

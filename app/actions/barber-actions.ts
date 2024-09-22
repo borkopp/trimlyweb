@@ -1,7 +1,10 @@
 'use server'
 
+import { Database } from '@/database.types';
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+
+type Service = Database["public"]["Tables"]["services"]["Row"];
 
 export async function assignBarberRole(userId: string, serviceIds: number[]) {
   const supabase = createClient()
@@ -50,12 +53,12 @@ export async function searchUsers(query: string) {
   }
 }
 
-export const getServices = async () => {
+export const getServices = async (): Promise<Service[]> => {
   const supabase = createClient()
 
   const { data, error } = await supabase
     .from('services')
-    .select('id, name')
+    .select('*')
 
-  return data
+  return data as Service[]
 }
