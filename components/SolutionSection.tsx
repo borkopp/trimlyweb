@@ -1,9 +1,11 @@
 import {FeaturesBentoGrid} from "./FeaturesBentoGrid";
+import {ShootingStars} from "./ui/shooting-stars";
+import {StarsBackground} from "./ui/stars-background";
 
 export default function SolutionSection() {
   return (
-    <section className="w-full bg-neutral-900 mx-auto py-12 md:py-24 lg:py-32">
-      <div className="container px-4 md:px-6">
+    <section className="bg-neutral-900 flex flex-col items-center justify-center relative w-full py-12 md:py-24 lg:py-32">
+      <div className="container px-4 md:px-6 relative z-10">
         <div className="space-y-4 items-center text-center mb-24">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">SOLUTION</h3>
           <h2 className="text-4xl font-semibold tracking-tighter sm:text-5xl">Your own app to run your business seamlesly.</h2>
@@ -15,6 +17,8 @@ export default function SolutionSection() {
         </div>
         <FeaturesBentoGrid />
       </div>
+      <ShootingStars className="absolute top-0 left-0 w-full h-full z-0" />
+      <StarsBackground className="absolute inset-0 w-full h-full z-0" />
     </section>
   );
 }

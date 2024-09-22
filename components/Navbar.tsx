@@ -35,7 +35,7 @@ export default async function Navbar() {
             </>
           ) : (
             <Link href="/login">
-              <Button size="sm" variant="link">
+              <Button size="sm" variant="outline" className="hover:text-primary">
                 Log in
               </Button>
             </Link>

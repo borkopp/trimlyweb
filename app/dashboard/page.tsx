@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
-import {Calendar, File, Home, LineChart, ListFilter, Scissors, Search, Settings, Users2} from "lucide-react";
+import {Calendar, File, Home, LineChart, ListFilter, Scissors, Search, Users2} from "lucide-react";
 import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
@@ -26,7 +26,6 @@ import {AppointmentDetails} from "@/components/AppointmentDetails";
 import {NewAppointmentDialog} from "@/components/NewAppointmentDialog";
 import {formatTime} from "@/utils/dateUtils";
 import {getDaysInMonth} from "date-fns";
-import {signOut} from "../(auth)/actions";
 import {LogoutButton} from "@/components/LogoutButton";
 
 async function getImageUrl(path: string) {
@@ -49,13 +48,6 @@ export default async function DashboardPage() {
   const {data: profile} = await supabase.from("profiles").select("*").eq("id", user.id).single();
 
   const avatarUrl = profile?.avatar_url ? await getImageUrl(profile.avatar_url) : null;
-
-  const handleLogout = async () => {
-    "use server";
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    redirect("/login");
-  };
 
   const todayAppointments = await getTodayAppointments();
   const currentMonthRevenue = await getCurrentMonthRevenue();
