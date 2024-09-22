@@ -22,16 +22,16 @@ export default function HeroMockup() {
         <div data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100" className="relative w-full h-[400px] flex justify-center items-center">
           {/* Left iPhone */}
           <Iphone15Pro
-            src="/barber-calendar.png"
+            src="/images/barber-calendar.png"
             className={`absolute transition-all duration-1000 ease-in-out ${
               scrolled ? "left-[15%] opacity-100 scale-75" : "left-[25%] opacity-70 scale-[0.65]"
             } z-20`}
           />
           {/* Center iPhone */}
-          <Iphone15Pro src="/homescreen.png" className="absolute z-30 scale-75" />
+          <Iphone15Pro src="/images/homescreen.png" className="absolute z-30 scale-75" />
           {/* Right iPhone */}
           <Iphone15Pro
-            src="/barber-dashboard.png"
+            src="/images/barber-dashboard.png"
             className={`absolute transition-all duration-1000 ease-in-out ${
               scrolled ? "right-[15%] opacity-100 scale-75" : "right-[25%] opacity-70 scale-[0.65]"
             } z-20`}
