@@ -19,17 +19,20 @@ export async function getServices(): Promise<Service[]> {
     return data
 }
 
-export async function addService(service: Service): Promise<void> {
+export async function addService(service: Omit<Service, 'id'>): Promise<Service> {
     const supabase = createClient()
     try {
-        const { error } = await supabase
+        const { data, error } = await supabase
         .from('services')
-        .insert(service)
+        .insert({ ...service, image: service.image || null })
+        .select()
+        .single()
 
         if (error) {
-        throw error;
+            throw error;
         }
         revalidatePath('/dashboard/services');
+        return data;
     } catch (error) {
         console.error('Error adding service:', error);
         throw error;
@@ -41,7 +44,7 @@ export async function updateService(service: Service): Promise<Service> {
   
     const { data, error } = await supabase
       .from('services')
-      .update(service)
+      .update({ ...service, image: service.image || null })
       .eq('id', service.id)
       .select()
       .single()

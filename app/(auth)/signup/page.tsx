@@ -26,7 +26,7 @@ export default function SignupPage() {
           )}
         />
       </div>
-      <div className="flex items-center justify-center w-2/3 py-12">
+      <div className="flex items-center justify-center w-full lg:w-2/3 py-12">
         <div className="mx-auto grid w-[400px] gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Sign up</h1>

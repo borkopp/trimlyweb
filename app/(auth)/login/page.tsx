@@ -1,47 +1,11 @@
-"use client";
 import Link from "next/link";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
 import TypingAnimation from "@/components/ui/typing-animation";
-import {login} from "../actions";
-import {useState} from "react";
-import {useToast} from "@/components/ui/use-toast";
 import AnimatedGridPattern from "@/components/magicui/animated-grid-pattern";
 import {cn} from "@/lib/utils";
-import {useFormStatus} from "react-dom";
+import LoginForm from "./LoginForm";
+import {login} from "../actions";
 
 export default function LoginPage() {
-  const [error, setError] = useState<string | null>(null);
-  const {toast} = useToast();
-
-  async function handleSubmit(formData: FormData) {
-    setError(null);
-    try {
-      const result = await login(formData);
-      if (result?.error) {
-        setError(result.error);
-        toast({
-          title: "Login failed",
-          description: result.error,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Login successful",
-          description: "You have been logged in",
-        });
-      }
-    } catch (error) {
-      setError("An unexpected error occurred");
-      toast({
-        title: "Login failed",
-        description: "An unexpected error occurred",
-        variant: "destructive",
-      });
-    }
-  }
-
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="hidden h-screen bg-muted w-2/3 lg:block relative overflow-hidden">
@@ -64,55 +28,15 @@ export default function LoginPage() {
         />
       </div>
 
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center w-full lg:w-2/3 py-12">
         <div className="mx-auto grid w-[400px] gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Login</h1>
             <p className="text-balance text-muted-foreground">Enter your email below to login to your account</p>
           </div>
-          <form action={handleSubmit}>
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" name="email" placeholder="your.name@example.com" required />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
-                <Link href="/forgot-password" className="ml-auto inline-block text-sm underline">
-                  Forgot your password?
-                </Link>
-              </div>
-              <Input id="password" name="password" type="password" required />
-            </div>
-            <SubmitButton />
-            <Button variant="outline" className="w-full">
-              Login with Google
-            </Button>
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{" "}
-              <Link href="/signup" className="underline">
-                Sign up
-              </Link>
-            </div>
-          </form>
+          <LoginForm login={login} />
         </div>
       </div>
     </div>
-  );
-}
-
-function SubmitButton() {
-  const {pending} = useFormStatus();
-
-  return (
-    <Button type="submit" className={`w-full mb-4 mt-8 ${pending ? "bg-gray-500" : "bg-[#EA580C]"}`} disabled={pending}>
-      {pending ? (
-        <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary self-center"></div>
-        </div>
-      ) : (
-        "Login"
-      )}
-    </Button>
   );
 }

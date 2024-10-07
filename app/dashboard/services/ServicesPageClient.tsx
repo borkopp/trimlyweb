@@ -15,13 +15,26 @@ import {createClient} from "@/utils/supabase/client";
 import {toast} from "@/components/ui/use-toast";
 import {addService, deleteService, updateService} from "@/app/actions/dashboard-actions";
 import {useRouter} from "next/navigation";
+import {uploadImage} from "@/lib/uploadImage";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage} from "@/components/ui/breadcrumb";
+import Link from "next/link";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 
 async function getImageUrl(path: string) {
+  if (!path) return null;
   const supabase = createClient();
   const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
-
   return data?.publicUrl || null;
 }
 
@@ -36,15 +49,17 @@ export default function ServicesPageClient({
   const [services, setServices] = useState<Service[]>(initialServices);
   const [serviceImages, setServiceImages] = useState<Record<string, string>>({});
   const [editingService, setEditingService] = useState<Service | null>(null);
-  const [newService, setNewService] = useState<Service>({
+  const [newService, setNewService] = useState<Omit<Service, "id">>({
     name: "",
     description: "",
     time: 0,
     price: 0,
     image: "",
-    id: 0,
   });
-  const [open, setOpen] = useState(false);
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState<Service | null>(null);
 
   const fetchImageUrls = useCallback(async () => {
     const imageUrls: Record<string, string> = {};
@@ -67,36 +82,43 @@ export default function ServicesPageClient({
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, isEditing: boolean) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
+      try {
+        const imagePath = await uploadImage(file);
         if (isEditing && editingService) {
-          setEditingService({...editingService, image: reader.result as string});
+          setEditingService({...editingService, image: imagePath});
         } else {
-          setNewService({...newService, image: reader.result as string});
+          setNewService({...newService, image: imagePath});
         }
-      };
-      reader.readAsDataURL(file);
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        toast({
+          title: "Error",
+          description: "Failed to upload image. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
   //handle adding a new service
   const handleAddService = async () => {
     try {
-      await addService(newService);
+      const addedService = await addService(newService);
+      setServices([...services, addedService]);
       setNewService({
         name: "",
         description: "",
         time: 0,
         price: 0,
         image: "",
-        id: 0,
       });
       toast({
         title: "Service added",
-        description: `${newService.name} has been added to your services.`,
+        description: `${addedService.name} has been added to your services.`,
       });
-      router.refresh();
+      setOpenAddDialog(false); // Close the dialog after adding
     } catch (error) {
+      console.error("Error adding service:", error);
       toast({
         title: "Error",
         description: "Failed to add service. Please try again.",
@@ -117,7 +139,7 @@ export default function ServicesPageClient({
           description: `${editingService.name} has been updated.`,
         });
         setEditingService(null);
-        setOpen(false);
+        setOpenEditDialog(false);
       }
     } catch (error) {
       console.error("Error updating service:", error);
@@ -130,34 +152,55 @@ export default function ServicesPageClient({
   };
 
   //handle removing a service
-  const handleRemoveService = async (id: number) => {
-    try {
-      await deleteService(id);
-      setServices(services.filter((service) => service.id !== id));
-      toast({
-        title: "Service removed",
-        description: `${services.find((service) => service.id === id)?.name} has been removed.`,
-      });
-      router.refresh();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to remove service. Please try again.",
-        variant: "destructive",
-      });
+  const handleRemoveService = async (service: Service) => {
+    setServiceToDelete(service);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (serviceToDelete) {
+      try {
+        await deleteService(serviceToDelete.id);
+        setServices(services.filter((service) => service.id !== serviceToDelete.id));
+        toast({
+          title: "Service removed",
+          description: `${serviceToDelete.name} has been removed.`,
+        });
+        router.refresh();
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to remove service. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
+    setDeleteConfirmOpen(false);
+    setServiceToDelete(null);
   };
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-6">Services Management</h1>
+      <Breadcrumb className="hidden md:flex mb-4">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/dashboard">Dashboard</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Services</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
       <Card>
         <CardHeader>
           <CardTitle>Services</CardTitle>
           <CardDescription>Manage your barbershop&apos;s services</CardDescription>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[400px] w-full rounded-md border">
+          <ScrollArea className="max-h-[90vh] w-full rounded-md border">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -187,14 +230,14 @@ export default function ServicesPageClient({
                     <TableCell>€ {service.price}</TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Dialog open={open} onOpenChange={setOpen}>
+                        <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
                           <DialogTrigger asChild>
                             <Button
                               variant="outline"
                               size="icon"
                               onClick={() => {
                                 setEditingService(service);
-                                setOpen(true);
+                                setOpenEditDialog(true);
                               }}>
                               <Pencil className="h-4 w-4" />
                             </Button>
@@ -263,7 +306,7 @@ export default function ServicesPageClient({
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
-                        <Button variant="destructive" size="icon" onClick={() => handleRemoveService(service.id)}>
+                        <Button variant="destructive" size="icon" onClick={() => handleRemoveService(service)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -275,7 +318,7 @@ export default function ServicesPageClient({
           </ScrollArea>
         </CardContent>
         <CardFooter>
-          <Dialog>
+          <Dialog open={openAddDialog} onOpenChange={setOpenAddDialog}>
             <DialogTrigger asChild>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
@@ -348,6 +391,19 @@ export default function ServicesPageClient({
           </Dialog>
         </CardFooter>
       </Card>
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>This action cannot be undone. This will permanently delete the service.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>Continue</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
