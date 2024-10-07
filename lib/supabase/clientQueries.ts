@@ -5,7 +5,7 @@ const supabase = createClient();
 
 type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-
+type Service = Database["public"]["Tables"]["services"]["Row"];
 
 export async function adminRemoveAppointment(id: number): Promise<void> {
     const { error } = await supabase
@@ -42,4 +42,36 @@ export async function getWeekAppointments(): Promise<(Appointment & { client: Pr
   }
 
   return data as (Appointment & { client: Profile })[];
+}
+
+export async function addService(service: Service): Promise<void> {
+    const { error } = await supabase
+      .from('services')
+      .insert(service);
+  
+    if (error) {
+      throw error;
+    }
+} 
+
+export async function updateService(service: Service): Promise<void> {
+    const { error } = await supabase
+      .from('services')
+      .update(service)
+      .eq('id', service.id);
+  
+    if (error) {
+      throw error;
+    }
+}
+
+export async function deleteService(id: number): Promise<void> {
+    const { error } = await supabase
+      .from('services')
+      .delete()
+      .eq('id', id);
+  
+    if (error) {
+      throw error;
+    }
 }

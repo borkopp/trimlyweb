@@ -79,15 +79,15 @@ export default async function DashboardPage() {
                     <Scissors className="h-5 w-5 transition-all group-hover:scale-110" />
                     <span className="sr-only">Barbershop Dashboard</span>
                   </Link>
-                  <Link href="#" className="flex items-center gap-4 px-2.5 text-foreground">
+                  <Link href="/dashboard" className="flex items-center gap-4 px-2.5 text-foreground">
                     <Home className="h-5 w-5" />
                     Dashboard
                   </Link>
-                  <Link href="#" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+                  <Link href="/dashboard/appointments" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
                     <Calendar className="h-5 w-5" />
-                    Appointments
+                    Calendar
                   </Link>
-                  <Link href="#" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
+                  <Link href="/dashboard/management" className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground">
                     <Users2 className="h-5 w-5" />
                     Clients
                   </Link>

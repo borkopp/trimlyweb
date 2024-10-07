@@ -32,28 +32,41 @@ export function DashboardSidebar() {
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
-              href="/dashboard/appointments"
+              href="/dashboard/calendar"
               className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                pathname === "/dashboard/appointments" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+                pathname === "/dashboard/calendar" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
               } transition-colors hover:text-foreground md:h-8 md:w-8`}>
               <Calendar className="h-5 w-5" />
-              <span className="sr-only">Appointments</span>
+              <span className="sr-only">Calendar</span>
             </Link>
           </TooltipTrigger>
-          <TooltipContent side="right">Appointments</TooltipContent>
+          <TooltipContent side="right">Calendar</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
-              href="/dashboard/management"
+              href="/dashboard/barbers"
               className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                pathname === "/dashboard/management" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+                pathname === "/dashboard/barbers" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
               } transition-colors hover:text-foreground md:h-8 md:w-8`}>
               <Users2 className="h-5 w-5" />
-              <span className="sr-only">Management</span>
+              <span className="sr-only">Barbers</span>
             </Link>
           </TooltipTrigger>
-          <TooltipContent side="right">Management</TooltipContent>
+          <TooltipContent side="right">Barbers</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link
+              href="/dashboard/services"
+              className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+                pathname === "/dashboard/services" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+              } transition-colors hover:text-foreground md:h-8 md:w-8`}>
+              <Scissors className="h-5 w-5" />
+              <span className="sr-only">Services</span>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent side="right">Services</TooltipContent>
         </Tooltip>
         <Tooltip>
           <TooltipTrigger asChild>

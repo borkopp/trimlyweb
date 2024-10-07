@@ -12,11 +12,13 @@ export type Database = {
       appointments: {
         Row: {
           barber_id: number
+          cancellation_reason: string | null
           date: string
           duration: number | null
           end_time: string | null
           id: number
           is_archived: boolean | null
+          is_cancelled: boolean
           service_ids: number[]
           temporary_user_id: number | null
           time: string
@@ -24,11 +26,13 @@ export type Database = {
         }
         Insert: {
           barber_id: number
+          cancellation_reason?: string | null
           date: string
           duration?: number | null
           end_time?: string | null
           id?: number
           is_archived?: boolean | null
+          is_cancelled?: boolean
           service_ids: number[]
           temporary_user_id?: number | null
           time: string
@@ -36,11 +40,13 @@ export type Database = {
         }
         Update: {
           barber_id?: number
+          cancellation_reason?: string | null
           date?: string
           duration?: number | null
           end_time?: string | null
           id?: number
           is_archived?: boolean | null
+          is_cancelled?: boolean
           service_ids?: number[]
           temporary_user_id?: number | null
           time?: string
@@ -291,25 +297,28 @@ export type Database = {
       }
       services: {
         Row: {
+          description: string | null
           id: number
           image: string | null
           name: string
           price: number
-          time: number | null
+          time: number
         }
         Insert: {
+          description?: string | null
           id?: number
           image?: string | null
           name: string
           price: number
-          time?: number | null
+          time: number
         }
         Update: {
+          description?: string | null
           id?: number
           image?: string | null
           name?: string
           price?: number
-          time?: number | null
+          time?: number
         }
         Relationships: []
       }
