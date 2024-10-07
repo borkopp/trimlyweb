@@ -17,8 +17,8 @@ export default function HeroMockup() {
   }, [scrolled]);
 
   return (
-    <div className="relative py-16">
-      <div className="relative z-20 flex justify-center items-center h-[500px]">
+    <div className="relative pb-16 bg-neutral-950">
+      <div className="relative z-20 flex justify-center items-center h-[600px]">
         <div data-aos="fade-up" data-aos-duration="1000" data-aos-delay="100" className="relative w-full h-[400px] flex justify-center items-center">
           {/* Left iPhone */}
           <Iphone15Pro

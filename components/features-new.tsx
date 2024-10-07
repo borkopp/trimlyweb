@@ -1,14 +1,5 @@
 import {cn} from "@/lib/utils";
-import {
-  IconAdjustmentsBolt,
-  IconCloud,
-  IconCurrencyDollar,
-  IconEaseInOut,
-  IconHeart,
-  IconHelp,
-  IconRouteAltLeft,
-  IconTerminal2,
-} from "@tabler/icons-react";
+import {IconHeart} from "@tabler/icons-react";
 import {BellRing, Calendar, Clock4, ImageIcon, Settings, Smartphone, Star} from "lucide-react";
 
 export function FeaturesSection() {
@@ -62,15 +53,17 @@ export function FeaturesSection() {
     },
   ];
   return (
-    <div className="container py-24 lg:py-36">
-      <div className="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
-        <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Features</h2>
-        <p className="mt-1 text-muted-foreground">All in one place. For your loyal customers.</p>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  relative z-10 py-10 max-w-7xl mx-auto">
-        {features.map((feature, index) => (
-          <Feature key={feature.title} {...feature} index={index} />
-        ))}
+    <div className="bg-neutral-950">
+      <div className="container py-24 lg:py-36">
+        <div className="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
+          <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Features</h2>
+          <p className="mt-1 text-muted-foreground">All in one place. For your loyal customers.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  relative z-10 py-10 max-w-7xl mx-auto">
+          {features.map((feature, index) => (
+            <Feature key={feature.title} {...feature} index={index} />
+          ))}
+        </div>
       </div>
     </div>
   );

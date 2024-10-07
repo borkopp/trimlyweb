@@ -3,16 +3,22 @@ import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
 import {Switch} from "@/components/ui/switch";
-import {CheckIcon, MinusIcon} from "lucide-react";
+import {CheckIcon} from "lucide-react";
 import ShinyButton from "./ui/shiny-button";
-import AnimatedGridPattern from "./magicui/animated-grid-pattern";
-import {cn} from "@/lib/utils";
+import {ShootingStars} from "./ui/shooting-stars";
+import {StarsBackground} from "./ui/stars-background";
 
 export default function Pricing() {
   return (
-    <section className="w-full mx-auto py-12 md:py-24 lg:py-24 relative">
-      {/* Pricing */}
-      <div className="container py-16 lg:py-24 bg-background-secondary relative">
+    <section id="pricing" className="w-full bg-background mx-auto py-12 md:py-24 lg:py-24 relative overflow-hidden">
+      {/* Background effects */}
+      <div className="absolute inset-0 pointer-events-none">
+        <ShootingStars className="absolute top-0 left-0 w-full h-full" />
+        <StarsBackground className="absolute inset-0 w-full h-full" />
+      </div>
+
+      {/* Pricing content */}
+      <div className="container py-16 lg:py-24 relative z-10">
         {/* Title */}
         <div className="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
           <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Pricing</h2>
@@ -24,7 +30,7 @@ export default function Pricing() {
           <Label htmlFor="payment-schedule" className="me-3">
             Monthly
           </Label>
-          <Switch id="payment-schedule" />
+          <Switch id="payment-schedule" className="z-20" />
           <Label htmlFor="payment-schedule" className="relative ms-3">
             Annual
             <span className="absolute -top-10 start-auto -end-28">
@@ -45,10 +51,10 @@ export default function Pricing() {
         {/* Grid */}
         <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:items-center">
           {/* Card */}
-          <Card className="bg-background z-10">
+          <Card className="bg-background/80 backdrop-blur-sm">
             <CardHeader className="text-center pb-2">
               <CardTitle className="mb-7">Basic</CardTitle>
-              <span className="font-bold text-5xl">€79</span>
+              <span className="font-bold text-5xl">€99</span>
             </CardHeader>
             <CardDescription className="text-center  w-11/12 mx-auto">The basics</CardDescription>
             <CardContent>
@@ -75,11 +81,11 @@ export default function Pricing() {
           </Card>
           {/* End Card */}
           {/* Card */}
-          <Card className="border-primary bg-background z-10">
+          <Card className="border-primary bg-background/80 backdrop-blur-sm">
             <CardHeader className="text-center pb-2">
-              <Badge className="uppercase w-max self-center mb-3">Most popular</Badge>
+              <Badge className="uppercase w-max self-center mb-3">Best value</Badge>
               <CardTitle className="!mb-7">Plus</CardTitle>
-              <span className="font-bold text-5xl">€119</span>
+              <span className="font-bold text-5xl">€139</span>
             </CardHeader>
             <CardDescription className="text-center w-11/12 mx-auto">Everything you need for a growing business</CardDescription>
             <CardContent>
@@ -114,7 +120,7 @@ export default function Pricing() {
           </Card>
           {/* End Card */}
           {/* Card */}
-          <Card className="bg-background z-10">
+          <Card className="bg-background/80 backdrop-blur-sm">
             <CardHeader className="text-center pb-2">
               <CardTitle className="mb-7">One-Time-Payment</CardTitle>
               <span className="font-bold text-5xl">Let&apos;s talk</span>
@@ -151,14 +157,7 @@ export default function Pricing() {
         {/* End Grid */}
         {/* End Comparison table */}
       </div>
-      {/* End Pricing */}
-      {/* <AnimatedGridPattern
-        numSquares={30}
-        maxOpacity={1} // Keep this at 1 or adjust as needed for visibility
-        duration={3}
-        repeatDelay={1}
-        className={cn("[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]", "inset-x-0 inset-y-[-100%] h-[200%] skew-y-12")}
-      /> */}
+      {/* End Pricing content */}
     </section>
   );
 }

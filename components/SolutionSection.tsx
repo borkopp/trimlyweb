@@ -4,7 +4,7 @@ import {StarsBackground} from "./ui/stars-background";
 
 export default function SolutionSection() {
   return (
-    <section className="bg-neutral-900 flex flex-col items-center justify-center relative w-full py-12 md:py-24 lg:py-32">
+    <section id="solution" className="bg-neutral-900 flex flex-col items-center justify-center relative w-full py-12 md:py-24 lg:py-32">
       <div className="container px-4 md:px-6 relative z-10">
         <div className="space-y-4 items-center text-center mb-24">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">SOLUTION</h3>
