@@ -53,6 +53,8 @@ html {
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+    --calendar-border: hsl(240 3.7% 15.9% / 0.5);
+    --calendar-time-color: hsl(240 5% 64.9%); /* Adjust this color as needed */
   }
 }
 
