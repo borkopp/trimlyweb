@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import {addDays, format, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay} from "date-fns";
-import {Calendar as CalendarIcon, ChevronLeft, ChevronRight} from "lucide-react";
+import {ChevronLeft, ChevronRight} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar";
 import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
@@ -10,8 +10,6 @@ import {Database} from "@/database.types";
 import dayjs from "dayjs";
 import {createClient} from "@supabase/supabase-js";
 import {formatDate, formatTime} from "@/utils/dateUtils";
-import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
-import Link from "next/link";
 
 type Appointment = Database["public"]["Tables"]["appointments"]["Row"] & {
   client: Database["public"]["Tables"]["profiles"]["Row"];
@@ -138,19 +136,6 @@ export default function FullPageCalendar() {
         </div>
       </aside>
       <main className="flex-1 p-4 overflow-auto">
-        <Breadcrumb className="hidden md:flex">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/dashboard">Dashboard</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Calendar</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
         <div className="flex justify-end items-center gap-6 mb-4">
           <h2 className="text-2xl font-bold ml-12">
             {view === "week" ? `${format(weekStart, "MMMM d")} - ${format(weekEnd, "MMMM d, yyyy")}` : format(date, "MMMM d, yyyy")}
