@@ -71,7 +71,6 @@ export async function deleteService(id: number): Promise<void> {
 }
 
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
-type BarberService = Database["public"]["Tables"]["barber_services"]["Row"];
 
 export async function getBarbers(): Promise<(Barber & { services: Service[] })[]> {
     const supabase = createClient()
@@ -135,20 +134,40 @@ export async function updateBarber(barber: Barber): Promise<Barber> {
     return data
 }
 
-export async function deleteBarber(id: string): Promise<void> {
+export async function deleteBarber(barberId: number): Promise<void> {
     const supabase = createClient()
-  
+    
+    // First, get the user_id associated with this barber
+    const { data: barber, error: fetchError } = await supabase
+      .from('barbers')
+      .select('user_id')
+      .eq('id', barberId)
+      .single()
+
+    if (fetchError) throw fetchError
+
+    if (!barber || !barber.user_id) {
+      throw new Error('Barber not found or not associated with a user')
+    }
+
+    // Call the remove_barber_role RPC with the user_id
     const { error } = await supabase
-      .from('profiles')
-      .delete()
-      .eq('id', id)
+      .rpc('remove_barber_role', { p_user_id: barber.user_id })
   
     if (error) {
+        if (error.code === '23503') {
+            if (error.message.includes('appointments')) {
+                throw new Error('Cannot delete barber: This barber has existing appointments.')
+            } else if (error.message.includes('barber_services')) {
+                throw new Error('Cannot delete barber: This barber has associated services.')
+            } else {
+                throw new Error('Cannot delete barber: There are related records preventing deletion.')
+            }
+        }
         throw error
     }
     revalidatePath('/dashboard/barbers')
 }
-
 
 export async function addServiceToBarber(barberId: number, serviceId: number): Promise<void> {
     const supabase = createClient()
@@ -194,8 +213,26 @@ export async function getNonBarberProfiles(): Promise<Profile[]> {
 export async function assignBarberRole(userId: string, serviceIds: number[] = []): Promise<void> {
     const supabase = createClient()
     
-    const { error } = await supabase
-      .rpc('assign_barber_role', { user_id: userId, service_ids: serviceIds })
+    // First, get the user's profile data
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('full_name, email')
+      .eq('id', userId)
+      .single()
+
+    if (profileError) throw profileError
+
+    if (!profile || !profile.full_name) {
+      throw new Error('User profile not found or missing required data')
+    }
+
+    // Call the updated RPC function
+    const { error } = await supabase.rpc('assign_barber_role_with_data', { 
+      p_user_id: userId, 
+      barber_name: profile.full_name,
+      barber_email: profile.email,
+      service_ids: serviceIds 
+    })
 
     if (error) throw error
 

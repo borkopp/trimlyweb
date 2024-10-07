@@ -1,7 +1,7 @@
 "use client";
 
-import {useState, useEffect} from "react";
-import {Search, Plus, X} from "lucide-react";
+import {useState, useEffect, useCallback} from "react";
+import {Search, Plus, X, MoreVertical, Trash, User} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
@@ -12,23 +12,23 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Badge} from "@/components/ui/badge";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {Database} from "@/database.types";
-import {
-  addBarber,
-  updateBarber,
-  deleteBarber,
-  addServiceToBarber,
-  removeServiceFromBarber,
-  getNonBarberProfiles,
-  assignBarberRole,
-} from "@/app/actions/dashboard-actions";
+import {addServiceToBarber, removeServiceFromBarber, getNonBarberProfiles, assignBarberRole, deleteBarber} from "@/app/actions/dashboard-actions";
 import {toast} from "@/components/ui/use-toast";
-import {useRouter} from "next/navigation";
 import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
 import Link from "next/link";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import Image from "next/image";
+import {createClient} from "@/utils/supabase/client";
 
 type Barber = Database["public"]["Tables"]["barbers"]["Row"] & {services: Service[]};
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
+async function getImageUrl(path: string) {
+  const supabase = createClient();
+  const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
+  return data?.publicUrl || null;
+}
 
 export default function BarbersPageClient({
   initialBarbers,
@@ -39,17 +39,9 @@ export default function BarbersPageClient({
   initialServices: Service[];
   refreshBarbers: () => Promise<Barber[]>;
 }) {
-  const router = useRouter();
   const [barbers, setBarbers] = useState<Barber[]>(initialBarbers);
   const [services, setServices] = useState<Service[]>(initialServices);
   const [searchTerm, setSearchTerm] = useState("");
-  const [newBarber, setNewBarber] = useState<Omit<Barber, "id" | "user_id">>({
-    name: "",
-    email: "",
-    image: "",
-    description: "",
-    services: [],
-  });
   const [selectedServices, setSelectedServices] = useState<Record<number, string | null>>({});
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [filteredProfiles, setFilteredProfiles] = useState<Profile[]>([]);
@@ -57,19 +49,50 @@ export default function BarbersPageClient({
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
   const [selectedServiceIds, setSelectedServiceIds] = useState<number[]>([]);
   const [isAddBarberDialogOpen, setIsAddBarberDialogOpen] = useState(false);
+  const [isAddingBarber, setIsAddingBarber] = useState(false);
+  const [isLoadingProfiles, setIsLoadingProfiles] = useState(true);
+  const [barberAvatars, setBarberAvatars] = useState<Record<number, string | null>>({});
 
   const filteredBarbers = barbers.filter(
     (barber) => barber.name.toLowerCase().includes(searchTerm.toLowerCase()) || barber.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  useEffect(() => {
-    const fetchProfiles = async () => {
+  const refreshNonBarberProfiles = useCallback(async () => {
+    setIsLoadingProfiles(true);
+    try {
       const fetchedProfiles = await getNonBarberProfiles();
       setProfiles(fetchedProfiles);
       setFilteredProfiles(fetchedProfiles);
-    };
-    fetchProfiles();
+    } catch (error) {
+      console.error("Error fetching non-barber profiles:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load non-barber profiles. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingProfiles(false);
+    }
   }, []);
+
+  useEffect(() => {
+    refreshNonBarberProfiles();
+  }, [refreshNonBarberProfiles]);
+
+  useEffect(() => {
+    const loadBarberAvatars = async () => {
+      const avatars: Record<number, string | null> = {};
+      for (const barber of barbers) {
+        if (barber.image) {
+          avatars[barber.id] = await getImageUrl(barber.image);
+        } else {
+          avatars[barber.id] = null;
+        }
+      }
+      setBarberAvatars(avatars);
+    };
+    loadBarberAvatars();
+  }, [barbers]);
 
   useEffect(() => {
     const filtered = profiles.filter(
@@ -80,16 +103,37 @@ export default function BarbersPageClient({
     setFilteredProfiles(filtered);
   }, [profileSearchTerm, profiles]);
 
+  useEffect(() => {
+    const refreshBarbersList = async () => {
+      const updatedBarbers = await refreshBarbers();
+      setBarbers(updatedBarbers);
+    };
+
+    // Refresh the barbers list every 5 minutes
+    const intervalId = setInterval(refreshBarbersList, 5 * 60 * 1000);
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [refreshBarbers]);
+
   const handleAddBarber = async () => {
     if (!selectedProfile) return;
+    setIsAddingBarber(true);
 
     try {
       await assignBarberRole(selectedProfile.id, selectedServiceIds);
       const updatedBarbers = await refreshBarbers();
       setBarbers(updatedBarbers);
       setIsAddBarberDialogOpen(false);
+
+      // Update the profiles list
+      setProfiles((prevProfiles) => prevProfiles.filter((profile) => profile.id !== selectedProfile.id));
+      setFilteredProfiles((prevFiltered) => prevFiltered.filter((profile) => profile.id !== selectedProfile.id));
+
       setSelectedProfile(null);
       setSelectedServiceIds([]);
+      setProfileSearchTerm(""); // Clear the search term
+
       toast({
         title: "Barber added",
         description: `${selectedProfile.full_name} has been assigned the barber role.`,
@@ -101,6 +145,8 @@ export default function BarbersPageClient({
         description: "Failed to add barber. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsAddingBarber(false);
     }
   };
 
@@ -146,6 +192,33 @@ export default function BarbersPageClient({
     }
   };
 
+  const handleDeleteBarber = useCallback(
+    async (barber: Barber) => {
+      try {
+        await deleteBarber(barber.id);
+        const updatedBarbers = await refreshBarbers();
+        setBarbers(updatedBarbers);
+        await refreshNonBarberProfiles(); // Refresh the non-barber profiles list
+        toast({
+          title: "Barber deleted",
+          description: `${barber.name} has been removed from the barbers list.`,
+        });
+      } catch (error) {
+        console.error("Error deleting barber:", error);
+        let errorMessage = "Failed to delete barber. Please try again.";
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        toast({
+          title: "Error",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    },
+    [refreshBarbers, refreshNonBarberProfiles]
+  );
+
   return (
     <div className="container mx-auto py-10">
       <Breadcrumb className="hidden md:flex mb-4">
@@ -189,18 +262,24 @@ export default function BarbersPageClient({
                 />
               </div>
               <ScrollArea className="h-[200px] w-full rounded-md border p-4">
-                {filteredProfiles.map((profile) => (
-                  <div
-                    key={profile.id}
-                    className={`flex items-center justify-between p-2 cursor-pointer ${selectedProfile?.id === profile.id ? "bg-secondary" : ""}`}
-                    onClick={() => setSelectedProfile(profile)}>
-                    <div>
-                      <p className="font-medium">{profile.full_name}</p>
-                      <p className="text-sm text-muted-foreground">{profile.email}</p>
-                    </div>
-                    {selectedProfile?.id === profile.id && <Badge variant="outline">Selected</Badge>}
+                {isLoadingProfiles ? (
+                  <div className="flex items-center justify-center h-full">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                   </div>
-                ))}
+                ) : (
+                  filteredProfiles.map((profile) => (
+                    <div
+                      key={profile.id}
+                      className={`flex items-center justify-between p-2 cursor-pointer ${selectedProfile?.id === profile.id ? "bg-secondary" : ""}`}
+                      onClick={() => setSelectedProfile(profile)}>
+                      <div>
+                        <p className="font-medium">{profile.full_name || "No Name"}</p>
+                        <p className="text-sm text-muted-foreground">{profile.email}</p>
+                      </div>
+                      {selectedProfile?.id === profile.id && <Badge variant="outline">Selected</Badge>}
+                    </div>
+                  ))
+                )}
               </ScrollArea>
               <div className="flex items-center gap-4">
                 <Label htmlFor="services" className="text-right">
@@ -238,8 +317,17 @@ export default function BarbersPageClient({
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleAddBarber} disabled={!selectedProfile}>
-                Assign Barber Role
+              <Button onClick={handleAddBarber} disabled={!selectedProfile || isAddingBarber} className="w-full">
+                <span className="flex items-center justify-center">
+                  {isAddingBarber ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      <span>Assigning...</span>
+                    </>
+                  ) : (
+                    "Assign Barber Role"
+                  )}
+                </span>
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -249,20 +337,36 @@ export default function BarbersPageClient({
         {filteredBarbers.map((barber) => (
           <Card key={barber.id} className="flex flex-col">
             <CardHeader>
-              <div className="flex items-center space-x-4">
-                <Avatar className="w-12 h-12">
-                  <AvatarImage src={barber.image || undefined} alt={barber.name || ""} />
-                  <AvatarFallback>
-                    {barber.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <CardTitle>{barber.name}</CardTitle>
-                  <CardDescription>{barber.email}</CardDescription>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <Avatar className="w-12 h-12">
+                    {barberAvatars[barber.id] ? (
+                      <AvatarImage src={barberAvatars[barber.id] || undefined} alt={barber.name || ""} />
+                    ) : (
+                      <AvatarFallback>
+                        <User className="h-6 w-6" />
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+                  <div>
+                    <CardTitle>{barber.name}</CardTitle>
+                    <CardDescription>{barber.email}</CardDescription>
+                  </div>
                 </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <span className="sr-only">Open menu</span>
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => handleDeleteBarber(barber)} className="text-red-600">
+                      <Trash className="mr-2 h-4 w-4" />
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </CardHeader>
             <CardContent className="flex-grow">
