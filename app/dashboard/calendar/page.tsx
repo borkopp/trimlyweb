@@ -89,7 +89,7 @@ export default function FullPageCalendar() {
   };
 
   return (
-    <div className="flex bg-muted/20">
+    <div className="flex">
       <aside className="border-r p-4 flex flex-col">
         <div className="mb-4">
           {view === "week" ? (

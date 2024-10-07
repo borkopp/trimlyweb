@@ -60,6 +60,7 @@ export default function ServicesPageClient({
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [serviceToDelete, setServiceToDelete] = useState<Service | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const fetchImageUrls = useCallback(async () => {
     const imageUrls: Record<string, string> = {};
@@ -100,8 +101,27 @@ export default function ServicesPageClient({
     }
   };
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!newService.name.trim()) newErrors.name = "Name is required";
+    if (!newService.description?.trim()) newErrors.description = "Description is required";
+    if (!newService.time) newErrors.time = "Duration is required";
+    if (!newService.price) newErrors.price = "Price is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   //handle adding a new service
   const handleAddService = async () => {
+    if (!validateForm()) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const addedService = await addService(newService);
       setServices([...services, addedService]);
@@ -335,47 +355,59 @@ export default function ServicesPageClient({
                   <Label htmlFor="name" className="text-right">
                     Name
                   </Label>
-                  <Input
-                    id="name"
-                    value={newService.name}
-                    onChange={(e) => setNewService({...newService, name: e.target.value})}
-                    className="col-span-3"
-                  />
+                  <div className="col-span-3">
+                    <Input
+                      id="name"
+                      value={newService.name}
+                      onChange={(e) => setNewService({...newService, name: e.target.value})}
+                      className={errors.name ? "border-red-500" : ""}
+                    />
+                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                  </div>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="description" className="text-right">
                     Description
                   </Label>
-                  <Textarea
-                    id="description"
-                    value={newService.description || ""}
-                    onChange={(e) => setNewService({...newService, description: e.target.value})}
-                    className="col-span-3"
-                  />
+                  <div className="col-span-3">
+                    <Textarea
+                      id="description"
+                      value={newService.description || ""}
+                      onChange={(e) => setNewService({...newService, description: e.target.value})}
+                      className={errors.description ? "border-red-500" : ""}
+                    />
+                    {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+                  </div>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="duration" className="text-right">
                     Duration (min)
                   </Label>
-                  <Input
-                    id="duration"
-                    type="number"
-                    value={newService.time}
-                    onChange={(e) => setNewService({...newService, time: parseInt(e.target.value)})}
-                    className="col-span-3"
-                  />
+                  <div className="col-span-3">
+                    <Input
+                      id="duration"
+                      type="number"
+                      value={newService.time}
+                      onChange={(e) => setNewService({...newService, time: parseInt(e.target.value)})}
+                      className={errors.time ? "border-red-500" : ""}
+                    />
+                    {errors.time && <p className="text-red-500 text-sm mt-1">{errors.time}</p>}
+                  </div>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="price" className="text-right">
                     Price ($)
                   </Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    value={newService.price}
-                    onChange={(e) => setNewService({...newService, price: parseFloat(e.target.value)})}
-                    className="col-span-3"
-                  />
+                  <div className="col-span-3">
+                    <Input
+                      id="price"
+                      type="number"
+                      value={newService.price}
+                      onChange={(e) => setNewService({...newService, price: parseFloat(e.target.value)})}
+                      className={errors.price ? "border-red-500" : ""}
+                    />
+                    {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+                  </div>
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="image" className="text-right">
