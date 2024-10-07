@@ -48,19 +48,8 @@ export default function LoginForm({login}: {login: (formData: FormData) => Promi
         </div>
         <div>
           <PasswordInput id="password" name="password" placeholder="Password" />
-          <div className="flex items-center justify-end mt-3">
-            <Link href="/forgot-password" className="text-sm underline">
-              Forgot your password?
-            </Link>
-          </div>
         </div>
         <SubmitButton />
-
-        <div className="flex items-center justify-between mb-2">
-          <Link href="/signup" className="text-sm underline">
-            Don&apos;t have an account? Sign up
-          </Link>
-        </div>
       </div>
     </form>
   );

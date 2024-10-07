@@ -35,6 +35,12 @@ export default function LoginPage() {
             <p className="text-balance text-muted-foreground">Enter your email below to login to your account</p>
           </div>
           <LoginForm login={login} />
+          <div className="mt-4 text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link href="/signup" className="underline">
+              Sign up
+            </Link>
+          </div>
         </div>
       </div>
     </div>
