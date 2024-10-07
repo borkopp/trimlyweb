@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
-import {Calendar, File, Home, LineChart, ListFilter, Scissors, Search, Users2} from "lucide-react";
+import {Calendar, File, Home, LineChart, ListFilter, Scissors, Search, User, Users2} from "lucide-react";
 import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
@@ -118,13 +118,11 @@ export default async function DashboardPage() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-                  <Image
-                    src={avatarUrl || "/placeholder-user.jpg"}
-                    width={36}
-                    height={36}
-                    alt="Avatar"
-                    className="overflow-hidden rounded-full object-cover"
-                  />
+                  {avatarUrl ? (
+                    <Image src={avatarUrl} width={36} height={36} alt="Avatar" className="overflow-hidden rounded-full object-cover" />
+                  ) : (
+                    <User className="h-5 w-5" />
+                  )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
