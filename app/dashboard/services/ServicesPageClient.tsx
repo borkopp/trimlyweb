@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import {Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage} from "@/components/ui/breadcrumb";
 import Link from "next/link";
+import {Skeleton} from "@/components/ui/skeleton";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 
@@ -47,7 +48,8 @@ export default function ServicesPageClient({
 }) {
   const router = useRouter();
   const [services, setServices] = useState<Service[]>(initialServices);
-  const [serviceImages, setServiceImages] = useState<Record<string, string>>({});
+  const [serviceImages, setServiceImages] = useState<Record<string, string | null>>({});
+  const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>({});
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [newService, setNewService] = useState<Omit<Service, "id">>({
     name: "",
@@ -63,16 +65,19 @@ export default function ServicesPageClient({
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const fetchImageUrls = useCallback(async () => {
-    const imageUrls: Record<string, string> = {};
+    const imageUrls: Record<string, string | null> = {};
+    const loadingStates: Record<string, boolean> = {};
     for (const service of services) {
       if (service.image) {
+        loadingStates[service.id] = true;
+        setLoadingImages(loadingStates);
         const imageUrl = await getImageUrl(service.image);
-        if (imageUrl) {
-          imageUrls[service.id] = imageUrl;
-        }
+        imageUrls[service.id] = imageUrl;
+        loadingStates[service.id] = false;
       }
     }
     setServiceImages(imageUrls);
+    setLoadingImages(loadingStates);
   }, [services]);
 
   useEffect(() => {
@@ -236,13 +241,17 @@ export default function ServicesPageClient({
                 {services.map((service) => (
                   <TableRow key={service.id}>
                     <TableCell>
-                      <Image
-                        src={serviceImages[service.id]}
-                        alt={service.name}
-                        width={100}
-                        height={100}
-                        className="w-12 h-12 object-cover rounded-md"
-                      />
+                      {loadingImages[service.id] || !serviceImages[service.id] ? (
+                        <Skeleton className="w-12 h-12 rounded-md" />
+                      ) : (
+                        <Image
+                          src={serviceImages[service.id] || ""}
+                          alt={service.name}
+                          width={100}
+                          height={100}
+                          className="w-12 h-12 object-cover rounded-md"
+                        />
+                      )}
                     </TableCell>
                     <TableCell>{service.name}</TableCell>
                     <TableCell>{service.description}</TableCell>
