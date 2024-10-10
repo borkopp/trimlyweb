@@ -2,7 +2,7 @@ import {Suspense} from "react";
 import DashboardContent from "./DashboardContent";
 import {Skeleton} from "@/components/ui/skeleton";
 
-export default function Page() {
+export default function DashboardPage() {
   return (
     <Suspense fallback={<DashboardSkeleton />}>
       <DashboardContent />
