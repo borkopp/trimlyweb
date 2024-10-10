@@ -31,6 +31,7 @@ html {
     --ring: 240 4.9% 83.9%;
     --calendar-border: hsl(240 3.7% 15.9% / 0.5);
     --calendar-time-color: hsl(240 5% 64.9%);
+    --radius: 0.5rem;
 
     /* --background: 0 0% 100%;
     --background-secondary: 240 5.9% 10%;

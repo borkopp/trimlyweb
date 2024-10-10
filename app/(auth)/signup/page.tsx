@@ -4,6 +4,7 @@ import {signup} from "../actions";
 import AnimatedGridPattern from "@/components/magicui/animated-grid-pattern";
 import {cn} from "@/lib/utils";
 import SignupForm from "./SignupForm";
+import {Button} from "@/components/ui/button";
 export default function SignupPage() {
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
@@ -27,7 +28,21 @@ export default function SignupPage() {
         />
       </div>
       <div className="flex items-center justify-center w-full lg:w-2/3 py-12">
-        <div className="mx-auto grid w-[400px] gap-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold font-ff text-primary mb-4">trimly</h1>
+          <h1 className="text-3xl font-bold">New accounts are currently disabled.</h1>
+          <p className="text-muted-foreground">We are working on some updates to our platform. Please check back later.</p>
+          <div className="flex justify-center gap-4 mt-10">
+            <Button className="w-32">
+              <Link href="/login">Login</Link>
+            </Button>
+            <Button variant="outline" className="w-32">
+              <Link href="/">Home</Link>
+            </Button>
+          </div>
+        </div>
+
+        {/* <div className="mx-auto grid w-[400px] gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Sign up</h1>
             <p className="text-balance text-muted-foreground">Enter your email below to create an account</p>
@@ -39,7 +54,7 @@ export default function SignupPage() {
               Login
             </Link>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
