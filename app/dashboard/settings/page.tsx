@@ -162,5 +162,3 @@ export function SettingsPageComponent() {
     </div>
   );
 }
-
-export default SettingsPageComponent;
