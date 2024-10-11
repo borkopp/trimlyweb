@@ -12,6 +12,7 @@ import {toast} from "@/components/ui/use-toast";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useTransition} from "react";
 import {deleteAppointment} from "@/app/actions/appointment-actions";
+import {revalidatePath} from "next/cache";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
@@ -73,18 +74,19 @@ export function AppointmentDetails() {
       startTransition(async () => {
         await deleteAppointment(selectedAppointment.id);
         removeAppointment(selectedAppointment.id);
-        setIsDeleteDialogOpen(false);
         toast({
-          title: "Appointment removed",
-          description: "The appointment has been successfully removed.",
+          title: "Appointment cancelled",
+          description: "The appointment has been successfully cancelled.",
         });
       });
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to remove the appointment. Please try again.",
+        description: "Failed to cancel the appointment. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsDeleteDialogOpen(false);
     }
   };
 

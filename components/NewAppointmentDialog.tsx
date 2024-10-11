@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useTransition} from "react";
+import {useState, useTransition, useRef, useEffect} from "react";
 import {format, isBefore, isSameDay, set} from "date-fns";
 import {CalendarIcon} from "lucide-react";
 import {Button} from "@/components/ui/button";
@@ -29,6 +29,21 @@ export function NewAppointmentDialog({initialBarbers, initialServices, user_id}:
   const [service, setService] = useState("");
   const [time, setTime] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const datePickerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node)) {
+        setDatePickerOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -138,20 +153,30 @@ export function NewAppointmentDialog({initialBarbers, initialServices, user_id}:
               <Label htmlFor="date" className="text-right">
                 Date
               </Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    id="date"
-                    variant={"outline"}
-                    className={`col-span-3 justify-start text-left font-normal ${!date && "text-muted-foreground"}`}>
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar mode="single" selected={date} onSelect={setDate} fromDate={new Date()} />
-                </PopoverContent>
-              </Popover>
+              <div className="col-span-3 relative">
+                <Button
+                  id="date"
+                  variant={"outline"}
+                  className={`w-full justify-start text-left font-normal ${!date && "text-muted-foreground"}`}
+                  onClick={() => setDatePickerOpen(!datePickerOpen)}>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                </Button>
+                {datePickerOpen && (
+                  <div ref={datePickerRef} className="absolute top-full left-0 z-50 mt-2 bg-background border rounded-md shadow-lg">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={(newDate) => {
+                        setDate(newDate);
+                        setDatePickerOpen(false);
+                      }}
+                      fromDate={new Date()}
+                      initialFocus
+                    />
+                  </div>
+                )}
+              </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="time" className="text-right">
@@ -176,7 +201,14 @@ export function NewAppointmentDialog({initialBarbers, initialServices, user_id}:
           </div>
           <DialogFooter>
             <Button disabled={isPending || !date || !barber || !service || !time} type="submit">
-              {isPending ? "Creating..." : "Create Appointment"}
+              {isPending ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white self-center"></div>
+                  <div>Creating...</div>
+                </div>
+              ) : (
+                "Create Appointment"
+              )}
             </Button>
           </DialogFooter>
         </form>
