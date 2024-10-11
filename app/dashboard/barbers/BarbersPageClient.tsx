@@ -50,6 +50,8 @@ export default function BarbersPageClient({
   const [isAddingBarber, setIsAddingBarber] = useState(false);
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(true);
   const [barberAvatars, setBarberAvatars] = useState<Record<number, string | null>>({});
+  const [addingServices, setAddingServices] = useState<Record<number, boolean>>({});
+  const [isRemovingService, setIsRemovingService] = useState<Record<number, boolean>>({});
 
   const filteredBarbers = barbers.filter(
     (barber) => barber.name.toLowerCase().includes(searchTerm.toLowerCase()) || barber.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -149,6 +151,7 @@ export default function BarbersPageClient({
   };
 
   const handleRemoveService = async (barberId: number, serviceId: number) => {
+    setIsRemovingService((prev) => ({...prev, [barberId]: true}));
     try {
       await removeServiceFromBarber(barberId, serviceId);
       const updatedBarbers = await refreshBarbers();
@@ -164,6 +167,8 @@ export default function BarbersPageClient({
         description: "Failed to remove service. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsRemovingService((prev) => ({...prev, [barberId]: false}));
     }
   };
 
@@ -171,11 +176,14 @@ export default function BarbersPageClient({
     const selectedService = selectedServices[barberId];
     if (!selectedService) return;
 
+    // Set the adding state for this specific barber
+    setAddingServices((prev) => ({...prev, [barberId]: true}));
+
     try {
       await addServiceToBarber(barberId, parseInt(selectedService));
       const updatedBarbers = await refreshBarbers();
       setBarbers(updatedBarbers);
-      setSelectedServices((prev) => ({...prev, [barberId]: null})); // Reset selected service after adding
+      setSelectedServices((prev) => ({...prev, [barberId]: null}));
       toast({
         title: "Service added",
         description: `Service has been added to the barber's services.`,
@@ -187,6 +195,9 @@ export default function BarbersPageClient({
         description: "Failed to add service. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      // Reset the adding state for this specific barber
+      setAddingServices((prev) => ({...prev, [barberId]: false}));
     }
   };
 
@@ -315,7 +326,7 @@ export default function BarbersPageClient({
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleAddBarber} disabled={!selectedProfile || isAddingBarber} className="w-full">
+              <Button onClick={handleAddBarber} disabled={!selectedProfile || isAddingBarber}>
                 <span className="flex items-center justify-center">
                   {isAddingBarber ? (
                     <>
@@ -374,7 +385,12 @@ export default function BarbersPageClient({
                   {barber.services.map((service) => (
                     <Badge key={service.id} variant="secondary" className="flex items-center gap-1">
                       {service.name}
-                      <Button variant="ghost" size="icon" className="h-4 w-4 rounded-full" onClick={() => handleRemoveService(barber.id, service.id)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        disabled={isRemovingService[barber.id]}
+                        className="h-4 w-4 rounded-full"
+                        onClick={() => handleRemoveService(barber.id, service.id)}>
                         <X className="h-3 w-3" />
                       </Button>
                     </Badge>
@@ -400,8 +416,15 @@ export default function BarbersPageClient({
                       ))}
                   </SelectContent>
                 </Select>
-                <Button onClick={() => handleAddService(barber.id)} disabled={!selectedServices[barber.id]}>
-                  Add Service
+                <Button onClick={() => handleAddService(barber.id)} disabled={!selectedServices[barber.id] || addingServices[barber.id]}>
+                  {addingServices[barber.id] ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white self-center"></div>
+                      <span className="ml-2">Adding...</span>
+                    </div>
+                  ) : (
+                    "Add Service"
+                  )}
                 </Button>
               </div>
             </CardFooter>
