@@ -107,6 +107,13 @@ export type Database = {
             referencedRelation: "services"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "fk_barber_services_barber"
+            columns: ["barber_id"]
+            isOneToOne: false
+            referencedRelation: "barbers"
+            referencedColumns: ["id"]
+          },
         ]
       }
       barber_unavailability: {
@@ -368,13 +375,22 @@ export type Database = {
             }
             Returns: undefined
           }
+      assign_barber_role_with_data: {
+        Args: {
+          p_user_id: string
+          barber_name: string
+          barber_email: string
+          service_ids: number[]
+        }
+        Returns: undefined
+      }
       delete_user_account: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
       remove_barber_role: {
         Args: {
-          user_id: string
+          p_user_id: string
         }
         Returns: undefined
       }
