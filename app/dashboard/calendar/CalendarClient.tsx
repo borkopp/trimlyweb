@@ -35,9 +35,9 @@ export default function CalendarClient({initialAppointments}: Props) {
         .from("appointments")
         .select(
           `
-          *,
-          client:profiles!appointments_user_id_fkey(full_name, email)
-        `
+        *,
+        client:profiles!appointments_user_id_fkey(full_name, email)
+      `
         )
         .gte("date", startDate)
         .lte("date", endDate)
@@ -56,6 +56,16 @@ export default function CalendarClient({initialAppointments}: Props) {
     fetchAppointments();
   }, [fetchAppointments]);
 
+  // // Add this debugging function
+  // const logAppointments = (appointments: Appointment[]) => {
+  //   console.log("Fetched appointments:", appointments);
+  //   appointments.forEach((apt, index) => {
+  //     if (!apt.client) {
+  //       console.warn(`Appointment at index ${index} has no client:`, apt);
+  //     }
+  //   });
+  // };
+
   const handleNavigate = (newDate: Date) => {
     setDate(newDate);
   };
@@ -64,20 +74,24 @@ export default function CalendarClient({initialAppointments}: Props) {
     setView(newView);
   };
 
-  const events = appointments.map((apt) => ({
-    id: apt.id,
-    title: apt.client.full_name,
-    start: new Date(`${apt.date}T${apt.time}`),
-    end: new Date(
-      `${apt.date}T${
-        apt.end_time ||
-        moment(`${apt.date}T${apt.time}`)
-          .add(apt.duration || 60, "minutes")
-          .format("HH:mm:ss")
-      }`
-    ),
-    resource: apt,
-  }));
+  const events = appointments.map((apt) => {
+    // Add null check and provide a fallback value
+    const clientName = apt.client?.full_name || "No Name";
+    return {
+      id: apt.id,
+      title: clientName,
+      start: new Date(`${apt.date}T${apt.time}`),
+      end: new Date(
+        `${apt.date}T${
+          apt.end_time ||
+          moment(`${apt.date}T${apt.time}`)
+            .add(apt.duration || 60, "minutes")
+            .format("HH:mm:ss")
+        }`
+      ),
+      resource: apt,
+    };
+  });
 
   const CustomToolbar = ({label, onNavigate, onView}: any) => (
     <div className="flex items-center justify-between mb-4">
@@ -120,7 +134,7 @@ export default function CalendarClient({initialAppointments}: Props) {
           {appointments.map((apt) => (
             <Card key={apt.id} className="mb-2">
               <CardHeader className="p-2">
-                <CardTitle className="text-sm">{apt.client.full_name}</CardTitle>
+                <CardTitle className="text-sm">{apt.client?.full_name || "No Name"}</CardTitle>
                 <CardDescription className="text-xs">
                   {formatDate(apt.date)} - {formatTime(apt.time)}
                 </CardDescription>

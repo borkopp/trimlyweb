@@ -22,16 +22,16 @@ export default async function Navbar() {
           </div>
           {data.user ? (
             <>
-              <Link href="/dashboard">
-                <Button variant="default" size="sm">
-                  Dashboard
-                </Button>
-              </Link>
               <form action={signOut}>
                 <Button variant="ghost" size="sm" type="submit">
                   Sign Out
                 </Button>
               </form>
+              <Link href="/dashboard">
+                <Button variant="default" size="sm">
+                  Dashboard
+                </Button>
+              </Link>
             </>
           ) : (
             <Link href="/login">

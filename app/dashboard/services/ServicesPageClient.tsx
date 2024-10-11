@@ -63,6 +63,8 @@ export default function ServicesPageClient({
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [serviceToDelete, setServiceToDelete] = useState<Service | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isAddingService, setIsAddingService] = useState(false);
+  const [isEditingService, setIsEditingService] = useState(false);
 
   const fetchImageUrls = useCallback(async () => {
     const imageUrls: Record<string, string | null> = {};
@@ -118,12 +120,14 @@ export default function ServicesPageClient({
 
   //handle adding a new service
   const handleAddService = async () => {
+    setIsAddingService(true);
     if (!validateForm()) {
       toast({
         title: "Validation Error",
         description: "Please fill in all required fields.",
         variant: "destructive",
       });
+      setIsAddingService(false);
       return;
     }
 
@@ -149,11 +153,14 @@ export default function ServicesPageClient({
         description: "Failed to add service. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsAddingService(false);
     }
   };
 
   //handle editing a service
   const handleEditService = async () => {
+    setIsEditingService(true);
     try {
       if (editingService) {
         await updateService(editingService);
@@ -173,6 +180,8 @@ export default function ServicesPageClient({
         description: "Failed to update service. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsEditingService(false);
     }
   };
 
@@ -331,7 +340,19 @@ export default function ServicesPageClient({
                               </div>
                             </div>
                             <DialogFooter>
-                              <Button onClick={handleEditService}>Save changes</Button>
+                              <Button
+                                disabled={isEditingService}
+                                className={isEditingService ? "opacity-50 cursor-not-allowed" : ""}
+                                onClick={handleEditService}>
+                                {isEditingService ? (
+                                  <div className="flex items-center justify-center">
+                                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white self-center"></div>
+                                    <span className="ml-2">Saving...</span>
+                                  </div>
+                                ) : (
+                                  "Save changes"
+                                )}
+                              </Button>
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
@@ -426,7 +447,16 @@ export default function ServicesPageClient({
                 </div>
               </div>
               <DialogFooter>
-                <Button onClick={handleAddService}>Add Service</Button>
+                <Button disabled={isAddingService} className={isAddingService ? "opacity-50 cursor-not-allowed" : ""} onClick={handleAddService}>
+                  {isAddingService ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white self-center"></div>
+                      <span className="ml-2">Adding...</span>
+                    </div>
+                  ) : (
+                    "Add Service"
+                  )}
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -441,7 +471,9 @@ export default function ServicesPageClient({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete}>Continue</AlertDialogAction>
+            <AlertDialogAction className="bg-destructive hover:bg-destructive/70" onClick={confirmDelete}>
+              Continue
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

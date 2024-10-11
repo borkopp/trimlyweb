@@ -149,7 +149,7 @@ export function NewAppointmentDialog({initialBarbers, initialServices, user_id}:
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar mode="single" selected={date} onSelect={setDate} fromDate={new Date()} initialFocus />
+                  <Calendar mode="single" selected={date} onSelect={setDate} fromDate={new Date()} />
                 </PopoverContent>
               </Popover>
             </div>
