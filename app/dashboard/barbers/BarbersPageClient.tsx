@@ -1,5 +1,4 @@
 "use client";
-
 import {useState, useEffect, useCallback} from "react";
 import {Search, Plus, X, MoreVertical, Trash, User} from "lucide-react";
 import {Button} from "@/components/ui/button";
@@ -17,7 +16,6 @@ import {toast} from "@/components/ui/use-toast";
 import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
 import Link from "next/link";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import Image from "next/image";
 import {createClient} from "@/utils/supabase/client";
 
 type Barber = Database["public"]["Tables"]["barbers"]["Row"] & {services: Service[]};
@@ -363,7 +361,7 @@ export default function BarbersPageClient({
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => handleDeleteBarber(barber)} className="text-red-600">
                       <Trash className="mr-2 h-4 w-4" />
-                      Delete
+                      Remove Barber
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

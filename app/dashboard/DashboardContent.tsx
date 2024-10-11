@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
@@ -20,13 +19,14 @@ import {Progress} from "@/components/ui/progress";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {getBarbers, getCurrentMonthRevenue, getDayAppointments, getServices, getTodayAppointments, getWeekAppointments} from "@/lib/supabase/queries";
-import {AppointmentsProvider} from "@/components/AppointmentsContext";
-import AppointmentsSection from "@/components/AppointmentsSection";
-import {AppointmentDetails} from "@/components/AppointmentDetails";
+import {AppointmentsProvider} from "@/components/dashboard/AppointmentsContext";
+import AppointmentsSection from "@/components/dashboard/AppointmentsSection";
+import {AppointmentDetails} from "@/components/dashboard/AppointmentDetails";
 import {NewAppointmentDialog} from "@/components/NewAppointmentDialog";
 import {formatTime} from "@/utils/dateUtils";
 import {getDaysInMonth} from "date-fns";
 import {LogoutButton} from "@/components/LogoutButton";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 
 async function getImageUrl(path: string) {
   const supabase = createClient();
@@ -114,11 +114,12 @@ export default async function DashboardContent() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon" className="overflow-hidden rounded-full">
-                  {avatarUrl ? (
-                    <Image src={avatarUrl} width={36} height={36} alt="Avatar" className="overflow-hidden rounded-full object-cover" />
-                  ) : (
-                    <User className="h-5 w-5" />
-                  )}
+                  <Avatar>
+                    <AvatarImage src={avatarUrl || ""} alt="Avatar" />
+                    <AvatarFallback>
+                      <User className="h-5 w-5" />
+                    </AvatarFallback>
+                  </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

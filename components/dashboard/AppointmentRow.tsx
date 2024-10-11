@@ -1,6 +1,6 @@
 "use client";
 
-import {useAppointments} from "@/components/AppointmentsContext";
+import {useAppointments} from "@/components/dashboard/AppointmentsContext";
 import {TableCell, TableRow} from "@/components/ui/table";
 import {Badge} from "@/components/ui/badge";
 import {formatDate, formatTime} from "@/utils/dateUtils";

@@ -1,6 +1,6 @@
 "use client";
 import React, {useEffect, useState} from "react";
-import {useAppointments} from "@/components/AppointmentsContext";
+import {useAppointments} from "@/components/dashboard/AppointmentsContext";
 import {createClient} from "@/utils/supabase/client";
 import {Clock, Copy, MoreVertical, Users} from "lucide-react";
 import {Button} from "@/components/ui/button";

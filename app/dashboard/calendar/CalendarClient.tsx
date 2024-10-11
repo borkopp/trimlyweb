@@ -1,8 +1,5 @@
 "use client";
-
 import React from "react";
-import {createClientComponentClient} from "@supabase/auth-helpers-nextjs";
-import {Database} from "@/database.types";
 import {Appointment} from "@/types/appointments";
 import {Calendar, momentLocalizer} from "react-big-calendar";
 import moment from "moment";
@@ -11,7 +8,9 @@ import {Button} from "@/components/ui/button";
 import {Card, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {formatDate, formatTime} from "@/utils/dateUtils";
+import {createClient} from "@/utils/supabase/client";
 import "./calendar-dark.css";
+import {ChevronLeft, ChevronRight} from "lucide-react";
 
 // Setup the localizer for react-big-calendar
 const localizer = momentLocalizer(moment);
@@ -25,7 +24,7 @@ export default function CalendarClient({initialAppointments}: Props) {
   const [view, setView] = React.useState<"day" | "week">("day");
   const [appointments, setAppointments] = React.useState<Appointment[]>(initialAppointments);
 
-  const supabase = createClientComponentClient<Database>();
+  const supabase = createClient();
 
   const fetchAppointments = React.useCallback(async () => {
     const startDate = moment(date).startOf(view).format("YYYY-MM-DD");
@@ -84,12 +83,12 @@ export default function CalendarClient({initialAppointments}: Props) {
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-2">
         <Button variant="outline" size="icon" onClick={() => onNavigate("PREV")}>
-          &lt;
+          <ChevronLeft />
         </Button>
         <Button variant="outline" size="icon" onClick={() => onNavigate("NEXT")}>
-          &gt;
+          <ChevronRight />
         </Button>
-        <Button className="w-20" variant="outline" size="icon" onClick={() => onNavigate("TODAY")}>
+        <Button className="w-20 " variant="outline" size="icon" onClick={() => onNavigate("TODAY")}>
           Today
         </Button>
       </div>
@@ -148,7 +147,7 @@ export default function CalendarClient({initialAppointments}: Props) {
           max={new Date(0, 0, 0, 20, 0, 0)} // Set end time to 20:00
           eventPropGetter={(event) => ({
             style: {
-              backgroundColor: "#27272A",
+              backgroundColor: "hsl(var(--muted) / 0.5)",
               borderLeft: "5px solid #EA580C",
               borderTop: "none",
               borderBottom: "none",

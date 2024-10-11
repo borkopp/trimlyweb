@@ -1,5 +1,5 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import AppointmentRow from "@/components/AppointmentRow";
+import AppointmentRow from "@/components/dashboard/AppointmentRow";
 import {Database} from "@/database.types";
 
 type Appointment = Database["public"]["Tables"]["appointments"]["Row"] & {
