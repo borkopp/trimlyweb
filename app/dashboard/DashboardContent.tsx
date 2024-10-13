@@ -143,7 +143,7 @@ export default async function DashboardContent() {
                   <CardHeader className="pb-3">
                     <CardTitle>Barbershop Overview</CardTitle>
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
-                      Welcome to your barbershop dashboard. Manage appointments, clients, and analytics with ease.
+                      Manage appointments, clients, barbers and services with ease.
                     </CardDescription>
                   </CardHeader>
                   <CardFooter>
