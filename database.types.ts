@@ -192,39 +192,33 @@ export type Database = {
           },
         ]
       }
-      barbershops: {
+      barbershop: {
         Row: {
-          avg_price: number
-          closing_time: string
+          closing_time: string | null
           description: string | null
           id: number
-          image: string | null
-          location: string
-          name: string
+          location: string | null
+          name: string | null
           opening_time: string | null
-          rating: number
+          phone: string | null
         }
         Insert: {
-          avg_price: number
-          closing_time: string
+          closing_time?: string | null
           description?: string | null
           id?: number
-          image?: string | null
-          location: string
-          name: string
+          location?: string | null
+          name?: string | null
           opening_time?: string | null
-          rating: number
+          phone?: string | null
         }
         Update: {
-          avg_price?: number
-          closing_time?: string
+          closing_time?: string | null
           description?: string | null
           id?: number
-          image?: string | null
-          location?: string
-          name?: string
+          location?: string | null
+          name?: string | null
           opening_time?: string | null
-          rating?: number
+          phone?: string | null
         }
         Relationships: []
       }

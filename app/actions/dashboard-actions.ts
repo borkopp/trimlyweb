@@ -238,3 +238,37 @@ export async function assignBarberRole(userId: string, serviceIds: number[] = []
 
     revalidatePath('/dashboard/barbers')
 }
+
+type BarbershopSettings = Database["public"]["Tables"]["barbershop"]["Row"];
+
+export async function getBarbershopSettings(): Promise<BarbershopSettings> {
+    const supabase = createClient()
+  
+    const { data, error } = await supabase
+      .from('barbershop')
+      .select('*')
+      .eq('id', 1)
+      .single()
+  
+    if (error) {
+        throw error
+    }
+    return data
+}
+
+export async function updateBarbershopSettings(settings: Partial<BarbershopSettings>): Promise<BarbershopSettings> {
+    const supabase = createClient()
+  
+    const { data, error } = await supabase
+      .from('barbershop')
+      .update(settings)
+      .eq('id', 1)
+      .select()
+      .single()
+  
+    if (error) {
+        throw error
+    }
+    revalidatePath('/dashboard/settings')
+    return data
+}
