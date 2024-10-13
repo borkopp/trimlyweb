@@ -33,8 +33,10 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { Separator } from "@/components/ui/separator"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb"
+import Link from "next/link"
 
-export function BarbershopDashboardComponent() {
+export function AnalyticsPage() {
   return (
     <div className="chart-wrapper mx-auto flex max-w-6xl flex-col flex-wrap items-start justify-center gap-6 p-6 sm:flex-row sm:p-8">
       <div className="grid w-full gap-6 sm:grid-cols-2 lg:max-w-[22rem] lg:grid-cols-1 xl:max-w-[25rem]">
@@ -44,7 +46,7 @@ export function BarbershopDashboardComponent() {
             <CardTitle className="text-4xl tabular-nums">
               32{" "}
               <span className="font-sans text-sm font-normal tracking-normal text-muted-foreground">
-                haircuts
+                appointments
               </span>
             </CardTitle>
           </CardHeader>
@@ -52,8 +54,8 @@ export function BarbershopDashboardComponent() {
             <ChartContainer
               config={{
                 haircuts: {
-                  label: "Haircuts",
-                  color: "hsl(var(--chart-1))",
+                  label: "Appointments",
+                  color: "hsl(var(--primary))",
                 },
               }}
             >
@@ -169,7 +171,7 @@ export function BarbershopDashboardComponent() {
               config={{
                 waitTime: {
                   label: "Wait Time",
-                  color: "hsl(var(--chart-1))",
+                  color: "hsl(var(--primary))",
                 },
               }}
               className="w-full"
@@ -247,7 +249,7 @@ export function BarbershopDashboardComponent() {
           <CardHeader>
             <CardTitle>Progress</CardTitle>
             <CardDescription>
-              You're averaging more haircuts per day this year than last year.
+              You&apos;re averaging more haircuts per day this year than last year.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
@@ -255,14 +257,14 @@ export function BarbershopDashboardComponent() {
               <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
                 32
                 <span className="text-sm font-normal text-muted-foreground">
-                  haircuts/day
+                  appointments/day
                 </span>
               </div>
               <ChartContainer
                 config={{
                   haircuts: {
                     label: "Haircuts",
-                    color: "hsl(var(--chart-1))",
+                    color: "hsl(var(--primary))",
                   },
                 }}
                 className="aspect-auto h-[32px] w-full"
@@ -373,7 +375,7 @@ export function BarbershopDashboardComponent() {
               config={{
                 duration: {
                   label: "Duration",
-                  color: "hsl(var(--chart-1))",
+                  color: "hsl(var(--primary))",
                 },
               }}
               className="ml-auto w-[72px]"
@@ -428,7 +430,7 @@ export function BarbershopDashboardComponent() {
                   color: "hsl(var(--chart-2))",
                 },
                 styling: {
-                  label: "Styling",
+                  label: "Hair Wash",
                   color: "hsl(var(--chart-3))",
                 },
               }}
@@ -479,9 +481,10 @@ export function BarbershopDashboardComponent() {
                   <LabelList
                     position="insideLeft"
                     dataKey="label"
-                    fill="white"
+                    fill="black"
                     offset={8}
                     fontSize={12}
+                    fontWeight={600}
                   />
                 </Bar>
               </BarChart>
@@ -510,7 +513,7 @@ export function BarbershopDashboardComponent() {
               </div>
               <Separator orientation="vertical" className="mx-2 h-10 w-px" />
               <div className="grid flex-1 auto-rows-min gap-0.5">
-                <div className="text-xs text-muted-foreground">Styling</div>
+                <div className="text-xs text-muted-foreground">Hair Wash</div>
                 <div className="flex items-baseline gap-1 text-2xl font-bold tabular-nums leading-none">
                   15
                   <span className="text-sm font-normal text-muted-foreground">
@@ -545,7 +548,7 @@ export function BarbershopDashboardComponent() {
                 </div>
               </div>
               <div className="grid flex-1 auto-rows-min gap-0.5">
-                <div className="text-sm text-muted-foreground">Styling</div>
+                <div className="text-sm text-muted-foreground">Hair Wash</div>
                 <div className="flex items-baseline gap-1 text-xl font-bold tabular-nums leading-none">
                   15/20
                   <span className="text-sm font-normal text-muted-foreground">
@@ -565,7 +568,7 @@ export function BarbershopDashboardComponent() {
                   color: "hsl(var(--chart-2))",
                 },
                 styling: {
-                  label: "Styling",
+                  label: "Hair Wash",
                   color: "hsl(var(--chart-3))",
                 },
               }}
@@ -615,7 +618,7 @@ export function BarbershopDashboardComponent() {
           <CardHeader className="p-4 pb-0">
             <CardTitle>Revenue</CardTitle>
             <CardDescription>
-              You're earning an average of $1,254 per day. Great job!
+              You&apos;re earning an average of $1,254 per day. Great job!
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-row items-baseline gap-4 p-4 pt-2">
