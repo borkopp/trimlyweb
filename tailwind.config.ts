@@ -78,6 +78,7 @@ const config = {
       },
       fontFamily: {
         ff: ['var(--font-ff)'],
+        inter: ['var(--font-inter)'],
       },
     },
   },

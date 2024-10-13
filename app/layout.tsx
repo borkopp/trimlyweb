@@ -1,18 +1,16 @@
 import type {Metadata} from "next";
-import {Inter} from "next/font/google";
-import localfont from "next/font/local";
+import localFont from "next/font/local";
 import "./globals.css";
 import {ThemeProvider} from "@/components/theme-provider";
 import {Toaster} from "@/components/ui/toaster";
 
-const inter = Inter({subsets: ["latin"], variable: "--font-inter"});
+const inter = localFont({
+  src: "../public/fonts/Inter-VariableFont_opsz,wght.ttf",
+  variable: "--font-inter",
+});
 
-const filmfiction = localfont({
-  src: [
-    {
-      path: "../public/fonts/FilmFiction-Bold.otf",
-    },
-  ],
+const filmfiction = localFont({
+  src: "../public/fonts/FilmFiction-Bold.otf",
   variable: "--font-ff",
 });
 
@@ -28,8 +26,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${filmfiction.variable} font-sans`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <body className={`${inter.variable} ${filmfiction.variable} font-inter`}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {children}
           <Toaster />
         </ThemeProvider>
