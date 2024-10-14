@@ -59,7 +59,7 @@ function SubmitButton() {
   const {pending} = useFormStatus();
 
   return (
-    <Button type="submit" className={`w-full mb-4 mt-8 ${pending ? "bg-gray-500" : "bg-[#EA580C]"}`} disabled={pending}>
+    <Button type="submit" className={`w-full mb-4 mt-8 ${pending ? "bg-gray-500" : "bg-primary"}`} disabled={pending}>
       {pending ? (
         <div className="flex items-center justify-center">
           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary self-center"></div>

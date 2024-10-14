@@ -11,7 +11,7 @@ export default function LoginPage() {
       <div className="hidden h-screen bg-muted w-2/3 lg:block relative overflow-hidden">
         <div className="flex flex-col justify-between items-start h-full relative z-10 p-12">
           <Link href={"/"} className="font-ff text-3xl">
-            trimly
+            fadely
           </Link>
           <TypingAnimation className="text-lg font-semibold" text="Keep your loyal customers happy and satisfied." duration={90} />
         </div>

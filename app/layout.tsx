@@ -15,7 +15,7 @@ const filmfiction = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "trimly",
+  title: "fadely",
   description: "Own an app for your barbershop.",
 };
 

@@ -11,7 +11,7 @@ export default function SignupPage() {
       <div className="hidden h-screen bg-muted w-2/3 lg:block relative overflow-hidden">
         <div className="flex flex-col justify-between items-start h-full relative z-10 p-12">
           <Link href={"/"} className="font-ff text-3xl">
-            trimly
+            fadely
           </Link>
           <TypingAnimation className="text-lg font-semibold" text="Keep your loyal customers happy and satisfied." duration={90} />
         </div>
@@ -29,7 +29,7 @@ export default function SignupPage() {
       </div>
       <div className="flex items-center justify-center w-full lg:w-2/3 py-12">
         <div className="text-center">
-          <h1 className="text-3xl font-bold font-ff text-primary mb-4">trimly</h1>
+          <h1 className="text-3xl font-bold font-ff text-primary mb-4">fadely</h1>
           <h1 className="text-3xl font-bold">New accounts are currently disabled.</h1>
           <p className="text-muted-foreground">We are working on some updates to our platform. Please check back later.</p>
           <div className="flex justify-center gap-4 mt-10">
