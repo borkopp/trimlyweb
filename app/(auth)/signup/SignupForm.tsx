@@ -72,7 +72,7 @@ export default function SignupForm({signup}: SignupFormProps) {
           {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
         </button>
       </div>
-      <Button type="submit" className={`w-full mb-4 mt-8 ${isLoading ? "bg-gray-500" : "bg-[#EA580C]"}`} disabled={isLoading}>
+      <Button type="submit" className={`w-full mb-4 mt-8 ${isLoading ? "bg-gray-500" : "bg-primary"}`} disabled={isLoading}>
         {isLoading ? (
           <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary self-center"></div>

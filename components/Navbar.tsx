@@ -23,7 +23,7 @@ export default async function Navbar() {
           {data.user ? (
             <>
               <form action={signOut}>
-                <Button variant="ghost" size="sm" type="submit">
+                <Button variant="link" size="sm" className="text-sm" type="submit">
                   Sign Out
                 </Button>
               </form>
