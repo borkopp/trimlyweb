@@ -12,10 +12,10 @@ export default function Pricing() {
   return (
     <section id="pricing" className="w-full bg-background mx-auto py-12 md:py-24 lg:py-24 relative overflow-hidden">
       {/* Background effects */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* <div className="absolute inset-0 pointer-events-none">
         <ShootingStars className="absolute top-0 left-0 w-full h-full" />
         <StarsBackground className="absolute inset-0 w-full h-full" />
-      </div>
+      </div> */}
 
       {/* Pricing content */}
       <div className="container py-16 lg:py-24 relative z-10">

@@ -53,11 +53,14 @@ export function FeaturesSection() {
     },
   ];
   return (
-    <div className="bg-neutral-950">
+    <div className="bg-background">
       <div className="container py-24 lg:py-36">
-        <div className="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
-          <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Features</h2>
-          <p className="mt-1 text-muted-foreground">All in one place. For your loyal customers.</p>
+        <div className="space-y-4 items-center text-center mb-24">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">FEATURES</h3>
+          <h2 className="text-4xl font-semibold tracking-tighter sm:text-5xl">Everything you need to run your barbershop</h2>
+          <p className="text-neutral-500 text-[1.2rem]  mx-auto my-4 text-center relative">
+          From booking appointments to managing your team and much more.
+          </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4  relative z-10 py-10 max-w-7xl mx-auto">
           {features.map((feature, index) => (

@@ -16,8 +16,8 @@ export function BackgroundBeamsDemo() {
           data-aos="fade-up"
           data-aos-delay="300"
           data-aos-duration="1000"
-          className="text-neutral-500 text-[1.2rem] max-w-lg mx-auto my-4 text-center relative">
-          Own an app for your business, without paying thousands. Stand out from the competition. Gain loyal customers.
+          className="text-neutral-500 text-[1.2rem] max-w-xl mx-auto my-4 text-center relative">
+          Branded app for your business, without paying thousands. Stand out from the competition. Gain loyal customers.
         </p>
         <div className="flex flex-row gap-4 justify-center mt-10">
           <HeroButton dataAos="fade-up" dataAosDelay="400" dataAosDuration="1000" href="#pricing" text="Check pricing" />

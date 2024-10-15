@@ -1,4 +1,5 @@
 "use client";
+import Faq from "@/components/Faq";
 import Hero from "@/components/Hero";
 import HeroMockup from "@/components/HeroMockup";
 import {BackgroundBeamsDemo} from "@/components/HeroTest";
@@ -20,16 +21,12 @@ export default function Home() {
   }, []);
   return (
     <main>
-      {/* Hero */}
-      {/* <Hero /> */}
       <BackgroundBeamsDemo />
       <HeroMockup />
       <ProblemSection />
       <SolutionSection />
-      {/* Features */}
-      {/* <Features /> */}
       <FeaturesSection />
-      {/* Pricing */}
+      <Faq />
       <Pricing />
     </main>
   );

@@ -16,7 +16,7 @@ const filmfiction = localFont({
 
 export const metadata: Metadata = {
   title: "fadely",
-  description: "Own an app for your barbershop.",
+  description: "Branded app for your barbershop.",
 };
 
 export default function RootLayout({
