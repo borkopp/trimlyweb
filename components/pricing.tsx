@@ -20,9 +20,12 @@ export default function Pricing() {
       {/* Pricing content */}
       <div className="container py-16 lg:py-24 relative z-10">
         {/* Title */}
-        <div className="max-w-2xl mx-auto text-center mb-10 lg:mb-14">
-          <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">Pricing</h2>
-          <p className="mt-1 text-muted-foreground">Whatever your status, our offers evolve according to your needs.</p>
+        <div className="space-y-4 items-center text-center mb-24">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">PRICING</h3>
+          <h2 className="text-4xl font-semibold tracking-tighter font-montserrat sm:text-5xl">Something for everyone</h2>
+          <p className="text-neutral-500 text-[1.2rem] font-lato mx-auto my-4 text-center relative">
+            Whatever your status, our offers evolve according to your needs.
+          </p>
         </div>
         {/* End Title */}
         {/* Switch */}

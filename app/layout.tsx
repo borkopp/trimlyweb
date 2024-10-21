@@ -1,5 +1,6 @@
 import type {Metadata} from "next";
 import localFont from "next/font/local";
+import {Montserrat, Lato} from "next/font/google";
 import "./globals.css";
 import {ThemeProvider} from "@/components/theme-provider";
 import {Toaster} from "@/components/ui/toaster";
@@ -7,6 +8,17 @@ import {Toaster} from "@/components/ui/toaster";
 const inter = localFont({
   src: "../public/fonts/Inter-VariableFont_opsz,wght.ttf",
   variable: "--font-inter",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+});
+
+const lato = Lato({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-lato",
 });
 
 const filmfiction = localFont({
@@ -26,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${filmfiction.variable} font-inter`}>
+      <body className={`${inter.variable} ${filmfiction.variable} ${montserrat.variable} ${lato.variable} font-inter`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {children}
           <Toaster />

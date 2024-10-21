@@ -3,6 +3,10 @@ import React from "react";
 import {BackgroundBeams} from "@/components/ui/background-beams";
 import {HeroButton} from "./HeroButton";
 import WordPullUp from "./ui/word-pull-up";
+import {Button} from "./ui/button";
+import {ArrowRightIcon} from "lucide-react";
+import router from "next/router";
+import Link from "next/link";
 
 export function BackgroundBeamsDemo() {
   return (
@@ -16,12 +20,15 @@ export function BackgroundBeamsDemo() {
           data-aos="fade-up"
           data-aos-delay="300"
           data-aos-duration="1000"
-          className="text-neutral-500 text-[1.2rem] max-w-xl mx-auto my-4 text-center relative">
+          className="text-neutral-500 text-[1.4rem] max-w-xl mx-auto my-4 text-center font-lato relative">
           Branded app for your business, without paying thousands. Stand out from the competition. Gain loyal customers.
         </p>
         <div className="flex flex-row gap-4 justify-center mt-10">
-          <HeroButton dataAos="fade-up" dataAosDelay="400" dataAosDuration="1000" href="#pricing" text="Check pricing" />
-          <HeroButton dataAos="fade-up" dataAosDelay="600" dataAosDuration="1200" href="#solution" text="Learn more" />
+          <button className="herobutton font-inter font-semibold">Learn more</button>
+          <Button variant={"outline"} className="flex flex-row items-center gap-2 group ml-4">
+            <Link href="#pricing">Check pricing</Link>
+            <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+          </Button>
         </div>
       </div>
       <BackgroundBeams />

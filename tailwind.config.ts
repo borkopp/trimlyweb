@@ -104,7 +104,10 @@ const config = {
   		},
   		fontFamily: {
   			ff: ['var(--font-ff)'],
-  			inter: ['var(--font-inter)']
+  			inter: ['var(--font-inter)'],
+			montserrat: ["var(--font-montserrat)"],
+			lato: ["var(--font-lato)"],
+
   		}
   	}
   },

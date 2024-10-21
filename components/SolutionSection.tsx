@@ -8,8 +8,8 @@ export default function SolutionSection() {
       <div className="container px-4 md:px-6 relative z-10">
         <div className="space-y-4 items-center text-center mb-24">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">SOLUTION</h3>
-          <h2 className="text-4xl font-semibold tracking-tighter sm:text-5xl">Your own app to run your business seamlesly</h2>
-          <p className="text-neutral-500 text-[1.2rem]  mx-auto my-4 text-center relative">
+          <h2 className="text-4xl font-semibold tracking-tighter font-montserrat sm:text-5xl">Your own app to run your business seamlesly</h2>
+          <p className="text-neutral-500 text-[1.2rem] font-lato mx-auto my-4 text-center relative">
             This is not a basic appointment scheduler. This is a full-fledged software that will help you run your business.
             <br />
             You get your own mobile app and desktop dashboard. Your name - your logo - your brand.

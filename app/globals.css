@@ -6,6 +6,43 @@ html {
   scroll-behavior: smooth;
 }
 
+.herobutton {
+  padding: 0.5em 2em;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #ea580c;
+  transition: all 1000ms;
+  position: relative;
+  overflow: hidden;
+  outline: 2px solid #ea580c;
+}
+
+.herobutton:hover {
+  color: #ffffff;
+  transform: scale(1.1);
+  outline: 2px solid #ea580c;
+  box-shadow: 4px 5px 17px -4px #ea580c;
+}
+
+.herobutton::before {
+  content: "";
+  position: absolute;
+  left: -50px;
+  top: 0;
+  width: 0;
+  height: 100%;
+  background-color: #ea580c;
+  transform: skewX(45deg);
+  z-index: -1;
+  transition: width 1000ms;
+}
+
+.herobutton:hover::before {
+  width: 250%;
+}
+
 @layer base {
   :root {
     --background: 240 10% 3.9%;

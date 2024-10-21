@@ -26,7 +26,7 @@ export default function Home() {
       <ProblemSection />
       <SolutionSection />
       <FeaturesSection />
-      <Faq />
+      {/* <Faq /> */}
       <Pricing />
     </main>
   );
