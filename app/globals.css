@@ -12,11 +12,11 @@ html {
   border-radius: 0.5rem;
   font-weight: bold;
   cursor: pointer;
-  color: #ea580c;
+  color: #ffffff;
   transition: all 1000ms;
   position: relative;
   overflow: hidden;
-  outline: 2px solid #ea580c;
+  outline: 1px solid #ea580c;
 }
 
 .herobutton:hover {

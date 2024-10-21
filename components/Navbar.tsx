@@ -16,6 +16,20 @@ export default async function Navbar() {
         <Link href="/" className="font-ff text-2xl cursor-pointer text-primary">
           fadely
         </Link>
+        {/* <div className="flex gap-4 items-center font-lato text-sm">
+          <Link className="hover:text-primary" href="/features">
+            Features
+          </Link>
+          <Link className="hover:text-primary" href="#pricing">
+            Pricing
+          </Link>
+          <Link className="hover:text-primary" href="#faq">
+            FAQ
+          </Link>
+          <Link className="hover:text-primary" href="#contact">
+            Contact
+          </Link>
+        </div> */}
         <div className="flex gap-2 items-center">
           {/* <div className="mr-4 items-center flex">
             <LanguageToggle />

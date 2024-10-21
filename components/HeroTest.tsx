@@ -24,11 +24,42 @@ export function BackgroundBeamsDemo() {
           Branded app for your business, without paying thousands. Stand out from the competition. Gain loyal customers.
         </p>
         <div className="flex flex-row gap-4 justify-center mt-10">
-          <button className="herobutton font-inter font-semibold">Learn more</button>
-          <Button variant={"outline"} className="flex flex-row items-center gap-2 group ml-4">
+          {/* <button data-aos="fade-up" data-aos-delay="300" data-aos-duration="1000" className="herobutton font-inter font-semibold">
+            Learn more
+          </button> */}
+          {/* <Button
+            data-aos="fade-up"
+            data-aos-delay="400"
+            data-aos-duration="1000"
+            variant={"outline"}
+            className="flex flex-row items-center gap-2 group ml-4">
             <Link href="#pricing">Check pricing</Link>
             <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
-          </Button>
+          </Button> */}
+          <Link href="#solution">
+            <button
+              data-aos="fade-up"
+              data-aos-delay="300"
+              data-aos-duration="1000"
+              className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none ">
+              <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#f96416_0%,#fec7aa_50%,#f96416_100%)]" />
+              <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-5 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+                Learn more
+              </span>
+            </button>
+          </Link>
+          <Link href="#pricing">
+            <button
+              data-aos="fade-up"
+              data-aos-delay="400"
+              data-aos-duration="1000"
+              className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none ">
+              <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#f96416_0%,#fec7aa_50%,#f96416_100%)]" />
+              <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-background px-5 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+                Check pricing
+              </span>
+            </button>
+          </Link>
         </div>
       </div>
       <BackgroundBeams />

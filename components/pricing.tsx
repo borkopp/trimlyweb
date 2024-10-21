@@ -18,18 +18,18 @@ export default function Pricing() {
       </div> */}
 
       {/* Pricing content */}
-      <div className="container py-16 lg:py-24 relative z-10">
+      <div className="container py-16 lg:py-20 relative z-10">
         {/* Title */}
         <div className="space-y-4 items-center text-center mb-24">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">PRICING</h3>
-          <h2 className="text-4xl font-semibold tracking-tighter font-montserrat sm:text-5xl">Something for everyone</h2>
+          <h2 className="text-4xl font-semibold tracking-tighter font-montserrat sm:text-5xl">Solutions for everyone</h2>
           <p className="text-neutral-500 text-[1.2rem] font-lato mx-auto my-4 text-center relative">
             Whatever your status, our offers evolve according to your needs.
           </p>
         </div>
         {/* End Title */}
         {/* Switch */}
-        <div className="flex justify-center items-center">
+        {/* <div className="flex justify-center items-center">
           <Label htmlFor="payment-schedule" className="me-3">
             Monthly
           </Label>
@@ -49,7 +49,7 @@ export default function Pricing() {
               </span>
             </span>
           </Label>
-        </div>
+        </div> */}
         {/* End Switch */}
         {/* Grid */}
         <div className="mt-12 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:items-center">
@@ -125,7 +125,7 @@ export default function Pricing() {
           {/* Card */}
           <Card className="bg-background/80 backdrop-blur-sm">
             <CardHeader className="text-center pb-2">
-              <CardTitle className="mb-7">One-Time-Payment</CardTitle>
+              <CardTitle className="mb-7">One-Time Payment</CardTitle>
               <span className="font-bold text-5xl">Let&apos;s talk</span>
             </CardHeader>
             <CardDescription className="text-center  w-11/12 mx-auto">Advanced features for scaling your business</CardDescription>
