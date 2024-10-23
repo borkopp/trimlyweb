@@ -36,7 +36,7 @@ export default function Home() {
         <Pricing />
         <BackgroundBeams />
       </div>
-      {/* <Faq /> */}
+      <Faq />
     </main>
   );
 }

@@ -15,11 +15,6 @@ export default async function Navbar() {
           fadely
         </Link>
         <div>
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="text-sm text-neutral-500">
-              Overview
-            </Button>
-          </Link>
           <Link href="#solution">
             <Button variant="ghost" size="sm" className="text-sm text-neutral-500">
               Features
