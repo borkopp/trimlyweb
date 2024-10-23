@@ -8,6 +8,7 @@ import SolutionSection from "@/components/SolutionSection";
 import Features from "@/components/features";
 import {FeaturesSection} from "@/components/features-new";
 import Pricing from "@/components/pricing";
+import {BackgroundBeams} from "@/components/ui/background-beams";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import {useEffect} from "react";
@@ -21,13 +22,21 @@ export default function Home() {
   }, []);
   return (
     <main>
-      <BackgroundBeamsDemo />
-      <HeroMockup />
+      <div className="relative">
+        <div className="space-y-10">
+          <BackgroundBeamsDemo />
+          <HeroMockup />
+        </div>
+        <BackgroundBeams />
+      </div>
       <ProblemSection />
       <SolutionSection />
-      <FeaturesSection />
+      <div className="relative">
+        <FeaturesSection />
+        <Pricing />
+        <BackgroundBeams />
+      </div>
       {/* <Faq /> */}
-      <Pricing />
     </main>
   );
 }

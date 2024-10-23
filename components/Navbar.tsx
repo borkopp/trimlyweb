@@ -1,8 +1,6 @@
 import React from "react";
-import {ModeToggle} from "./theme-toggle";
 import Link from "next/link";
 import {Button} from "./ui/button";
-import {LanguageToggle} from "./language-toggle";
 import {createClient} from "@/utils/supabase/server";
 import {signOut} from "@/app/(auth)/actions";
 
@@ -16,6 +14,28 @@ export default async function Navbar() {
         <Link href="/" className="font-ff text-2xl cursor-pointer text-primary">
           fadely
         </Link>
+        <div>
+          <Link href="/">
+            <Button variant="ghost" size="sm" className="text-sm text-neutral-500">
+              Overview
+            </Button>
+          </Link>
+          <Link href="#solution">
+            <Button variant="ghost" size="sm" className="text-sm text-neutral-500">
+              Features
+            </Button>
+          </Link>
+          <Link href="#pricing">
+            <Button variant="ghost" size="sm" className="text-sm text-neutral-500">
+              Pricing
+            </Button>
+          </Link>
+          <Link href="#faq">
+            <Button variant="ghost" size="sm" className="text-sm text-neutral-500">
+              FAQ
+            </Button>
+          </Link>
+        </div>
         {/* <div className="flex gap-4 items-center font-lato text-sm">
           <Link className="hover:text-primary" href="/features">
             Features
@@ -48,11 +68,13 @@ export default async function Navbar() {
               </Link>
             </>
           ) : (
-            <Link href="/login">
-              <Button size="sm" variant="outline" className="hover:text-primary">
-                Log in
-              </Button>
-            </Link>
+            <>
+              <Link href="/login">
+                <Button size="sm" variant="default">
+                  Log in
+                </Button>
+              </Link>
+            </>
           )}
         </div>
       </div>
