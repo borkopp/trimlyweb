@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { Facebook, Twitter, Instagram, Linkedin, Mail } from "lucide-react"
+import Link from "next/link";
+import {Facebook, Twitter, Instagram, Linkedin, Mail} from "lucide-react";
 
 export default function Footer() {
   return (
@@ -14,18 +14,41 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
-              <li><Link href="/services" className="hover:text-primary transition-colors">Services</Link></li>
-              <li><Link href="/products" className="hover:text-primary transition-colors">Products</Link></li>
-              <li><Link href="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
+              <li>
+                <Link href="/about" className="hover:text-primary transition-colors">
+                  Features
+                </Link>
+              </li>
+              <li>
+                <Link href="/pricing" className="hover:text-primary transition-colors">
+                  Pricing
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-primary transition-colors">
+                  Contact
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-4">Legal</h3>
             <ul className="space-y-2">
-              <li><Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="hover:text-primary transition-colors">Terms of Service</Link></li>
-              <li><Link href="/cookies" className="hover:text-primary transition-colors">Cookie Policy</Link></li>
+              <li>
+                <Link href="/privacy" className="hover:text-primary transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="hover:text-primary transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/cookies" className="hover:text-primary transition-colors">
+                  Cookie Policy
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
@@ -61,5 +84,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

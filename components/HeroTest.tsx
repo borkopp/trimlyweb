@@ -4,8 +4,8 @@ import Link from "next/link";
 
 export function BackgroundBeamsDemo() {
   return (
-    <div className="h-[35rem] w-full rounded-md bg-neutral-950 relative flex flex-col items-center justify-center antialiased">
-      <div className="max-w-2xl mx-auto p-4 relative z-10">
+    <div className="h-[35rem] w-full rounded-md bg-background relative flex flex-col items-center justify-center antialiased">
+      <div className="max-w-2xl mx-auto relative z-10">
         <WordPullUp
           className="relative text-5xl md:text-7xl bg-clip-text mt text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 text-center font-inter font-extrabold"
           words="The upgrade for your barbershop"
@@ -37,7 +37,7 @@ export function BackgroundBeamsDemo() {
               data-aos-duration="1000"
               className="relative inline-flex h-12 overflow-hidden rounded-full p-[1px] focus:outline-none ">
               <span className="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#f96416_0%,#fec7aa_50%,#f96416_100%)]" />
-              <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-slate-950 px-5 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+              <span className="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-full bg-background px-5 py-1 text-sm font-medium text-white backdrop-blur-3xl">
                 Learn more
               </span>
             </button>

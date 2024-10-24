@@ -10,7 +10,7 @@ export default async function Navbar() {
 
   return (
     <div className="w-full h-16 sticky top-0 backdrop-filter backdrop-blur-md bg-black/20 z-50 flex items-center justify-between border-b px-4 sm:px-8 md:px-16 lg:px-72">
-      <div className="w-full h-full flex justify-between items-center">
+      <div className="w-full max-w-[120rem] mx-auto h-full flex justify-between items-center">
         <Link href="/" className="font-ff text-2xl cursor-pointer text-primary">
           fadely
         </Link>
@@ -28,6 +28,11 @@ export default async function Navbar() {
           <Link href="#faq">
             <Button variant="ghost" size="sm" className="text-sm text-neutral-500">
               FAQ
+            </Button>
+          </Link>
+          <Link href="/contact">
+            <Button variant="ghost" size="sm" className="text-sm text-neutral-500">
+              Contact
             </Button>
           </Link>
         </div>

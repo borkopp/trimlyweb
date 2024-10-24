@@ -2,7 +2,7 @@ import {PhoneOff, Clock, Calendar} from "lucide-react";
 
 export default function ProblemSection() {
   return (
-    <section className="bg-neutral-950">
+    <section className="bg-background">
       <div className="max-w-6xl mx-auto py-12 md:py-24 lg:py-32">
         <div className="container px-4 md:px-6">
           <div className="space-y-4 items-center text-center">
