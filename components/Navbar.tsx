@@ -1,12 +1,44 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
+import {usePathname, useRouter} from "next/navigation";
 import {Button} from "./ui/button";
-import {createClient} from "@/utils/supabase/server";
+import {createClient} from "@/utils/supabase/client";
 import {signOut} from "@/app/(auth)/actions";
 
-export default async function Navbar() {
-  const supabase = createClient();
-  const {data} = await supabase.auth.getUser();
+export default function Navbar() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [user, setUser] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({data}) => {
+      setUser(data.user);
+    });
+  }, []);
+
+  const handleNavigation = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+    e.preventDefault();
+    if (pathname !== "/") {
+      router.push("/");
+      setTimeout(() => {
+        const element = document.querySelector(path);
+        element?.scrollIntoView({behavior: "smooth"});
+      }, 100);
+    } else {
+      const element = document.querySelector(path);
+      element?.scrollIntoView({behavior: "smooth"});
+    }
+  };
+
+  const navItems = [
+    {href: "#solution", label: "Features"},
+    {href: "#pricing", label: "Pricing"},
+    {href: "#faq", label: "FAQ"},
+    {href: "/contact", label: "Contact"},
+  ];
 
   return (
     <div className="w-full h-16 sticky top-0 backdrop-filter backdrop-blur-md bg-black/20 z-50 flex items-center justify-between border-b px-4 sm:px-8 md:px-16 lg:px-72">
@@ -15,46 +47,19 @@ export default async function Navbar() {
           fadely
         </Link>
         <div>
-          <Link href="#solution">
-            <Button variant="ghost" size="sm" className="text-sm text-neutral-500">
-              Features
-            </Button>
-          </Link>
-          <Link href="#pricing">
-            <Button variant="ghost" size="sm" className="text-sm text-neutral-500">
-              Pricing
-            </Button>
-          </Link>
-          <Link href="#faq">
-            <Button variant="ghost" size="sm" className="text-sm text-neutral-500">
-              FAQ
-            </Button>
-          </Link>
-          <Link href="/contact">
-            <Button variant="ghost" size="sm" className="text-sm text-neutral-500">
-              Contact
-            </Button>
-          </Link>
+          {navItems.map((item) => (
+            <Link key={item.label} href={item.href} onClick={(e) => (item.href.startsWith("#") ? handleNavigation(e, item.href) : null)}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={`text-sm ${pathname === item.href ? "text-primary" : "text-neutral-500 hover:text-primary"}`}>
+                {item.label}
+              </Button>
+            </Link>
+          ))}
         </div>
-        {/* <div className="flex gap-4 items-center font-lato text-sm">
-          <Link className="hover:text-primary" href="/features">
-            Features
-          </Link>
-          <Link className="hover:text-primary" href="#pricing">
-            Pricing
-          </Link>
-          <Link className="hover:text-primary" href="#faq">
-            FAQ
-          </Link>
-          <Link className="hover:text-primary" href="#contact">
-            Contact
-          </Link>
-        </div> */}
         <div className="flex gap-2 items-center">
-          {/* <div className="mr-4 items-center flex">
-            <LanguageToggle />
-          </div> */}
-          {data.user ? (
+          {user ? (
             <>
               <form action={signOut}>
                 <Button variant="link" size="sm" className="text-sm" type="submit">
@@ -68,13 +73,11 @@ export default async function Navbar() {
               </Link>
             </>
           ) : (
-            <>
-              <Link href="/login">
-                <Button size="sm" variant="default">
-                  Log in
-                </Button>
-              </Link>
-            </>
+            <Link href="/login">
+              <Button size="sm" variant="default">
+                Log in
+              </Button>
+            </Link>
           )}
         </div>
       </div>
