@@ -1,32 +1,25 @@
-import Link from "next/link";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
-import {Calendar, File, Home, LineChart, ListFilter, Scissors, Search, User, Users2} from "lucide-react";
-import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList} from "@/components/ui/breadcrumb";
+import {File, ListFilter} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {Input} from "@/components/ui/input";
 import {Progress} from "@/components/ui/progress";
-import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {getBarbers, getCurrentMonthRevenue, getDayAppointments, getServices, getTodayAppointments, getWeekAppointments} from "@/lib/supabase/queries";
 import {AppointmentsProvider} from "@/components/dashboard/AppointmentsContext";
 import AppointmentsSection from "@/components/dashboard/AppointmentsSection";
-import {AppointmentDetails} from "@/components/dashboard/AppointmentDetails";
 import {NewAppointmentDialog} from "@/components/NewAppointmentDialog";
 import {formatTime} from "@/utils/dateUtils";
 import {getDaysInMonth} from "date-fns";
-import {LogoutButton} from "@/components/LogoutButton";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {AppointmentDetailsOverview} from "@/components/dashboard/AppointmentDetailsOverview";
 
 async function getImageUrl(path: string) {
   const supabase = createClient();
@@ -141,12 +134,7 @@ export default async function DashboardContent() {
               </Tabs>
             </div>
             <div>
-              <Card className="overflow-hidden">
-                <CardHeader className="pb-3">
-                  <CardTitle>Select an appointment</CardTitle>
-                  <CardDescription>Click on an appointment from the list to view its details.</CardDescription>
-                </CardHeader>
-              </Card>
+              <AppointmentDetailsOverview />
             </div>
           </main>
         </div>

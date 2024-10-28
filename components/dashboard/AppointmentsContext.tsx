@@ -1,38 +1,36 @@
 "use client";
 
-import React, {createContext, useContext, useState} from "react";
-import {Appointment} from "@/types/appointments";
+import React, {createContext, useContext, useState, ReactNode} from "react";
+import {Database} from "@/database.types";
 
-interface AppointmentsContextType {
-  selectedAppointmentId: number | null;
-  setSelectedAppointmentId: (id: number | null) => void;
-  appointments: Appointment[];
-  setAppointments: (appointments: Appointment[]) => void;
+type Appointment = Database["public"]["Tables"]["appointments"]["Row"];
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
+type AppointmentWithClient = Appointment & {client: Profile};
+
+type AppointmentsContextType = {
+  selectedAppointment: AppointmentWithClient | null;
+  setSelectedAppointment: (appointment: AppointmentWithClient | null) => void;
   removeAppointment: (id: number) => void;
-}
+  appointments: AppointmentWithClient[];
+  setAppointments: React.Dispatch<React.SetStateAction<AppointmentWithClient[]>>;
+};
 
 const AppointmentsContext = createContext<AppointmentsContextType | undefined>(undefined);
 
-export function AppointmentsProvider({children}: {children: React.ReactNode}) {
-  const [selectedAppointmentId, setSelectedAppointmentId] = useState<number | null>(null);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+export function AppointmentsProvider({children}: {children: ReactNode}) {
+  const [selectedAppointment, setSelectedAppointment] = useState<AppointmentWithClient | null>(null);
+  const [appointments, setAppointments] = useState<AppointmentWithClient[]>([]);
 
   const removeAppointment = (id: number) => {
-    setAppointments((prev) => prev.filter((apt) => apt.id !== id));
-    if (selectedAppointmentId === id) {
-      setSelectedAppointmentId(null);
+    setAppointments((prevAppointments) => prevAppointments.filter((appointment) => appointment.id !== id));
+    if (selectedAppointment?.id === id) {
+      setSelectedAppointment(null);
     }
   };
 
   return (
-    <AppointmentsContext.Provider
-      value={{
-        selectedAppointmentId,
-        setSelectedAppointmentId,
-        appointments,
-        setAppointments,
-        removeAppointment,
-      }}>
+    <AppointmentsContext.Provider value={{selectedAppointment, setSelectedAppointment, removeAppointment, appointments, setAppointments}}>
       {children}
     </AppointmentsContext.Provider>
   );
