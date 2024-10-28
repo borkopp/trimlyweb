@@ -1,12 +1,9 @@
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Label} from "@/components/ui/label";
-import {Switch} from "@/components/ui/switch";
 import {CheckIcon} from "lucide-react";
 import ShinyButton from "./ui/shiny-button";
-import {ShootingStars} from "./ui/shooting-stars";
-import {StarsBackground} from "./ui/stars-background";
+import {CalendarScript} from "./CalendarScript";
 
 export default function Pricing() {
   return (
@@ -150,8 +147,13 @@ export default function Pricing() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant={"outline"}>
-                Sign up
+              <Button
+                className="w-full"
+                variant={"outline"}
+                data-cal-link="fadely/30min"
+                data-cal-namespace="30min"
+                data-cal-config='{"layout":"month_view"}'>
+                Book a call
               </Button>
             </CardFooter>
           </Card>
@@ -161,6 +163,7 @@ export default function Pricing() {
         {/* End Comparison table */}
       </div>
       {/* End Pricing content */}
+      <CalendarScript />
     </section>
   );
 }
