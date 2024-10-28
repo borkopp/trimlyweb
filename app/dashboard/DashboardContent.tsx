@@ -21,13 +21,6 @@ import {formatTime} from "@/utils/dateUtils";
 import {getDaysInMonth} from "date-fns";
 import {AppointmentDetailsOverview} from "@/components/dashboard/AppointmentDetailsOverview";
 
-async function getImageUrl(path: string) {
-  const supabase = createClient();
-  const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
-
-  return data?.publicUrl || null;
-}
-
 export default async function DashboardContent() {
   const supabase = createClient();
   const {
@@ -37,10 +30,6 @@ export default async function DashboardContent() {
   if (!user) {
     redirect("/login");
   }
-
-  const {data: profile} = await supabase.from("profiles").select("*").eq("id", user.id).single();
-
-  const avatarUrl = profile?.avatar_url ? await getImageUrl(profile.avatar_url) : null;
 
   const todayAppointments = await getTodayAppointments();
   const currentMonthRevenue = await getCurrentMonthRevenue();

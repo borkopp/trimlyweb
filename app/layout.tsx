@@ -4,6 +4,7 @@ import {Montserrat, Lato} from "next/font/google";
 import "./globals.css";
 import {ThemeProvider} from "@/components/theme-provider";
 import {Toaster} from "@/components/ui/toaster";
+import {Analytics} from "@vercel/analytics/react";
 
 const inter = localFont({
   src: "../public/fonts/Inter-VariableFont_opsz,wght.ttf",
@@ -42,6 +43,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {children}
           <Toaster />
+          <Analytics />
         </ThemeProvider>
       </body>
     </html>
