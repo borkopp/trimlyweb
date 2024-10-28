@@ -56,13 +56,13 @@ export default function Navbar() {
 
   return (
     <div
-      className={`fixed w-full z-50 transition-all duration-500 ease-in-out transform
+      className={`fixed z-50 transition-all duration-500 ease-in-out transform left-1/2 -translate-x-1/2
       ${
         isScrolled
-          ? "h-14 mx-auto max-w-[40%] rounded-full bg-black/70 backdrop-blur-lg border border-white/10 top-5 left-1/2 -translate-x-1/2 px-6"
-          : "h-16 top-0 backdrop-blur-none bg-transparent px-4 sm:px-8 md:px-16 lg:px-72"
+          ? "h-14 w-[40%] rounded-full bg-black/70 backdrop-blur-lg border border-white/10 top-5 px-6"
+          : "h-16 w-full top-0 backdrop-blur-none bg-transparent px-4 sm:px-8 md:px-16 lg:px-72"
       }
-      origin-top`}>
+      origin-center`}>
       <div className="w-full h-full flex items-center justify-between gap-4 transition-all duration-500 ease-in-out">
         {/* Logo */}
         <div className="flex-shrink-0">
