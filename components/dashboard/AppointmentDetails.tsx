@@ -12,13 +12,18 @@ import {toast} from "@/components/ui/use-toast";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useTransition} from "react";
 import {deleteAppointment} from "@/app/actions/appointment-actions";
-import {revalidatePath} from "next/cache";
+import {Appointment} from "@/types/appointments";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
 
-export function AppointmentDetails() {
-  const {selectedAppointment, removeAppointment} = useAppointments();
+type Props = {
+  appointmentId: string | null;
+  onClose?: () => void;
+};
+
+export function AppointmentDetails({appointmentId, onClose}: Props) {
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [services, setServices] = useState<Service[]>([]);
   const [barber, setBarber] = useState<Barber | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -26,41 +31,56 @@ export function AppointmentDetails() {
   const supabase = createClient();
 
   useEffect(() => {
-    if (!selectedAppointment) return;
-
     const fetchDetails = async () => {
-      // Fetch services
-      const {data: fetchedServices, error: servicesError} = await supabase.from("services").select("*").in("id", selectedAppointment.service_ids);
+      if (!appointmentId) return;
 
-      if (servicesError) {
-        console.error("Error fetching services:", servicesError);
-      } else {
-        setServices(fetchedServices || []);
-      }
+      try {
+        // Fetch appointment with client details
+        const {data: appointmentData, error: appointmentError} = await supabase
+          .from("appointments")
+          .select(
+            `
+            *,
+            client:profiles!appointments_user_id_fkey(full_name, email)
+          `
+          )
+          .eq("id", appointmentId)
+          .single();
 
-      // Fetch barber
-      const {data: fetchedBarber, error: barberError} = await supabase.from("barbers").select("*").eq("id", selectedAppointment.barber_id).single();
+        if (appointmentError) throw appointmentError;
+        setSelectedAppointment(appointmentData as Appointment);
 
-      if (barberError) {
-        console.error("Error fetching barber:", barberError);
-      } else {
-        setBarber(fetchedBarber);
+        // Fetch services
+        if (appointmentData.service_ids.length > 0) {
+          const {data: servicesData, error: servicesError} = await supabase.from("services").select("*").in("id", appointmentData.service_ids);
+
+          if (servicesError) throw servicesError;
+          setServices(servicesData);
+        }
+
+        // Fetch barber
+        const {data: barberData, error: barberError} = await supabase.from("barbers").select("*").eq("id", appointmentData.barber_id).single();
+
+        if (barberError) throw barberError;
+        setBarber(barberData);
+      } catch (error) {
+        console.error("Error fetching appointment details:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load appointment details",
+          variant: "destructive",
+        });
       }
     };
 
     fetchDetails();
-  }, [selectedAppointment, supabase]);
+  }, [appointmentId, supabase]);
 
   if (!selectedAppointment) {
     return (
-      <Card className="overflow-hidden">
-        <CardHeader className="pb-3">
-          <CardTitle>Select an appointment to see details</CardTitle>
-          <CardDescription className="max-w-lg text-balance leading-relaxed">
-            Click on an appointment from the list to view its details.
-          </CardDescription>
-        </CardHeader>
-      </Card>
+      <div className="p-4">
+        <h2 className="text-lg font-semibold">Loading appointment details...</h2>
+      </div>
     );
   }
 
@@ -73,11 +93,11 @@ export function AppointmentDetails() {
     try {
       startTransition(async () => {
         await deleteAppointment(selectedAppointment.id);
-        removeAppointment(selectedAppointment.id);
         toast({
           title: "Appointment cancelled",
           description: "The appointment has been successfully cancelled.",
         });
+        onClose?.();
       });
     } catch (error) {
       toast({
@@ -91,8 +111,8 @@ export function AppointmentDetails() {
   };
 
   return (
-    <Card className="overflow-hidden">
-      <CardHeader className="flex flex-row items-start bg-muted/50">
+    <div className="overflow-hidden">
+      <div className="flex flex-row items-start bg-muted/50 p-6">
         <div className="grid gap-0.5">
           <CardTitle className="group flex items-center gap-2 text-lg">
             Appointment Details
@@ -125,7 +145,7 @@ export function AppointmentDetails() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </CardHeader>
+      </div>
       <CardContent className="p-6 text-sm">
         <div className="grid gap-3">
           <div className="font-semibold">Appointment Details</div>
@@ -228,6 +248,6 @@ export function AppointmentDetails() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Card>
+    </div>
   );
 }
