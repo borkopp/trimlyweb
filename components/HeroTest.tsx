@@ -1,20 +1,18 @@
 import React from "react";
 import WordPullUp from "./ui/word-pull-up";
 import Link from "next/link";
+import {Button} from "./ui/button";
+import {CalendarScript} from "./CalendarScript";
 
 export function BackgroundBeamsDemo() {
   return (
     <div className="h-[35rem] w-full rounded-md bg-background p-10  lg:p-20 relative flex flex-col items-center justify-center antialiased">
       <div className="max-w-2xl mx-auto relative z-10">
         <WordPullUp
-          className="relative text-5xl md:text-6xl lg:text-7xl bg-clip-text mt text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 text-center font-inter font-extrabold"
+          className="relative max-w-xl text-5xl md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 text-center font-inter font-bold"
           words="The upgrade for your barbershop"
         />
-        <p
-          data-aos="fade-up"
-          data-aos-delay="300"
-          data-aos-duration="1000"
-          className="text-neutral-500 text-[1.4rem] max-w-xl mx-auto mt-10 text-center font-lato relative">
+        <p data-aos="fade-up" data-aos-delay="300" className="text-neutral-500 text-[1.2rem] max-w-xl mx-auto mt-10 text-center font-inter relative">
           Branded app for your business, without paying thousands. Stand out from the competition. Gain loyal customers.
         </p>
         <div className="flex flex-row gap-4 justify-center mt-12">
@@ -30,7 +28,7 @@ export function BackgroundBeamsDemo() {
             <Link href="#pricing">Check pricing</Link>
             <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
           </Button> */}
-          <Link href="#solution">
+          {/* <Link href="#solution">
             <button
               data-aos="fade-up"
               data-aos-delay="300"
@@ -53,9 +51,26 @@ export function BackgroundBeamsDemo() {
                 Check pricing
               </span>
             </button>
+          </Link> */}
+
+          <Link href="#solution">
+            <Button data-aos="fade-up" data-aos-delay="300" className="px-8">
+              Learn more
+            </Button>
           </Link>
+          <Button
+            data-aos="fade-up"
+            data-aos-delay="400"
+            variant="secondary"
+            className="px-8"
+            data-cal-link="fadely/30min"
+            data-cal-namespace="30min"
+            data-cal-config='{"layout":"month_view"}'>
+            Book a call
+          </Button>
         </div>
       </div>
+      <CalendarScript />
     </div>
   );
 }
