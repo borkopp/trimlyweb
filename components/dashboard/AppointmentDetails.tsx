@@ -1,10 +1,9 @@
 "use client";
 import React, {useEffect, useState} from "react";
-import {useAppointments} from "@/components/dashboard/AppointmentsContext";
 import {createClient} from "@/utils/supabase/client";
-import {Clock, Copy, MoreVertical, Users} from "lucide-react";
+import {Calendar, Clock, Copy, MoreVertical, Users} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {CardContent, CardDescription, CardFooter, CardTitle} from "@/components/ui/card";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {Separator} from "@/components/ui/separator";
 import {Database} from "@/database.types";
@@ -121,7 +120,16 @@ export function AppointmentDetails({appointmentId, onClose}: Props) {
               <span className="sr-only">Copy Appointment ID</span>
             </Button>
           </CardTitle>
-          <CardDescription>Date: {selectedAppointment.date}</CardDescription>
+          <CardDescription className="flex flex-row gap-2 text-sm">
+            <span className="flex items-center gap-1">
+              <Calendar className="h-4 w-4" />
+              {selectedAppointment.date}
+            </span>
+            <span className="flex items-center gap-1">
+              <Clock className="h-4 w-4" />
+              {selectedAppointment.time.slice(0, 5)}
+            </span>
+          </CardDescription>
         </div>
         <div className="ml-auto flex items-center gap-1">
           <Button size="sm" variant="outline" className="h-8 gap-1">
