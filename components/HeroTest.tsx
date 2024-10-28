@@ -4,10 +4,10 @@ import Link from "next/link";
 
 export function BackgroundBeamsDemo() {
   return (
-    <div className="h-[35rem] w-full rounded-md bg-background relative flex flex-col items-center justify-center antialiased">
+    <div className="h-[35rem] w-full rounded-md bg-background p-10  lg:p-20 relative flex flex-col items-center justify-center antialiased">
       <div className="max-w-2xl mx-auto relative z-10">
         <WordPullUp
-          className="relative text-5xl md:text-7xl bg-clip-text mt text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 text-center font-inter font-extrabold"
+          className="relative text-5xl md:text-6xl lg:text-7xl bg-clip-text mt text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 text-center font-inter font-extrabold"
           words="The upgrade for your barbershop"
         />
         <p

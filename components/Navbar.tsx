@@ -1,16 +1,18 @@
 "use client";
 
-import React from "react";
+import React, {useState} from "react";
 import Link from "next/link";
 import {usePathname, useRouter} from "next/navigation";
 import {Button} from "./ui/button";
 import {createClient} from "@/utils/supabase/client";
 import {signOut} from "@/app/(auth)/actions";
+import {Menu, X} from "lucide-react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = React.useState<any>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   React.useEffect(() => {
     const supabase = createClient();
@@ -31,6 +33,7 @@ export default function Navbar() {
       const element = document.querySelector(path);
       element?.scrollIntoView({behavior: "smooth"});
     }
+    setIsMenuOpen(false); // Close menu after navigation
   };
 
   const navItems = [
@@ -46,7 +49,14 @@ export default function Navbar() {
         <Link href="/" className="font-ff text-2xl cursor-pointer text-primary">
           fadely
         </Link>
-        <div>
+
+        {/* Mobile menu button */}
+        <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        {/* Desktop navigation */}
+        <div className="hidden md:flex">
           {navItems.map((item) => (
             <Link key={item.label} href={item.href} onClick={(e) => (item.href.startsWith("#") ? handleNavigation(e, item.href) : null)}>
               <Button
@@ -58,7 +68,25 @@ export default function Navbar() {
             </Link>
           ))}
         </div>
-        <div className="flex gap-2 items-center">
+
+        {/* Mobile navigation */}
+        {isMenuOpen && (
+          <div className="absolute top-16 left-0 right-0 bg-black/90 p-4 md:hidden">
+            {navItems.map((item) => (
+              <Link key={item.label} href={item.href} onClick={(e) => (item.href.startsWith("#") ? handleNavigation(e, item.href) : null)}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`text-sm w-full justify-start mb-2 ${pathname === item.href ? "text-primary" : "text-neutral-500 hover:text-primary"}`}>
+                  {item.label}
+                </Button>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* User actions */}
+        <div className="hidden md:flex gap-2 items-center">
           {user ? (
             <>
               <form action={signOut}>

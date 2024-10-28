@@ -55,7 +55,7 @@ export default async function DashboardHeader() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href="#">Dashboard</Link>
+              <div>Bruno&apos;s Barbershop</div>
             </BreadcrumbLink>
           </BreadcrumbItem>
         </BreadcrumbList>
