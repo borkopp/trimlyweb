@@ -113,13 +113,7 @@ export function AppointmentDetails({appointmentId, onClose}: Props) {
     <div className="overflow-hidden">
       <div className="flex flex-row items-start bg-muted/50 p-6">
         <div className="grid gap-0.5">
-          <CardTitle className="group flex items-center gap-2 text-lg">
-            Appointment Details
-            <Button size="icon" variant="outline" className="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100">
-              <Copy className="h-3 w-3" />
-              <span className="sr-only">Copy Appointment ID</span>
-            </Button>
-          </CardTitle>
+          <CardTitle className="group flex items-center gap-2 text-lg">Appointment Details</CardTitle>
           <CardDescription className="flex flex-row gap-2 text-sm">
             <span className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
@@ -144,9 +138,8 @@ export function AppointmentDetails({appointmentId, onClose}: Props) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Edit</DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-red-500">
-                Cancel
+                Cancel Appointment
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>View Client History</DropdownMenuItem>
