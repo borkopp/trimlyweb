@@ -1,7 +1,7 @@
 "use client";
 import Faq from "@/components/Faq";
 import HeroMockup from "@/components/HeroMockup";
-import {BackgroundBeamsDemo} from "@/components/HeroTest";
+import {Hero} from "@/components/HeroTest";
 import ProblemSection from "@/components/ProblemSection";
 import SolutionSection from "@/components/SolutionSection";
 import {FeaturesSection} from "@/components/features-new";
@@ -21,8 +21,8 @@ export default function Home() {
   return (
     <main>
       <div className="relative">
-        <div className="space-y-10">
-          <BackgroundBeamsDemo />
+        <div className="space-y-10 pt-20">
+          <Hero />
           <HeroMockup />
         </div>
         <BackgroundBeams />

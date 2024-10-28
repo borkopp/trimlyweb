@@ -2,15 +2,12 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import ScrollToTopButton from "@/components/ui/scroll-to-top-button";
 
-export default function MainLayout({
-  children, // will be a page or nested layout
-}: {
-  children: React.ReactNode;
-}) {
+export default function MainLayout({children}: {children: React.ReactNode}) {
   return (
-    <section>
+    <section className="relative min-h-screen">
+      {/* Remove the padding div and place Navbar directly */}
       <Navbar />
-      {children}
+      <main>{children}</main>
       <Footer />
       <ScrollToTopButton />
     </section>
