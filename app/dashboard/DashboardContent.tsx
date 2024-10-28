@@ -141,7 +141,12 @@ export default async function DashboardContent() {
               </Tabs>
             </div>
             <div>
-              <AppointmentDetails />
+              <Card className="overflow-hidden">
+                <CardHeader className="pb-3">
+                  <CardTitle>Select an appointment</CardTitle>
+                  <CardDescription>Click on an appointment from the list to view its details.</CardDescription>
+                </CardHeader>
+              </Card>
             </div>
           </main>
         </div>

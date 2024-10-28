@@ -189,7 +189,7 @@ export default function CalendarClient({initialAppointments}: Props) {
           />
         </main>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-3xl">
+          <DialogContent className="max-w-3xl p-0">
             <AppointmentDetails appointmentId={selectedAppointmentId} onClose={() => setIsDialogOpen(false)} />
           </DialogContent>
         </Dialog>
