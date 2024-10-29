@@ -1,12 +1,26 @@
 "use client";
 import {useState} from "react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Calendar, Mail, Phone} from "lucide-react";
-import {InlineWidget} from "react-calendly";
+import {Calendar, Mail, Phone, Send} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {Label} from "@/components/ui/label";
+import {CalendarScript} from "@/components/CalendarScript";
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    console.log(formData);
+  };
+
   return (
     <div className="container mx-auto px-4 py-12 md:py-24 lg:py-32 max-w-4xl">
       <div className="space-y-4 items-center text-center mb-24">
@@ -18,54 +32,78 @@ export default function ContactPage() {
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Contact Information</CardTitle>
-            <CardDescription>Reach out to us directly</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <Mail className="h-5 w-5 text-muted-foreground" />
-              <span>contact@fadely.app</span>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Phone className="h-5 w-5 text-muted-foreground" />
-              <span className="text-muted-foreground text-sm uppercase">soon</span>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Contact Information</CardTitle>
+              <CardDescription>Reach out to us directly</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <Mail className="h-5 w-5 text-muted-foreground" />
+                <span>contact@fadely.app</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Phone className="h-5 w-5 text-muted-foreground" />
+                <span className="text-muted-foreground text-sm uppercase">soon</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Schedule a Meeting</CardTitle>
+              <CardDescription>Book a time that works for you</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button className="w-full" data-cal-link="fadely/30min" data-cal-namespace="30min" data-cal-config='{"layout":"month_view"}'>
+                <Calendar className="w-4 h-4 mr-2" />
+                Schedule a Call
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Schedule a Meeting</CardTitle>
-            <CardDescription>Book a time that works for you</CardDescription>
+            <CardTitle>Send us a Message</CardTitle>
+            <CardDescription>We&apos;ll get back to you as soon as possible</CardDescription>
           </CardHeader>
           <CardContent>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="default">
-                  <Calendar className="w-4 h-4 mr-2" />
-                  Schedule
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-background rounded-lg p-4">
-                <DialogHeader>
-                  <DialogTitle>Schedule a Meeting</DialogTitle>
-                </DialogHeader>
-                <InlineWidget
-                  url="https://calendly.com/borko-petrevski"
-                  styles={{height: "630px", minWidth: "320px", borderRadius: "10px"}}
-                  pageSettings={{
-                    backgroundColor: "1a1a1a",
-                    textColor: "ffffff",
-                    primaryColor: "ea580b",
-                  }}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" placeholder="Your name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your@email.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
                 />
-              </DialogContent>
-            </Dialog>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="message">Message</Label>
+                <Textarea
+                  id="message"
+                  placeholder="Your message"
+                  className="min-h-[120px]"
+                  value={formData.message}
+                  onChange={(e) => setFormData({...formData, message: e.target.value})}
+                />
+              </div>
+              <Button type="submit" className="w-full">
+                <Send className="w-4 h-4 mr-2" />
+                Send Message
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </div>
+      <CalendarScript />
     </div>
   );
 }
