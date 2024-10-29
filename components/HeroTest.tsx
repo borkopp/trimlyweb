@@ -9,7 +9,7 @@ export function Hero() {
     <div className="h-[35rem] w-full rounded-md bg-background p-10 lg:p-20 relative flex flex-col items-center justify-center antialiased">
       <div className="max-w-2xl mx-auto relative z-10">
         <WordPullUp
-          className="relative max-w-xl text-5xl md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 text-center font-inter font-bold"
+          className="relative max-w-xl text-5xl md:text-6xl tracking-normal lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 text-center font-inter font-bold"
           words="The upgrade for your barbershop"
         />
         <p data-aos="fade-up" data-aos-delay="300" className="text-neutral-500 text-[1.2rem] max-w-xl mx-auto mt-10 text-center font-inter relative">

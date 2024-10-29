@@ -1,12 +1,14 @@
 "use client";
 import {useState} from "react";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Calendar, Mail, Phone, Send} from "lucide-react";
+import {Calendar, Mail, MapPin, Phone, Send} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Label} from "@/components/ui/label";
 import {CalendarScript} from "@/components/CalendarScript";
+import {BackgroundBeams} from "@/components/ui/background-beams";
+import {InstagramLogoIcon} from "@radix-ui/react-icons";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -32,7 +34,7 @@ export default function ContactPage() {
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">
-        <div className="space-y-8">
+        <div className="space-y-8 z-10">
           <Card>
             <CardHeader>
               <CardTitle>Contact Information</CardTitle>
@@ -47,10 +49,18 @@ export default function ContactPage() {
                 <Phone className="h-5 w-5 text-muted-foreground" />
                 <span className="text-muted-foreground text-sm uppercase">soon</span>
               </div>
+              <div className="flex items-center space-x-3">
+                <InstagramLogoIcon className="h-5 w-5 text-muted-foreground" />
+                <span className="text-muted-foreground text-sm uppercase">soon</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <MapPin className="h-5 w-5 text-muted-foreground" />
+                <span className="text-muted-foreground text-sm uppercase">soon</span>
+              </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="z-10">
             <CardHeader>
               <CardTitle>Schedule a Meeting</CardTitle>
               <CardDescription>Book a time that works for you</CardDescription>
@@ -64,7 +74,7 @@ export default function ContactPage() {
           </Card>
         </div>
 
-        <Card>
+        <Card className="z-10">
           <CardHeader>
             <CardTitle>Send us a Message</CardTitle>
             <CardDescription>We&apos;ll get back to you as soon as possible</CardDescription>
@@ -104,6 +114,7 @@ export default function ContactPage() {
         </Card>
       </div>
       <CalendarScript />
+      <BackgroundBeams />
     </div>
   );
 }

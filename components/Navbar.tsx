@@ -15,7 +15,6 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Add scroll listener
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -45,7 +44,7 @@ export default function Navbar() {
       const element = document.querySelector(path);
       element?.scrollIntoView({behavior: "smooth"});
     }
-    setIsMenuOpen(false); // Close menu after navigation
+    setIsMenuOpen(false);
   };
 
   const navItems = [
