@@ -81,6 +81,7 @@ export default function Footer() {
         </div>
         <div className="border-t border-secondary-foreground/10 mt-12 pt-8 text-center text-sm">
           <p>&copy; {new Date().getFullYear()} fadely. All rights reserved.</p>
+          <p className="text-xs text-secondary-foreground/50 mt-2">Website is currently under development.</p>
         </div>
       </div>
     </footer>
