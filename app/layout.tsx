@@ -29,8 +29,52 @@ const filmfiction = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "fadely",
-  description: "Branded app for your barbershop.",
+  metadataBase: new URL("https://fadely.app"),
+  title: {
+    default: "Fadely - Branded Barbershop Management System",
+    template: "%s | Fadely",
+  },
+  description: "Get your branded mobile app for your barbershop with Fadely. Book appointments, manage staff, and grow your business.",
+  keywords: ["barbershop software", "barber appointment system", "barbershop management", "fadely", "barber booking app"],
+  authors: [{name: "Fadely"}],
+  creator: "Fadely",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://fadely.app",
+    title: "Fadely - Branded Barbershop Management System",
+    description: "Get your branded mobile app & dashboard for your barbershop with Fadely. Book appointments, manage staff, and grow your business.",
+    siteName: "Fadely",
+    images: [
+      {
+        url: "/og-image.png", // Make sure to create this image
+        width: 1200,
+        height: 630,
+        alt: "Fadely - Barbershop Management System",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Fadely - Branded Barbershop Management System",
+    description: "Get your branded mobile app & dashboard for your barbershop with Fadely. Book appointments, manage staff, and grow your business.",
+    images: ["/og-image.png"],
+    creator: "@fadely",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "EyZ98HXkARVHeRpTS-zPRAOM4fXa_nuaLBs_KjOXZI4", // Add your Google Search Console verification code
+  },
 };
 
 export default function RootLayout({
