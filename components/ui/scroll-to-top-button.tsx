@@ -1,6 +1,6 @@
 "use client";
+import { ArrowUp } from "lucide-react";
 import {useState, useEffect} from "react";
-import {FaArrowUp} from "react-icons/fa";
 
 const ScrollToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -32,7 +32,7 @@ const ScrollToTopButton = () => {
         <button
           onClick={scrollToTop}
           className="fixed bottom-5 right-5 bg-primary text-white p-3 rounded-full shadow-lg hover:bg-primary/80 transition-all duration-300 z-50">
-          <FaArrowUp />
+          <ArrowUp />
         </button>
       )}
     </>

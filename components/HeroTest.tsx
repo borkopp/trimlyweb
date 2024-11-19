@@ -3,7 +3,7 @@ import WordPullUp from "./ui/word-pull-up";
 import Link from "next/link";
 import {Button} from "./ui/button";
 import {CalendarScript} from "./CalendarScript";
-
+import { ArrowRightIcon, Calendar } from "lucide-react";
 export function Hero() {
   return (
     <div className="h-[35rem] w-full rounded-md bg-background p-10 lg:p-20 relative flex flex-col items-center justify-center antialiased">
@@ -61,8 +61,10 @@ export function Hero() {
           <Button
             data-aos="fade-up"
             data-aos-delay="400"
-            variant="secondary"
-            className="px-8"
+            variant="expandIcon"
+            iconPlacement="right"
+            Icon={ArrowRightIcon}
+            className="px-8 bg-secondary hover:bg-secondary/80"
             data-cal-link="fadely/30min"
             data-cal-namespace="30min"
             data-cal-config='{"layout":"month_view"}'>
