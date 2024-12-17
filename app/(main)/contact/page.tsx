@@ -43,7 +43,7 @@ export default function ContactPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-muted-foreground" />
-                <span>contact@fadely.app</span>
+                <span className="text-muted-foreground text-sm uppercase">soon</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-muted-foreground" />
