@@ -4,8 +4,55 @@ import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} f
 import {CheckIcon} from "lucide-react";
 import ShinyButton from "./ui/shiny-button";
 import {CalendarScript} from "./CalendarScript";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {loadStripe} from "@stripe/stripe-js";
+import {createSubscription} from "@/app/actions/subscription-actions";
+import {useToast} from "@/components/ui/use-toast";
+
+// Initialize Stripe
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 export default function Pricing() {
+  const [isLoading, setIsLoading] = useState(false);
+  const {toast} = useToast();
+  const router = useRouter();
+
+  const handleSubscribe = async (plan: "basic" | "plus") => {
+    try {
+      setIsLoading(true);
+
+      // Create the subscription and get the client secret
+      const {clientSecret} = await createSubscription(plan);
+
+      const stripe = await stripePromise;
+      if (!stripe) throw new Error("Stripe failed to initialize");
+
+      // Confirm the payment with Stripe
+      const {error} = await stripe.confirmCardPayment(clientSecret);
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Subscription started!",
+        description: "Your 30-day trial has begun. Enjoy Fadely!",
+      });
+
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Subscription error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to start subscription. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <section id="pricing" className="w-full mx-auto relative overflow-hidden">
       {/* Background effects */}
@@ -115,7 +162,16 @@ export default function Pricing() {
               </ul>
             </CardContent>
             <CardFooter>
-              <ShinyButton text="Get started" />
+              <Button className="w-full" variant="outline" disabled={isLoading} onClick={() => handleSubscribe("plus")}>
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary self-center"></div>
+                    <span className="ml-2">Processing...</span>
+                  </div>
+                ) : (
+                  "Start 30-day trial"
+                )}
+              </Button>
             </CardFooter>
           </Card>
           {/* End Card */}

@@ -3,6 +3,7 @@ import DashboardHeader from "@/components/DashboardHeader";
 import {createClient} from "@/utils/supabase/server";
 import {TooltipProvider} from "@radix-ui/react-tooltip";
 import {redirect} from "next/navigation";
+import QueryClientProvider from "@/components/providers/QueryClientProvider";
 
 export default async function DashboardLayout({children}: {children: React.ReactNode}) {
   const supabase = createClient();
@@ -16,14 +17,16 @@ export default async function DashboardLayout({children}: {children: React.React
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/20">
-      <TooltipProvider>
-        <DashboardSidebar />
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
-          <DashboardHeader />
-          {children}
-        </div>
-      </TooltipProvider>
-    </div>
+    <QueryClientProvider>
+      <div className="flex min-h-screen w-full flex-col bg-muted/20">
+        <TooltipProvider>
+          <DashboardSidebar />
+          <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+            <DashboardHeader />
+            {children}
+          </div>
+        </TooltipProvider>
+      </div>
+    </QueryClientProvider>
   );
 }

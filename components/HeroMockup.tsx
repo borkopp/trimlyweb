@@ -33,7 +33,7 @@ export default function HeroMockup() {
               } z-20`}
             />
             {/* Center iPhone */}
-            <Iphone15Pro src="/images/homescreen.png" className="absolute z-30 scale-75" />
+            <Iphone15Pro src="/images/homescreen-new.png" className="absolute z-30 scale-75" />
             {/* Right iPhone */}
             <Iphone15Pro
               src="/images/barber-dashboard.png"
