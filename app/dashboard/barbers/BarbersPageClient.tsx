@@ -230,7 +230,7 @@ export default function BarbersPageClient({
 
   return (
     <div className="container mx-auto py-10">
-      <Breadcrumb className="hidden md:flex mb-4">
+      <Breadcrumb className="hidden md:flex">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
@@ -243,18 +243,23 @@ export default function BarbersPageClient({
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="flex justify-between items-center mb-6">
-        <div className="relative w-64">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search barbers..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-8" />
+
+      <div className="flex items-center justify-between py-10">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-3xl font-bold tracking-tight">Barbers</h1>
+          <p className="text-muted-foreground">Manage and view all your barbers in one place.</p>
+        </div>
+        <div>
+          <Dialog open={isAddBarberDialogOpen} onOpenChange={setIsAddBarberDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Add New Barber
+              </Button>
+            </DialogTrigger>
+          </Dialog>
         </div>
         <Dialog open={isAddBarberDialogOpen} onOpenChange={setIsAddBarberDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant={"outline"}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add New Barber
-            </Button>
-          </DialogTrigger>
           <DialogContent className="max-w-3xl">
             <DialogHeader>
               <DialogTitle>Add New Barber</DialogTitle>

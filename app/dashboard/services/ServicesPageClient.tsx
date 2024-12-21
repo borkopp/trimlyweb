@@ -215,7 +215,7 @@ export default function ServicesPageClient({
 
   return (
     <div className="container mx-auto py-10">
-      <Breadcrumb className="hidden md:flex mb-4">
+      <Breadcrumb className="hidden md:flex ">
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
@@ -228,12 +228,110 @@ export default function ServicesPageClient({
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <Card>
-        <CardHeader>
-          <CardTitle>Services</CardTitle>
-          <CardDescription>Manage your barbershop&apos;s services</CardDescription>
-        </CardHeader>
-        <CardContent>
+      <div className="py-10">
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-3xl font-bold tracking-tight">Services</h1>
+            <p className="text-muted-foreground">Manage and view all your services in one place.</p>
+          </div>
+          <div>
+            <Dialog open={openAddDialog} onOpenChange={setOpenAddDialog}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add New Service
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Service</DialogTitle>
+                  <DialogDescription>Add a new service to your barbershop.</DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Name
+                    </Label>
+                    <div className="col-span-3">
+                      <Input
+                        id="name"
+                        value={newService.name}
+                        onChange={(e) => setNewService({...newService, name: e.target.value})}
+                        className={errors.name ? "border-red-500" : ""}
+                      />
+                      {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="description" className="text-right">
+                      Description
+                    </Label>
+                    <div className="col-span-3">
+                      <Textarea
+                        id="description"
+                        value={newService.description || ""}
+                        onChange={(e) => setNewService({...newService, description: e.target.value})}
+                        className={errors.description ? "border-red-500" : ""}
+                      />
+                      {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="duration" className="text-right">
+                      Duration (min)
+                    </Label>
+                    <div className="col-span-3">
+                      <Input
+                        id="duration"
+                        type="number"
+                        value={newService.time}
+                        onChange={(e) => setNewService({...newService, time: parseInt(e.target.value)})}
+                        className={errors.time ? "border-red-500" : ""}
+                      />
+                      {errors.time && <p className="text-red-500 text-sm mt-1">{errors.time}</p>}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="price" className="text-right">
+                      Price ($)
+                    </Label>
+                    <div className="col-span-3">
+                      <Input
+                        id="price"
+                        type="number"
+                        value={newService.price}
+                        onChange={(e) => setNewService({...newService, price: parseFloat(e.target.value)})}
+                        className={errors.price ? "border-red-500" : ""}
+                      />
+                      {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="image" className="text-right">
+                      Image
+                    </Label>
+                    <Input id="image" type="file" onChange={(e) => handleImageUpload(e, false)} className="col-span-3" />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button disabled={isAddingService} className={isAddingService ? "opacity-50 cursor-not-allowed" : ""} onClick={handleAddService}>
+                    {isAddingService ? (
+                      <div className="flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white self-center"></div>
+                        <span className="ml-2">Adding...</span>
+                      </div>
+                    ) : (
+                      "Add Service"
+                    )}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+      </div>
+      <Card className="bg-transparent border-none">
+        <CardContent className="p-0">
           <ScrollArea className="max-h-[90vh] w-full rounded-md border">
             <Table>
               <TableHeader>
@@ -367,100 +465,6 @@ export default function ServicesPageClient({
             </Table>
           </ScrollArea>
         </CardContent>
-        <CardFooter>
-          <Dialog open={openAddDialog} onOpenChange={setOpenAddDialog}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Add New Service
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Service</DialogTitle>
-                <DialogDescription>Add a new service to your barbershop.</DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Name
-                  </Label>
-                  <div className="col-span-3">
-                    <Input
-                      id="name"
-                      value={newService.name}
-                      onChange={(e) => setNewService({...newService, name: e.target.value})}
-                      className={errors.name ? "border-red-500" : ""}
-                    />
-                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-                  </div>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="description" className="text-right">
-                    Description
-                  </Label>
-                  <div className="col-span-3">
-                    <Textarea
-                      id="description"
-                      value={newService.description || ""}
-                      onChange={(e) => setNewService({...newService, description: e.target.value})}
-                      className={errors.description ? "border-red-500" : ""}
-                    />
-                    {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
-                  </div>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="duration" className="text-right">
-                    Duration (min)
-                  </Label>
-                  <div className="col-span-3">
-                    <Input
-                      id="duration"
-                      type="number"
-                      value={newService.time}
-                      onChange={(e) => setNewService({...newService, time: parseInt(e.target.value)})}
-                      className={errors.time ? "border-red-500" : ""}
-                    />
-                    {errors.time && <p className="text-red-500 text-sm mt-1">{errors.time}</p>}
-                  </div>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="price" className="text-right">
-                    Price ($)
-                  </Label>
-                  <div className="col-span-3">
-                    <Input
-                      id="price"
-                      type="number"
-                      value={newService.price}
-                      onChange={(e) => setNewService({...newService, price: parseFloat(e.target.value)})}
-                      className={errors.price ? "border-red-500" : ""}
-                    />
-                    {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
-                  </div>
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="image" className="text-right">
-                    Image
-                  </Label>
-                  <Input id="image" type="file" onChange={(e) => handleImageUpload(e, false)} className="col-span-3" />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button disabled={isAddingService} className={isAddingService ? "opacity-50 cursor-not-allowed" : ""} onClick={handleAddService}>
-                  {isAddingService ? (
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white self-center"></div>
-                      <span className="ml-2">Adding...</span>
-                    </div>
-                  ) : (
-                    "Add Service"
-                  )}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </CardFooter>
       </Card>
 
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>

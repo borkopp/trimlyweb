@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useMemo} from "react";
+import {useState, useMemo, useEffect} from "react";
 import {Input} from "@/components/ui/input";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {Badge} from "@/components/ui/badge";
@@ -11,6 +11,14 @@ import {Mail, Search, User} from "lucide-react";
 import Link from "next/link";
 import {formatDate} from "@/utils/dateUtils";
 import {Database} from "@/database.types";
+import {createClient} from "@/utils/supabase/client";
+
+async function getImageUrl(path: string) {
+  if (!path) return null;
+  const supabase = createClient();
+  const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
+  return data?.publicUrl || null;
+}
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"] & {
   appointments: (Database["public"]["Tables"]["appointments"]["Row"] & {
@@ -24,6 +32,24 @@ interface ClientsPageClientProps {
 
 export default function ClientsPageClient({initialClients}: ClientsPageClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [avatarUrls, setAvatarUrls] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    async function loadAvatarUrls() {
+      const urls: Record<string, string> = {};
+      for (const client of initialClients) {
+        if (client.avatar_url) {
+          const url = await getImageUrl(client.avatar_url);
+          if (url) {
+            urls[client.id] = url;
+          }
+        }
+      }
+      setAvatarUrls(urls);
+    }
+
+    loadAvatarUrls();
+  }, [initialClients]);
 
   // Filter and sort clients based on search query
   const filteredClients = useMemo(() => {
@@ -39,24 +65,23 @@ export default function ClientsPageClient({initialClients}: ClientsPageClientPro
   }, [initialClients, searchQuery]);
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="mb-8">
-        <Breadcrumb className="mb-6">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link href="/dashboard">Dashboard</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Clients</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-
+    <div className="mb-8 container mx-auto">
+      <Breadcrumb className=" mt-10">
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link href="/dashboard">Dashboard</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator />
+          <BreadcrumbItem>
+            <BreadcrumbPage>Clients</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+      <div className="py-10">
         <div className="flex items-center justify-between">
-          <div>
+          <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-bold tracking-tight">Clients</h1>
             <p className="text-muted-foreground">Manage and view all your clients in one place.</p>
           </div>
@@ -100,7 +125,7 @@ export default function ClientsPageClient({initialClients}: ClientsPageClientPro
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={client.avatar_url || ""} />
+                        <AvatarImage src={client.id ? avatarUrls[client.id] : ""} />
                         <AvatarFallback>
                           <User className="h-4 w-4" />
                         </AvatarFallback>

@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
@@ -13,10 +13,21 @@ import {Calendar, Clock, Mail, Phone, Scissors, User} from "lucide-react";
 import Link from "next/link";
 import {formatDate, formatTime} from "@/utils/dateUtils";
 import {Database} from "@/database.types";
+import {createClient} from "@/utils/supabase/client";
+
+async function getImageUrl(path: string) {
+  if (!path) return null;
+  const supabase = createClient();
+  const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
+  return data?.publicUrl || null;
+}
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+type Barber = Database["public"]["Tables"]["barbers"]["Row"] & {
+  avatar_url?: string | null;
+};
 type Appointment = Database["public"]["Tables"]["appointments"]["Row"] & {
-  barber: Database["public"]["Tables"]["barbers"]["Row"];
+  barber: Barber;
   services: Database["public"]["Tables"]["services"]["Row"][];
 };
 
@@ -27,6 +38,32 @@ interface ClientProfilePageProps {
 
 export default function ClientProfilePage({profile, appointments}: ClientProfilePageProps) {
   const [activeTab, setActiveTab] = useState("overview");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [barberAvatars, setBarberAvatars] = useState<Record<number, string>>({});
+
+  useEffect(() => {
+    async function loadAvatarUrls() {
+      // Load client avatar
+      if (profile.avatar_url) {
+        const url = await getImageUrl(profile.avatar_url);
+        setAvatarUrl(url);
+      }
+
+      // Load barber avatars
+      const urls: Record<number, string> = {};
+      for (const apt of appointments) {
+        if (apt.barber?.avatar_url) {
+          const url = await getImageUrl(apt.barber.avatar_url);
+          if (url) {
+            urls[apt.barber.id] = url;
+          }
+        }
+      }
+      setBarberAvatars(urls);
+    }
+
+    loadAvatarUrls();
+  }, [profile.avatar_url, appointments]);
 
   // Calculate statistics
   const totalAppointments = appointments.length;
@@ -72,7 +109,7 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
           <CardContent className="p-6">
             <div className="flex items-start gap-6">
               <Avatar className="h-20 w-20">
-                <AvatarImage src={profile.avatar_url || ""} />
+                <AvatarImage src={avatarUrl || ""} />
                 <AvatarFallback>
                   <User className="h-10 w-10" />
                 </AvatarFallback>
@@ -185,6 +222,7 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8">
+                            <AvatarImage src={appointment.barber?.id ? barberAvatars[appointment.barber.id] : ""} />
                             <AvatarFallback>
                               <User className="h-4 w-4" />
                             </AvatarFallback>
