@@ -29,7 +29,7 @@ export default function Pricing() {
       if (!stripe) throw new Error("Stripe failed to initialize");
 
       // Confirm the payment with Stripe
-      const {error} = await stripe.confirmCardPayment(clientSecret);
+      const {error} = await stripe.confirmCardPayment(clientSecret as string);
 
       if (error) {
         throw error;
