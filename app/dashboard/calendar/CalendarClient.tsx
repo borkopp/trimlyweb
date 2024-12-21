@@ -11,10 +11,10 @@ import {formatDate, formatTime} from "@/utils/dateUtils";
 import {createClient} from "@/utils/supabase/client";
 import "./calendar-dark.css";
 import {ChevronLeft, ChevronRight} from "lucide-react";
-import {Dialog, DialogContent} from "@/components/ui/dialog";
 import {AppointmentDetails} from "@/components/dashboard/AppointmentDetails";
 import {AppointmentsProvider} from "@/components/dashboard/AppointmentsContext";
 import {useToast} from "@/components/ui/use-toast";
+import {CalendarSheet} from "./CalendarSheet";
 
 // Setup the localizer for react-big-calendar
 const localizer = momentLocalizer(moment);
@@ -29,7 +29,6 @@ export default function CalendarClient({initialAppointments}: Props) {
   const [view, setView] = React.useState<"day" | "week">("day");
   const [appointments, setAppointments] = React.useState<Appointment[]>(initialAppointments);
   const [selectedAppointmentId, setSelectedAppointmentId] = React.useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   const supabase = createClient();
 
@@ -129,12 +128,10 @@ export default function CalendarClient({initialAppointments}: Props) {
 
   const handleEventClick = (event: any) => {
     setSelectedAppointmentId(event.resource.id);
-    setIsDialogOpen(true);
   };
 
   const handleAppointmentClick = (appointmentId: string) => {
     setSelectedAppointmentId(appointmentId);
-    setIsDialogOpen(true);
   };
 
   return (
@@ -182,17 +179,16 @@ export default function CalendarClient({initialAppointments}: Props) {
                 borderBottom: "none",
                 borderRight: "none",
                 borderRadius: "0px",
-                fontFamily: "Inter, sans-serif",
+                fontFamily: "Montserrat, sans-serif",
               },
             })}
             onSelectEvent={handleEventClick}
           />
         </main>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-3xl p-0">
-            <AppointmentDetails appointmentId={selectedAppointmentId} onClose={() => setIsDialogOpen(false)} />
-          </DialogContent>
-        </Dialog>
+        <CalendarSheet 
+          selectedAppointmentId={selectedAppointmentId}
+          onClose={() => setSelectedAppointmentId(null)}
+        />
       </div>
     </AppointmentsProvider>
   );

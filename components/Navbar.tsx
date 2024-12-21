@@ -96,21 +96,21 @@ export default function Navbar() {
           {user ? (
             <>
               <form action={signOut}>
-                <Button variant="link" size="sm" className="text-sm" type="submit">
+                <Button variant="link" size="sm" className="text-xs" type="submit">
                   Sign Out
                 </Button>
               </form>
               <Link href="/dashboard">
-                <Button variant="default" size="sm">
+                <div className="px-2 py-2 bg-primary text-xs text-white rounded-md">
                   Dashboard
-                </Button>
+                </div>
               </Link>
             </>
           ) : (
             <Link href="/login">
-              <Button size="sm" variant="default">
-                Log in
-              </Button>
+              <div className="px-3 py-2 bg-primary text-xs text-white rounded-md hover:bg-primary/80" >
+                Login
+              </div>
             </Link>
           )}
         </div>

@@ -113,3 +113,53 @@ export async function getBarberAvailability(barberId: number, date: string) {
   console.log('Available slots after filtering:', availableSlots);
   return availableSlots;
 }
+
+export async function rescheduleAppointment(
+  appointmentId: string,
+  date: string,
+  time: string,
+) {
+  const supabase = createClient();
+
+  try {
+    const { data: appointment, error: appointmentError } = await supabase
+      .from('appointments')
+      .select('*')
+      .eq('id', appointmentId)
+      .single();
+
+    if (appointmentError) throw appointmentError;
+
+    // Use the existing book_appointment function to check availability
+    const { data: bookingCheck, error: bookingError } = await supabase
+      .rpc('book_appointment', {
+        p_user_id: appointment.user_id,
+        p_barber_id: appointment.barber_id,
+        p_service_ids: appointment.service_ids,
+        p_date: date,
+        p_time: time,
+        p_is_guest: appointment.is_guest || false,
+        p_check_only: true
+      });
+
+    if (bookingError) throw bookingError;
+
+    // If the slot is available, update the appointment
+    const { error: updateError } = await supabase
+      .from('appointments')
+      .update({
+        date,
+        time: time,
+        end_time: bookingCheck.end_time
+      })
+      .eq('id', appointmentId);
+
+    if (updateError) throw updateError;
+
+    revalidatePath('/dashboard');
+    return { success: true };
+  } catch (error) {
+    console.error('Error rescheduling appointment:', error);
+    return { success: false, error: 'Failed to reschedule appointment' };
+  }
+}

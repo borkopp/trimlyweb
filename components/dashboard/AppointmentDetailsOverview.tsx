@@ -12,6 +12,7 @@ import {toast} from "@/components/ui/use-toast";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useTransition} from "react";
 import {deleteAppointment} from "@/app/actions/appointment-actions";
+import {RescheduleDialog} from "./RescheduleDialog";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
@@ -21,6 +22,7 @@ export function AppointmentDetailsOverview() {
   const [services, setServices] = useState<Service[]>([]);
   const [barber, setBarber] = useState<Barber | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isRescheduleDialogOpen, setIsRescheduleDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const supabase = createClient();
 
@@ -106,7 +108,7 @@ export function AppointmentDetailsOverview() {
           </CardDescription>
         </div>
         <div className="ml-auto flex items-center gap-1">
-          <Button size="sm" variant="outline" className="h-8 gap-1">
+          <Button size="sm" variant="outline" className="h-8 gap-1" onClick={() => setIsRescheduleDialogOpen(true)}>
             <Clock className="h-3.5 w-3.5" />
             <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">Reschedule</span>
           </Button>
@@ -118,11 +120,11 @@ export function AppointmentDetailsOverview() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-red-500">
+              <DropdownMenuItem onClick={() => setIsRescheduleDialogOpen(true)}>Reschedule</DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-red-500" onClick={() => setIsDeleteDialogOpen(true)}>
                 Cancel Appointment
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>View Client History</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -229,6 +231,18 @@ export function AppointmentDetailsOverview() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {/* Reschedule Dialog */}
+      {selectedAppointment && (
+        <RescheduleDialog
+          open={isRescheduleDialogOpen}
+          onOpenChange={setIsRescheduleDialogOpen}
+          appointment={selectedAppointment}
+          onReschedule={() => {
+            // Refresh the appointment list
+            window.location.reload();
+          }}
+        />
+      )}
     </Card>
   );
 }

@@ -6,6 +6,8 @@ import CalendarClient from "./CalendarClient";
 import {Skeleton} from "@/components/ui/skeleton";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {Appointment} from "@/types/appointments";
+import {Sheet, SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
+import {AppointmentDetails} from "@/components/dashboard/AppointmentDetails";
 
 export const dynamic = "force-dynamic";
 

@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {createClient} from "@/utils/supabase/client";
 import {Calendar, Clock, Copy, MoreVertical, Users} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {CardContent, CardDescription, CardFooter, CardTitle} from "@/components/ui/card";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {Separator} from "@/components/ui/separator";
 import {Database} from "@/database.types";
@@ -12,42 +12,54 @@ import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, Di
 import {useTransition} from "react";
 import {deleteAppointment} from "@/app/actions/appointment-actions";
 import {Appointment} from "@/types/appointments";
+import {RescheduleDialog} from "./RescheduleDialog";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
 
 type Props = {
-  appointmentId: string | null;
+  appointmentId?: string | null;
+  appointment?: Appointment | null;
   onClose?: () => void;
+  variant?: "card" | "dialog";
+  onAppointmentDeleted?: (id: number) => void;
 };
 
-export function AppointmentDetails({appointmentId, onClose}: Props) {
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+export function AppointmentDetails({appointmentId, appointment: initialAppointment, onClose, variant = "card", onAppointmentDeleted}: Props) {
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(initialAppointment || null);
   const [services, setServices] = useState<Service[]>([]);
   const [barber, setBarber] = useState<Barber | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isRescheduleDialogOpen, setIsRescheduleDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const supabase = createClient();
 
   useEffect(() => {
     const fetchDetails = async () => {
-      if (!appointmentId) return;
+      if (!appointmentId && !initialAppointment) return;
 
       try {
-        // Fetch appointment with client details
-        const {data: appointmentData, error: appointmentError} = await supabase
-          .from("appointments")
-          .select(
-            `
-            *,
-            client:profiles!appointments_user_id_fkey(full_name, email)
-          `
-          )
-          .eq("id", appointmentId)
-          .single();
+        let appointmentData = initialAppointment;
 
-        if (appointmentError) throw appointmentError;
-        setSelectedAppointment(appointmentData as Appointment);
+        if (appointmentId) {
+          // Fetch appointment with client details if we only have the ID
+          const {data, error: appointmentError} = await supabase
+            .from("appointments")
+            .select(
+              `
+              *,
+              client:profiles!appointments_user_id_fkey(full_name, email)
+            `
+            )
+            .eq("id", appointmentId)
+            .single();
+
+          if (appointmentError) throw appointmentError;
+          appointmentData = data as Appointment;
+          setSelectedAppointment(appointmentData);
+        }
+
+        if (!appointmentData) return;
 
         // Fetch services
         if (appointmentData.service_ids.length > 0) {
@@ -73,9 +85,21 @@ export function AppointmentDetails({appointmentId, onClose}: Props) {
     };
 
     fetchDetails();
-  }, [appointmentId, supabase]);
+  }, [appointmentId, initialAppointment, supabase]);
 
   if (!selectedAppointment) {
+    if (variant === "card") {
+      return (
+        <Card className="overflow-hidden">
+          <CardHeader className="pb-3">
+            <CardTitle>Select an appointment to see details</CardTitle>
+            <CardDescription className="max-w-lg text-balance leading-relaxed">
+              Click on an appointment from the list to view its details.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      );
+    }
     return (
       <div className="p-4">
         <h2 className="text-lg font-semibold">Loading appointment details...</h2>
@@ -92,6 +116,7 @@ export function AppointmentDetails({appointmentId, onClose}: Props) {
     try {
       startTransition(async () => {
         await deleteAppointment(selectedAppointment.id);
+        onAppointmentDeleted?.(selectedAppointment.id);
         toast({
           title: "Appointment cancelled",
           description: "The appointment has been successfully cancelled.",
@@ -109,130 +134,101 @@ export function AppointmentDetails({appointmentId, onClose}: Props) {
     }
   };
 
-  return (
-    <div className="overflow-hidden">
-      <div className="flex flex-row items-start bg-muted/50 p-6">
-        <div className="grid gap-0.5">
-          <CardTitle className="group flex items-center gap-2 text-lg">Appointment Details</CardTitle>
-          <CardDescription className="flex flex-row gap-2 text-sm">
-            <span className="flex items-center gap-1">
-              <Calendar className="h-4 w-4" />
-              {selectedAppointment.date}
-            </span>
-            <span className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
-              {selectedAppointment.time.slice(0, 5)}
-            </span>
-          </CardDescription>
-        </div>
-        <div className="ml-auto flex items-center gap-1">
-          <Button size="sm" variant="outline" className="h-8 gap-1">
-            <Clock className="h-3.5 w-3.5" />
-            <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">Reschedule</span>
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="outline" className="h-8 w-8">
-                <MoreVertical className="h-3.5 w-3.5" />
-                <span className="sr-only">More</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsDeleteDialogOpen(true)} className="text-red-500">
-                Cancel Appointment
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>View Client History</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+  const content = (
+    <>
+      <div className="grid gap-0.5">
+        <CardTitle className="group flex items-center gap-2 text-lg">
+          Appointment #{selectedAppointment.id}
+          <div className="ml-auto flex items-center gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="icon" variant="outline" className="h-8 w-8">
+                  <MoreVertical className="h-3.5 w-3.5" />
+                  <span className="sr-only">More</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setIsRescheduleDialogOpen(true)}>Reschedule</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem className="text-red-500" onClick={() => setIsDeleteDialogOpen(true)}>
+                  Cancel Appointment
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </CardTitle>
+        <CardDescription className="flex flex-row gap-2 text-sm">
+          <span className="flex items-center gap-1">
+            <Calendar className="h-4 w-4" />
+            {selectedAppointment.date}
+          </span>
+          <span className="flex items-center gap-1">
+            <Clock className="h-4 w-4" />
+            {selectedAppointment.time.slice(0, 5)}
+          </span>
+        </CardDescription>
       </div>
-      <CardContent className="p-6 text-sm">
-        <div className="grid gap-3">
-          <div className="font-semibold">Appointment Details</div>
-          <ul className="grid gap-3">
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Service</span>
-              <span>{services.map((service) => service.name).join(", ")}</span>
-            </li>
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Duration</span>
-              <span>{totalDuration} minutes</span>
-            </li>
-          </ul>
-          <Separator className="my-2" />
-          <ul className="grid gap-3">
-            <li className="flex items-center justify-between">
-              <span className="text-muted-foreground">Price</span>
-              <span>€ {totalPrice.toFixed(2)}</span>
-            </li>
-            <li className="flex items-center justify-between font-semibold">
-              <span className="text-muted-foreground">Total</span>
-              <span>€ {totalPrice.toFixed(2)}</span>
-            </li>
-          </ul>
-        </div>
-        <Separator className="my-4" />
-        <div className="grid gap-3">
-          <div className="font-semibold">Client Information</div>
-          <dl className="grid gap-3">
-            <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Name</dt>
-              <dd>{selectedAppointment.client.full_name}</dd>
-            </div>
-            <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Email</dt>
-              <dd>
-                <a className="hover:underline" href={`mailto:${selectedAppointment.client.email}`}>
-                  {selectedAppointment.client.email}
-                </a>
-              </dd>
-            </div>
-            <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Phone</dt>
-              <dd>
-                <a className="hover:underline" href={`tel:+1234567890`}>
-                  +1 234 567 890
-                </a>
-              </dd>
-            </div>
-          </dl>
-        </div>
-        <Separator className="my-4" />
-        <div className="grid gap-3">
-          <div className="font-semibold">Barber Information</div>
-          <dl className="grid gap-3">
-            <div className="flex items-center justify-between">
-              <dt className="flex items-center gap-1 text-muted-foreground">
-                <Users className="h-4 w-4" />
-                Barber
-              </dt>
-              <dd>{barber?.name}</dd>
-            </div>
-          </dl>
-        </div>
-      </CardContent>
-      <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
-        <div className="text-xs text-muted-foreground">
-          Created <time dateTime={selectedAppointment.date}>{selectedAppointment.date}</time>
-        </div>
-        {/* <Pagination className="ml-auto mr-0 w-auto">
-          <PaginationContent>
-            <PaginationItem>
-              <Button size="icon" variant="outline" className="h-6 w-6">
-                <ChevronLeft className="h-3.5 w-3.5" />
-                <span className="sr-only">Previous Appointment</span>
-              </Button>
-            </PaginationItem>
-            <PaginationItem>
-              <Button size="icon" variant="outline" className="h-6 w-6">
-                <ChevronRight className="h-3.5 w-3.5" />
-                <span className="sr-only">Next Appointment</span>
-              </Button>
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination> */}
-      </CardFooter>
+
+      <div className="mt-6 grid gap-3">
+        <div className="font-semibold">Appointment Details</div>
+        <ul className="grid gap-3">
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Service</span>
+            <span>{services.map((service) => service.name).join(", ")}</span>
+          </li>
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Duration</span>
+            <span>{totalDuration} minutes</span>
+          </li>
+        </ul>
+        <Separator className="my-2" />
+        <ul className="grid gap-3">
+          <li className="flex items-center justify-between">
+            <span className="text-muted-foreground">Price</span>
+            <span>€ {totalPrice.toFixed(2)}</span>
+          </li>
+          <li className="flex items-center justify-between font-semibold">
+            <span className="text-muted-foreground">Total</span>
+            <span>€ {totalPrice.toFixed(2)}</span>
+          </li>
+        </ul>
+      </div>
+
+      <Separator className="my-4" />
+
+      <div className="grid gap-3">
+        <div className="font-semibold">Client Information</div>
+        <dl className="grid gap-3">
+          <div className="flex items-center justify-between">
+            <dt className="text-muted-foreground">Name</dt>
+            <dd>{selectedAppointment.client.full_name}</dd>
+          </div>
+          <div className="flex items-center justify-between">
+            <dt className="text-muted-foreground">Email</dt>
+            <dd>
+              <a className="hover:underline" href={`mailto:${selectedAppointment.client.email}`}>
+                {selectedAppointment.client.email}
+              </a>
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <Separator className="my-4" />
+
+      <div className="grid gap-3">
+        <div className="font-semibold">Barber Information</div>
+        <dl className="grid gap-3">
+          <div className="flex items-center justify-between">
+            <dt className="flex items-center gap-1 text-muted-foreground">
+              <Users className="h-4 w-4" />
+              Barber
+            </dt>
+            <dd>{barber?.name}</dd>
+          </div>
+        </dl>
+      </div>
+
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -243,12 +239,38 @@ export function AppointmentDetails({appointmentId, onClose}: Props) {
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
               No, Keep Appointment
             </Button>
-            <Button variant="destructive" onClick={handleRemoveAppointment}>
+            <Button variant="destructive" onClick={handleRemoveAppointment} disabled={isPending}>
               Yes, Cancel Appointment
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+
+      <RescheduleDialog
+        open={isRescheduleDialogOpen}
+        onOpenChange={setIsRescheduleDialogOpen}
+        appointment={selectedAppointment}
+        onReschedule={() => {
+          setIsRescheduleDialogOpen(false);
+          window.location.reload();
+        }}
+      />
+    </>
   );
+
+  if (variant === "card") {
+    return (
+      <Card className="overflow-hidden">
+        <CardHeader className="relative flex flex-row items-start bg-muted/50">{content}</CardHeader>
+        <CardContent className="p-6 text-sm">{/* The rest of the content */}</CardContent>
+        <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
+          <div className="text-xs text-muted-foreground">
+            Created <time dateTime={selectedAppointment.date}>{selectedAppointment.date}</time>
+          </div>
+        </CardFooter>
+      </Card>
+    );
+  }
+
+  return <div className="relative p-6">{content}</div>;
 }

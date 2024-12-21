@@ -1,6 +1,9 @@
 import {Suspense} from "react";
 import DashboardContent from "./DashboardContent";
 import {Skeleton} from "@/components/ui/skeleton";
+import {AppointmentsProvider} from "@/components/dashboard/AppointmentsContext";
+import {AppointmentDetails} from "@/components/dashboard/AppointmentDetails";
+import {useToast} from "@/components/ui/use-toast";
 
 export default function DashboardPage() {
   return (
@@ -29,7 +32,11 @@ function DashboardSkeleton() {
             <Skeleton className="h-10 w-full" /> {/* Tabs skeleton */}
             <Skeleton className="h-[400px] w-full" /> {/* Appointments section skeleton */}
           </div>
-          <Skeleton className="h-[600px] w-full" /> {/* Appointment details skeleton */}
+          <div className="col-span-4 space-y-4 lg:col-span-1">
+            <AppointmentsProvider>
+              <AppointmentDetails variant="card" />
+            </AppointmentsProvider>
+          </div>
         </main>
       </div>
     </div>
