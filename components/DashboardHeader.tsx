@@ -14,8 +14,9 @@ import {Input} from "@/components/ui/input";
 import {Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 import {LogoutButton} from "@/components/LogoutButton";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {Search, Scissors, User} from "lucide-react";
+import {Scissors, User} from "lucide-react";
 import {DashboardSidebarContent} from "./DashboardSidebarContent";
+import {ClientSearch} from "@/components/ClientSearch";
 
 async function getImageUrl(path: string) {
   const supabase = createClient();
@@ -61,8 +62,7 @@ export default async function DashboardHeader() {
         </BreadcrumbList>
       </Breadcrumb>
       <div className="relative ml-auto flex-1 md:grow-0">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input type="search" placeholder="Search clients..." className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]" />
+        <ClientSearch />
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

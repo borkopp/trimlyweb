@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
-import {Calendar, Home, LineChart, Scissors, Settings, Users2} from "lucide-react";
+import {Calendar, Home, LineChart, Scissors, Settings, User, User2, Users, Users2} from "lucide-react";
 import {usePathname} from "next/navigation";
 
 export function DashboardSidebar() {
@@ -32,6 +32,19 @@ export function DashboardSidebar() {
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
+              href="/dashboard/clients"
+              className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+                pathname === "/dashboard/clients" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
+              } transition-colors hover:text-foreground md:h-8 md:w-8`}>
+              <Users2 className="h-5 w-5" />
+              <span className="sr-only">Clients</span>
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent side="right">Clients</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link
               href="/dashboard/calendar"
               className={`flex h-9 w-9 items-center justify-center rounded-lg ${
                 pathname === "/dashboard/calendar" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
@@ -49,12 +62,13 @@ export function DashboardSidebar() {
               className={`flex h-9 w-9 items-center justify-center rounded-lg ${
                 pathname === "/dashboard/barbers" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
               } transition-colors hover:text-foreground md:h-8 md:w-8`}>
-              <Users2 className="h-5 w-5" />
+              <User2 className="h-5 w-5" />
               <span className="sr-only">Barbers</span>
             </Link>
           </TooltipTrigger>
           <TooltipContent side="right">Barbers</TooltipContent>
         </Tooltip>
+
         <Tooltip>
           <TooltipTrigger asChild>
             <Link
