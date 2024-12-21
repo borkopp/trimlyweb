@@ -44,20 +44,30 @@ export async function createAppointment(appointmentData: {
 export async function getBarberServices(barberId: number): Promise<Service[]> {
   const supabase = createClient()
   
+  type ServiceResponse = {
+    services: Service
+  }
+
   const { data, error } = await supabase
     .from('barber_services')
     .select(`
-      service_id,
-      services (*)
+      services (
+        id,
+        name,
+        description,
+        price,
+        time,
+        image
+      )
     `)
-    .eq('barber_id', barberId)
+    .eq('barber_id', barberId) as { data: ServiceResponse[] | null, error: any }
 
   if (error) {
     console.error('Error fetching barber services:', error)
     return []
   }
 
-  return data.map(item => item.services)
+  return data?.map(item => item.services) ?? []
 }
 
 export async function deleteAppointment(id: number) {
