@@ -1,21 +1,38 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
+import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 
 export async function login(formData: FormData) {
   const supabase = createClient();
+  const headersList = headers();
+  const barbershopId = headersList.get("x-barbershop-id");
 
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { data: signInData, error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
     return { error: error.message };
+  }
+
+  // If we're on a barbershop subdomain, verify the user belongs to this barbershop
+  if (barbershopId && signInData.user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('barbershop_id')
+      .eq('id', signInData.user.id)
+      .single();
+
+    if (!profile || profile.barbershop_id !== parseInt(barbershopId)) {
+      // Sign out the user since they don't belong to this barbershop
+      await supabase.auth.signOut();
+      return { error: "You don't have access to this barbershop" };
+    }
   }
 
   redirect("/dashboard");

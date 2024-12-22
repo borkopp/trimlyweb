@@ -36,6 +36,7 @@ export default async function DashboardHeader() {
   }
 
   const {data: profile} = await supabase.from("profiles").select("*").eq("id", user.id).single();
+  const {data: barbershop} = await supabase.from("barbershops").select("*").eq("id", profile?.barbershop_id).single();
 
   const avatarUrl = profile?.avatar_url ? await getImageUrl(profile.avatar_url) : null;
 
@@ -56,7 +57,7 @@ export default async function DashboardHeader() {
         <BreadcrumbList>
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <div>Bruno&apos;s Barbershop</div>
+              <div>{barbershop?.name}</div>
             </BreadcrumbLink>
           </BreadcrumbItem>
         </BreadcrumbList>

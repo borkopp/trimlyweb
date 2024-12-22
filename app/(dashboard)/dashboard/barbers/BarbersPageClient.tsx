@@ -1,6 +1,6 @@
 "use client";
 import {useState, useEffect, useCallback} from "react";
-import {Search, Plus, X, MoreVertical, Trash, User} from "lucide-react";
+import {Search, Plus, X, MoreVertical, Trash, User, Scissors} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
@@ -17,6 +17,7 @@ import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPa
 import Link from "next/link";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {createClient} from "@/utils/supabase/client";
+import {EmptyState} from "@/components/ui/empty-state";
 
 type Barber = Database["public"]["Tables"]["barbers"]["Row"] & {services: Service[]};
 type Service = Database["public"]["Tables"]["services"]["Row"];
@@ -436,6 +437,18 @@ export default function BarbersPageClient({
           </Card>
         ))}
       </div>
+
+      {filteredBarbers.length === 0 && (
+        <Card>
+          <EmptyState
+            icon={Scissors}
+            title="No barbers found"
+            description={
+              searchTerm ? `No barbers match your search "${searchTerm}"` : "Get started by adding your first barber. Your barbers will appear here."
+            }
+          />
+        </Card>
+      )}
     </div>
   );
 }

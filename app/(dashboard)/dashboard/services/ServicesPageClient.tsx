@@ -1,6 +1,6 @@
 "use client";
 import {useCallback, useEffect, useState} from "react";
-import {Trash2, Plus, Pencil} from "lucide-react";
+import {Trash2, Plus, Pencil, Scissors} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
@@ -29,6 +29,8 @@ import {
 import {Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage} from "@/components/ui/breadcrumb";
 import Link from "next/link";
 import {Skeleton} from "@/components/ui/skeleton";
+import {headers} from "next/headers";
+import {EmptyState} from "@/components/ui/empty-state";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 
@@ -42,9 +44,11 @@ async function getImageUrl(path: string) {
 export default function ServicesPageClient({
   initialServices,
   refreshServices,
+  barbershopId,
 }: {
   initialServices: Service[];
   refreshServices: () => Promise<Service[]>;
+  barbershopId: number;
 }) {
   const router = useRouter();
   const [services, setServices] = useState<Service[]>(initialServices);
@@ -57,6 +61,7 @@ export default function ServicesPageClient({
     time: 0,
     price: 0,
     image: "",
+    barbershop_id: barbershopId,
   });
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -132,7 +137,7 @@ export default function ServicesPageClient({
     }
 
     try {
-      const addedService = await addService(newService);
+      const addedService = await addService({...newService, barbershop_id: barbershopId});
       setServices([...services, addedService]);
       setNewService({
         name: "",
@@ -140,6 +145,7 @@ export default function ServicesPageClient({
         time: 0,
         price: 0,
         image: "",
+        barbershop_id: barbershopId,
       });
       toast({
         title: "Service added",
@@ -163,7 +169,7 @@ export default function ServicesPageClient({
     setIsEditingService(true);
     try {
       if (editingService) {
-        await updateService(editingService);
+        await updateService({...editingService, barbershop_id: barbershopId});
         const updatedServices = await refreshServices();
         setServices(updatedServices);
         toast({
@@ -463,6 +469,14 @@ export default function ServicesPageClient({
                 ))}
               </TableBody>
             </Table>
+
+            {services.length === 0 && (
+              <EmptyState
+                icon={Scissors}
+                title="No services found"
+                description="Get started by adding your first service. Your services will appear here."
+              />
+            )}
           </ScrollArea>
         </CardContent>
       </Card>

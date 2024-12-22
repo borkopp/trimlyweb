@@ -1,19 +1,27 @@
 import { createClient } from "@/utils/supabase/server";
 import { Database } from "@/database.types";
+import { headers } from "next/headers";
 
 type Appointment = Database['public']['Tables']['appointments']['Row'];
 type Service = Database['public']['Tables']['services']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
 type Barber = Database['public']['Tables']['barbers']['Row'];
 
+async function getBarbershopId(): Promise<string | null> {
+  const headersList = headers();
+  return headersList.get("x-barbershop-id");
+}
+
 export async function getTodayAppointments(): Promise<Appointment[]> {
   const supabase = createClient();
   const today = new Date().toISOString().split('T')[0];
+  const barbershopId = await getBarbershopId();
 
   const { data, error } = await supabase
     .from('appointments')
     .select('*')
     .eq('date', today)
+    .eq('barbershop_id', barbershopId)
     .order('time');
 
   if (error) {
@@ -29,11 +37,13 @@ export async function getCurrentMonthRevenue(): Promise<number> {
   const now = new Date();
   const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
   const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+  const barbershopId = await getBarbershopId();
 
   // Fetch appointments for the current month
   const { data: appointments, error: appointmentsError } = await supabase
     .from('appointments')
     .select('id, service_ids')
+    .eq('barbershop_id', barbershopId)
     .gte('date', firstDayOfMonth)
     .lte('date', lastDayOfMonth);
 
@@ -42,15 +52,17 @@ export async function getCurrentMonthRevenue(): Promise<number> {
     return 0;
   }
 
-  // Fetch all services
+  // Fetch all services for this barbershop
   const { data: services, error: servicesError } = await supabase
     .from('services')
-    .select('id, price');
+    .select('id, price')
+    .eq('barbershop_id', barbershopId);
 
   if (servicesError) {
     console.error('Error fetching services:', servicesError);
     return 0;
   }
+
   // Create a map of service id to price for quick lookup
   const servicePrices = new Map(services.map((service) => [service.id, service.price]));
 
@@ -70,7 +82,7 @@ export async function getWeekAppointments(): Promise<(Appointment & { client: Pr
     const today = new Date();
     const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay()).toISOString().split('T')[0];
     const endOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() + 6).toISOString().split('T')[0];
-  
+    const barbershopId = await getBarbershopId();
   
     const { data, error } = await supabase
       .from('appointments')
@@ -78,6 +90,7 @@ export async function getWeekAppointments(): Promise<(Appointment & { client: Pr
         *,
         client:profiles!appointments_user_id_fkey(full_name, email)
       `)
+      .eq('barbershop_id', barbershopId)
       .gte('date', startOfWeek)
       .lte('date', endOfWeek)
       .order('date', { ascending: true })
@@ -86,19 +99,22 @@ export async function getWeekAppointments(): Promise<(Appointment & { client: Pr
     if (error) {
       console.error('Error fetching week appointments:', error);
       return [];
-  }
+    }
 
-  return data as (Appointment & { client: Profile })[];
+    return data as (Appointment & { client: Profile })[];
 }
 
 export async function getDayAppointments(date: string): Promise<(Appointment & { client: Profile })[]> {
   const supabase = createClient();
+  const barbershopId = await getBarbershopId();
+
   const { data, error } = await supabase
     .from('appointments')
     .select(`
       *,
       client:profiles!appointments_user_id_fkey(full_name, email)
     `)
+    .eq('barbershop_id', barbershopId)
     .eq('date', date)
     .order('time', { ascending: true });
 
@@ -112,9 +128,12 @@ export async function getDayAppointments(date: string): Promise<(Appointment & {
 
 export async function getServicesById(ids: number[]): Promise<Service[]> {
     const supabase = createClient();
+    const barbershopId = await getBarbershopId();
+
     const { data, error } = await supabase
       .from("services")
       .select("*")
+      .eq('barbershop_id', barbershopId)
       .in("id", ids);
   
     if (error) {
@@ -123,13 +142,16 @@ export async function getServicesById(ids: number[]): Promise<Service[]> {
     }
   
     return data;
-  }
+}
   
-  export async function getBarberById(id: number): Promise<Barber | null> {
+export async function getBarberById(id: number): Promise<Barber | null> {
     const supabase = createClient();
+    const barbershopId = await getBarbershopId();
+
     const { data, error } = await supabase
       .from("barbers")
       .select("*")
+      .eq('barbershop_id', barbershopId)
       .eq("id", id)
       .single();
   
@@ -139,32 +161,38 @@ export async function getServicesById(ids: number[]): Promise<Service[]> {
     }
   
     return data;
-  }
+}
 
-  export async function getBarbers(): Promise<Barber[]> {
+export async function getBarbers(): Promise<Barber[]> {
     const supabase = createClient();
+    const barbershopId = await getBarbershopId();
+
     const { data, error } = await supabase
       .from("barbers")
-      .select("*");
+      .select("*")
+      .eq('barbershop_id', barbershopId);
 
     if (error) {
       console.error('Error fetching barbers:', error);
       return [];
     }
     return data;
-  }
+}
 
-  export async function getServices(): Promise<Service[]> {
+export async function getServices(): Promise<Service[]> {
     const supabase = createClient();
+    const barbershopId = await getBarbershopId();
+
     const { data, error } = await supabase
       .from("services")
-      .select("*");
+      .select("*")
+      .eq('barbershop_id', barbershopId);
 
     if (error) {
       console.error('Error fetching services:', error);
       return [];
     }
     return data;
-  }
+}
 
 

@@ -1,6 +1,5 @@
 "use client";
 import React, {useEffect, useState} from "react";
-import {createClient} from "@/utils/supabase/client";
 import {Calendar, Clock, Copy, MoreVertical, Users} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
@@ -10,7 +9,7 @@ import {Database} from "@/database.types";
 import {toast} from "@/components/ui/use-toast";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useTransition} from "react";
-import {deleteAppointment} from "@/app/actions/appointment-actions";
+import {deleteAppointment, getAppointmentDetails} from "@/app/actions/appointment-actions";
 import {Appointment} from "@/types/appointments";
 import {RescheduleDialog} from "./RescheduleDialog";
 
@@ -32,48 +31,25 @@ export function AppointmentDetails({appointmentId, appointment: initialAppointme
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isRescheduleDialogOpen, setIsRescheduleDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const supabase = createClient();
 
   useEffect(() => {
     const fetchDetails = async () => {
       if (!appointmentId && !initialAppointment) return;
 
       try {
-        let appointmentData = initialAppointment;
-
         if (appointmentId) {
-          // Fetch appointment with client details if we only have the ID
-          const {data, error: appointmentError} = await supabase
-            .from("appointments")
-            .select(
-              `
-              *,
-              client:profiles!appointments_user_id_fkey(full_name, email)
-            `
-            )
-            .eq("id", appointmentId)
-            .single();
-
-          if (appointmentError) throw appointmentError;
-          appointmentData = data as Appointment;
-          setSelectedAppointment(appointmentData);
+          console.log("Fetching appointment with ID:", appointmentId);
+          const details = await getAppointmentDetails(appointmentId);
+          setSelectedAppointment(details.appointment as Appointment);
+          setServices(details.services);
+          setBarber(details.barber);
+        } else if (initialAppointment) {
+          setSelectedAppointment(initialAppointment);
+          // Fetch services and barber details if needed
+          const details = await getAppointmentDetails(initialAppointment.id);
+          setServices(details.services);
+          setBarber(details.barber);
         }
-
-        if (!appointmentData) return;
-
-        // Fetch services
-        if (appointmentData.service_ids.length > 0) {
-          const {data: servicesData, error: servicesError} = await supabase.from("services").select("*").in("id", appointmentData.service_ids);
-
-          if (servicesError) throw servicesError;
-          setServices(servicesData);
-        }
-
-        // Fetch barber
-        const {data: barberData, error: barberError} = await supabase.from("barbers").select("*").eq("id", appointmentData.barber_id).single();
-
-        if (barberError) throw barberError;
-        setBarber(barberData);
       } catch (error) {
         console.error("Error fetching appointment details:", error);
         toast({
@@ -85,7 +61,7 @@ export function AppointmentDetails({appointmentId, appointment: initialAppointme
     };
 
     fetchDetails();
-  }, [appointmentId, initialAppointment, supabase]);
+  }, [appointmentId, initialAppointment]);
 
   if (!selectedAppointment) {
     if (variant === "card") {

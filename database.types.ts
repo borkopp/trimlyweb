@@ -12,6 +12,7 @@ export type Database = {
       appointments: {
         Row: {
           barber_id: number
+          barbershop_id: number
           cancellation_reason: string | null
           date: string
           duration: number | null
@@ -19,6 +20,7 @@ export type Database = {
           id: number
           is_archived: boolean | null
           is_cancelled: boolean
+          is_cancelled_by_barber: boolean
           service_ids: number[]
           temporary_user_id: number | null
           time: string
@@ -26,6 +28,7 @@ export type Database = {
         }
         Insert: {
           barber_id: number
+          barbershop_id?: number
           cancellation_reason?: string | null
           date: string
           duration?: number | null
@@ -33,6 +36,7 @@ export type Database = {
           id?: number
           is_archived?: boolean | null
           is_cancelled?: boolean
+          is_cancelled_by_barber?: boolean
           service_ids: number[]
           temporary_user_id?: number | null
           time: string
@@ -40,6 +44,7 @@ export type Database = {
         }
         Update: {
           barber_id?: number
+          barbershop_id?: number
           cancellation_reason?: string | null
           date?: string
           duration?: number | null
@@ -47,12 +52,20 @@ export type Database = {
           id?: number
           is_archived?: boolean | null
           is_cancelled?: boolean
+          is_cancelled_by_barber?: boolean
           service_ids?: number[]
           temporary_user_id?: number | null
           time?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "appointments_barber_id_fkey"
+            columns: ["barber_id"]
+            isOneToOne: false
+            referencedRelation: "barber_availability"
+            referencedColumns: ["barber_id"]
+          },
           {
             foreignKeyName: "appointments_barber_id_fkey"
             columns: ["barber_id"]
@@ -97,6 +110,13 @@ export type Database = {
             foreignKeyName: "barber_services_barber_id_fkey"
             columns: ["barber_id"]
             isOneToOne: false
+            referencedRelation: "barber_availability"
+            referencedColumns: ["barber_id"]
+          },
+          {
+            foreignKeyName: "barber_services_barber_id_fkey"
+            columns: ["barber_id"]
+            isOneToOne: false
             referencedRelation: "barbers"
             referencedColumns: ["id"]
           },
@@ -106,6 +126,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "services"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_barber_services_barber"
+            columns: ["barber_id"]
+            isOneToOne: false
+            referencedRelation: "barber_availability"
+            referencedColumns: ["barber_id"]
           },
           {
             foreignKeyName: "fk_barber_services_barber"
@@ -152,6 +179,13 @@ export type Database = {
             foreignKeyName: "barber_unavailability_barber_id_fkey"
             columns: ["barber_id"]
             isOneToOne: false
+            referencedRelation: "barber_availability"
+            referencedColumns: ["barber_id"]
+          },
+          {
+            foreignKeyName: "barber_unavailability_barber_id_fkey"
+            columns: ["barber_id"]
+            isOneToOne: false
             referencedRelation: "barbers"
             referencedColumns: ["id"]
           },
@@ -159,6 +193,7 @@ export type Database = {
       }
       barbers: {
         Row: {
+          barbershop_id: number
           description: string | null
           email: string | null
           id: number
@@ -167,6 +202,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          barbershop_id?: number
           description?: string | null
           email?: string | null
           id?: number
@@ -175,6 +211,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          barbershop_id?: number
           description?: string | null
           email?: string | null
           id?: number
@@ -192,7 +229,7 @@ export type Database = {
           },
         ]
       }
-      barbershop: {
+      barbershops: {
         Row: {
           closing_time: string | null
           description: string | null
@@ -201,6 +238,7 @@ export type Database = {
           name: string | null
           opening_time: string | null
           phone: string | null
+          subdomain: string
         }
         Insert: {
           closing_time?: string | null
@@ -210,6 +248,7 @@ export type Database = {
           name?: string | null
           opening_time?: string | null
           phone?: string | null
+          subdomain?: string
         }
         Update: {
           closing_time?: string | null
@@ -219,13 +258,94 @@ export type Database = {
           name?: string | null
           opening_time?: string | null
           phone?: string | null
+          subdomain?: string
+        }
+        Relationships: []
+      }
+      images: {
+        Row: {
+          barbershop_id: number
+          created_at: string
+          id: number
+          path: string
+          service_id: number | null
+          type: Database["public"]["Enums"]["image_type"] | null
+        }
+        Insert: {
+          barbershop_id: number
+          created_at?: string
+          id?: number
+          path: string
+          service_id?: number | null
+          type?: Database["public"]["Enums"]["image_type"] | null
+        }
+        Update: {
+          barbershop_id?: number
+          created_at?: string
+          id?: number
+          path?: string
+          service_id?: number | null
+          type?: Database["public"]["Enums"]["image_type"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "images_barbershop_id_fkey"
+            columns: ["barbershop_id"]
+            isOneToOne: false
+            referencedRelation: "barbershops"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "images_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          action_url: string | null
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          metadata: Json | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          metadata?: Json | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          metadata?: Json | null
+          title?: string
+          type?: string
+          user_id?: string
         }
         Relationships: []
       }
       profiles: {
         Row: {
           avatar_url: string | null
+          barbershop_id: number
           email: string | null
+          expo_push_token: string | null
           full_name: string | null
           id: string
           is_admin: boolean | null
@@ -235,7 +355,9 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          barbershop_id?: number
           email?: string | null
+          expo_push_token?: string | null
           full_name?: string | null
           id: string
           is_admin?: boolean | null
@@ -245,7 +367,9 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          barbershop_id?: number
           email?: string | null
+          expo_push_token?: string | null
           full_name?: string | null
           id?: string
           is_admin?: boolean | null
@@ -253,15 +377,7 @@ export type Database = {
           updated_at?: string | null
           username?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       service_appointments: {
         Row: {
@@ -298,6 +414,7 @@ export type Database = {
       }
       services: {
         Row: {
+          barbershop_id: number
           description: string | null
           id: number
           image: string | null
@@ -306,6 +423,7 @@ export type Database = {
           time: number
         }
         Insert: {
+          barbershop_id?: number
           description?: string | null
           id?: number
           image?: string | null
@@ -314,12 +432,52 @@ export type Database = {
           time: number
         }
         Update: {
+          barbershop_id?: number
           description?: string | null
           id?: number
           image?: string | null
           name?: string
           price?: number
           time?: number
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string
+          id: string
+          price_id: string
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          trial_end: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end: string
+          id?: string
+          price_id: string
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          trial_end: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string
+          id?: string
+          price_id?: string
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string
+          trial_end?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -352,7 +510,16 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      barber_availability: {
+        Row: {
+          barber_id: number | null
+          barbershop_id: number | null
+          date: string | null
+          is_available: boolean | null
+          slot_time: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       assign_barber_role:
@@ -378,7 +545,152 @@ export type Database = {
         }
         Returns: undefined
       }
+      book_appointment:
+        | {
+            Args: {
+              p_barber_id: number
+              p_user_id: string
+              p_barbershop_id: number
+              p_date: string
+              p_time: string
+              p_service_ids: number[]
+            }
+            Returns: number
+          }
+        | {
+            Args: {
+              p_user_id: string
+              p_barber_id: number
+              p_service_ids: number[]
+              p_date: string
+              p_time: string
+              p_is_guest?: boolean
+              p_check_only?: boolean
+            }
+            Returns: Json
+          }
+      bytea_to_text: {
+        Args: {
+          data: string
+        }
+        Returns: string
+      }
+      check_time_slot_availability: {
+        Args: {
+          p_barber_id: number
+          p_date: string
+          p_time: string
+          p_service_ids: number[]
+        }
+        Returns: boolean
+      }
+      cleanup_old_notifications: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       delete_user_account: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      http: {
+        Args: {
+          request: Database["public"]["CompositeTypes"]["http_request"]
+        }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_delete:
+        | {
+            Args: {
+              uri: string
+            }
+            Returns: Database["public"]["CompositeTypes"]["http_response"]
+          }
+        | {
+            Args: {
+              uri: string
+              content: string
+              content_type: string
+            }
+            Returns: Database["public"]["CompositeTypes"]["http_response"]
+          }
+      http_get:
+        | {
+            Args: {
+              uri: string
+            }
+            Returns: Database["public"]["CompositeTypes"]["http_response"]
+          }
+        | {
+            Args: {
+              uri: string
+              data: Json
+            }
+            Returns: Database["public"]["CompositeTypes"]["http_response"]
+          }
+      http_head: {
+        Args: {
+          uri: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_header: {
+        Args: {
+          field: string
+          value: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["http_header"]
+      }
+      http_list_curlopt: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          curlopt: string
+          value: string
+        }[]
+      }
+      http_patch: {
+        Args: {
+          uri: string
+          content: string
+          content_type: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_post:
+        | {
+            Args: {
+              uri: string
+              content: string
+              content_type: string
+            }
+            Returns: Database["public"]["CompositeTypes"]["http_response"]
+          }
+        | {
+            Args: {
+              uri: string
+              data: Json
+            }
+            Returns: Database["public"]["CompositeTypes"]["http_response"]
+          }
+      http_put: {
+        Args: {
+          uri: string
+          content: string
+          content_type: string
+        }
+        Returns: Database["public"]["CompositeTypes"]["http_response"]
+      }
+      http_reset_curlopt: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      http_set_curlopt: {
+        Args: {
+          curlopt: string
+          value: string
+        }
+        Returns: boolean
+      }
+      process_appointment_reminders: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -388,12 +700,53 @@ export type Database = {
         }
         Returns: undefined
       }
+      text_to_bytea: {
+        Args: {
+          data: string
+        }
+        Returns: string
+      }
+      urlencode:
+        | {
+            Args: {
+              data: Json
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              string: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              string: string
+            }
+            Returns: string
+          }
     }
     Enums: {
-      [_ in never]: never
+      image_type: "gallery" | "profile" | "service"
     }
     CompositeTypes: {
-      [_ in never]: never
+      http_header: {
+        field: string | null
+        value: string | null
+      }
+      http_request: {
+        method: unknown | null
+        uri: string | null
+        headers: Database["public"]["CompositeTypes"]["http_header"][] | null
+        content_type: string | null
+        content: string | null
+      }
+      http_response: {
+        status: number | null
+        content_type: string | null
+        headers: Database["public"]["CompositeTypes"]["http_header"][] | null
+        content: string | null
+      }
     }
   }
 }
@@ -478,4 +831,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

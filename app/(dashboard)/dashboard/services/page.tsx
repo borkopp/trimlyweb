@@ -1,11 +1,22 @@
 import {Suspense} from "react";
-import ServicesPage from "./ServicesPage";
+import ServicesPageClient from "./ServicesPageClient";
 import {Skeleton} from "@/components/ui/skeleton";
+import {headers} from "next/headers";
+import {getServices} from "@/app/actions/dashboard-actions";
 
-export default function Page() {
+export default async function Page() {
+  const headersList = headers();
+  const barbershopId = headersList.get("x-barbershop-id");
+
+  if (!barbershopId) {
+    throw new Error("No barbershop ID found");
+  }
+
+  const services = await getServices();
+
   return (
     <Suspense fallback={<ServicesSkeleton />}>
-      <ServicesPage />
+      <ServicesPageClient initialServices={services} barbershopId={parseInt(barbershopId)} refreshServices={getServices} />
     </Suspense>
   );
 }

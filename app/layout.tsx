@@ -6,6 +6,9 @@ import {ThemeProvider} from "@/components/theme-provider";
 import {Toaster} from "@/components/ui/toaster";
 import {SpeedInsights} from "@vercel/speed-insights/next";
 import {Analytics} from "@vercel/analytics/react";
+import {headers} from "next/headers";
+import {createClient} from "@/utils/supabase/server";
+import {BarbershopProvider} from "@/contexts/BarbershopContext";
 
 const inter = localFont({
   src: "../public/fonts/Inter-VariableFont_opsz,wght.ttf",
@@ -77,16 +80,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default async function RootLayout({children}: {children: React.ReactNode}) {
+  const headersList = headers();
+  const barbershopId = headersList.get("x-barbershop-id");
+
+  const supabase = createClient();
+
+  let barbershop = null;
+  if (barbershopId) {
+    const {data} = await supabase.from("barbershop").select("*").eq("id", barbershopId).single();
+    barbershop = data;
+  }
+
   return (
     <html lang="en">
       <body className={`${inter.variable} ${filmfiction.variable} ${montserrat.variable} ${lato.variable} font-inter`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          {children}
+          {barbershop ? <BarbershopProvider barbershop={barbershop}>{children}</BarbershopProvider> : children}
           <Toaster />
           <SpeedInsights />
           <Analytics />

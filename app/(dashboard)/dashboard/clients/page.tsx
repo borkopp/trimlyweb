@@ -2,6 +2,7 @@ import {createClient} from "@/utils/supabase/server";
 import ClientsPageClient from "./ClientsPageClient";
 import {notFound} from "next/navigation";
 import {Database} from "@/database.types";
+import {headers} from "next/headers";
 
 type ServiceAppointment = {
   services: Database["public"]["Tables"]["services"]["Row"];
@@ -17,9 +18,16 @@ type ClientWithAppointments = Database["public"]["Tables"]["profiles"]["Row"] & 
 
 export default async function ClientsPage() {
   const supabase = createClient();
+  const headersList = headers();
+  const barbershopId = headersList.get("x-barbershop-id");
 
-  // First get all barber user IDs
-  const {data: barbers} = await supabase.from("barbers").select("user_id");
+  if (!barbershopId) {
+    throw new Error("No barbershop ID found");
+  }
+
+  // First get all barber user IDs for this barbershop
+  const {data: barbers} = await supabase.from("barbers").select("user_id").eq("barbershop_id", parseInt(barbershopId));
+
   const barberIds = barbers?.map((b) => b.user_id).filter(Boolean) || [];
 
   // Fetch all clients (profiles) with their appointment counts and latest appointment
@@ -43,6 +51,7 @@ export default async function ClientsPage() {
       )
     `
     )
+    .eq("barbershop_id", parseInt(barbershopId))
     .not("id", "in", `(${barberIds.join(",")})`)
     .order("full_name");
 

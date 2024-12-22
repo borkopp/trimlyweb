@@ -6,6 +6,8 @@ This project is a modern web application designed for a barber shop to manage ap
 
 ## Important Notes
 
+Each barbershop will have its own dashboard, but its a one database. The barbershop id should be hardcoded in the codebase of the dashboard.
+
 It is important that you use the following technologies and practices:
 
 ## Technologies

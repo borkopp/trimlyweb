@@ -15,6 +15,7 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {cn} from "@/lib/utils";
 import {EventContentArg} from "@fullcalendar/core";
 import {Database} from "@/database.types";
+import {useBarbershop} from "@/contexts/BarbershopContext";
 
 type AppointmentRow = Database["public"]["Tables"]["appointments"]["Row"];
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
@@ -45,6 +46,8 @@ export default function CalendarClient({initialAppointments}: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [avatarUrls, setAvatarUrls] = useState<Record<string, string>>({});
   const supabase = createClient();
+  const {barbershop} = useBarbershop();
+  const [initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
     async function loadAvatarUrls() {
@@ -71,6 +74,11 @@ export default function CalendarClient({initialAppointments}: Props) {
 
   const fetchAppointments = useCallback(
     async (start: Date, end: Date) => {
+      if (initialLoad) {
+        setInitialLoad(false);
+        return;
+      }
+
       setIsLoading(true);
       const startDate = start.toISOString().split("T")[0];
       const endDate = end.toISOString().split("T")[0];
@@ -90,18 +98,11 @@ export default function CalendarClient({initialAppointments}: Props) {
             )
           `
           )
+          .eq("barbershop_id", barbershop?.id)
           .gte("date", startDate)
           .lte("date", endDate)
           .order("date", {ascending: true})
           .order("time", {ascending: true});
-
-        console.log("Supabase response:", {
-          status,
-          statusText,
-          error,
-          dataCount: data?.length || 0,
-          firstRecord: data?.[0],
-        });
 
         if (error) {
           console.error("Supabase error details:", {
@@ -150,7 +151,7 @@ export default function CalendarClient({initialAppointments}: Props) {
         setIsLoading(false);
       }
     },
-    [supabase, toast]
+    [supabase, toast, barbershop]
   );
 
   const events = useMemo(() => {

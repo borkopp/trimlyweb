@@ -1,6 +1,6 @@
 import {Suspense} from "react";
 import {createServerComponentClient} from "@supabase/auth-helpers-nextjs";
-import {cookies} from "next/headers";
+import {cookies, headers} from "next/headers";
 import {Database} from "@/database.types";
 import CalendarClient from "./CalendarClient";
 import {Skeleton} from "@/components/ui/skeleton";
@@ -23,6 +23,12 @@ interface Appointment extends AppointmentRow {
 
 async function getAppointments(): Promise<Appointment[]> {
   const supabase = createServerComponentClient<Database>({cookies});
+  const headersList = headers();
+  const barbershopId = headersList.get("x-barbershop-id");
+
+  if (!barbershopId) {
+    throw new Error("No barbershop ID found");
+  }
 
   const {data, error} = await supabase
     .from("appointments")
@@ -36,6 +42,7 @@ async function getAppointments(): Promise<Appointment[]> {
       )
     `
     )
+    .eq("barbershop_id", parseInt(barbershopId))
     .order("date", {ascending: true})
     .order("time", {ascending: true});
 
