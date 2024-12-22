@@ -2,7 +2,7 @@ import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const MAIN_DOMAINS = ['fadely.app', 'localhost:3000', 'localhost'];
+const MAIN_DOMAINS = ['fadely.app', 'www.fadely.app', 'localhost:3000', 'localhost'];
 const CACHE_REVALIDATE_SECONDS = 60; // 1 minute
 
 // Cache for barbershop data
@@ -22,12 +22,16 @@ export async function middleware(req: NextRequest) {
   // Skip middleware for api routes and static files
   if (req.nextUrl.pathname.startsWith('/_next') || 
       req.nextUrl.pathname.startsWith('/api') ||
-      req.nextUrl.pathname.startsWith('/static')) {
+      req.nextUrl.pathname.startsWith('/static') ||
+      req.nextUrl.pathname.startsWith('/favicon.ico')) {
     return res;
   }
 
+  // Normalize hostname (remove www if present)
+  const normalizedHostname = hostname?.replace('www.', '') || '';
+
   // Check if it's a main domain first
-  if (MAIN_DOMAINS.includes(hostname!)) {
+  if (MAIN_DOMAINS.includes(hostname!) || normalizedHostname === 'fadely.app') {
     console.log('Main domain detected:', hostname);
     if (req.nextUrl.pathname.startsWith('/dashboard')) {
       return NextResponse.redirect(new URL('/', req.url));
@@ -41,6 +45,13 @@ export async function middleware(req: NextRequest) {
   // Check if it's a subdomain
   if (hostname?.includes('.fadely.app') || hostname?.includes('.localhost')) {
     subdomain = hostname.split('.')[0];
+    // If the subdomain is www, treat it as main domain
+    if (subdomain === 'www') {
+      if (req.nextUrl.pathname.startsWith('/dashboard')) {
+        return NextResponse.redirect(new URL('/', req.url));
+      }
+      return res;
+    }
   }
 
   // If no subdomain is found and it's not a main domain, return 404
@@ -107,7 +118,8 @@ export async function middleware(req: NextRequest) {
       '/404',
       '/pricing',
       '/api/trpc', // If using tRPC
-      '/api/webhooks' // For payment webhooks etc.
+      '/api/webhooks', // For payment webhooks etc.
+      '/favicon.ico'
     ];
 
     const isAllowedPath = allowedPaths.some(allowedPath => 
