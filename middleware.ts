@@ -26,6 +26,15 @@ export async function middleware(req: NextRequest) {
     return res;
   }
 
+  // Check if it's a main domain first
+  if (MAIN_DOMAINS.includes(hostname!)) {
+    console.log('Main domain detected:', hostname);
+    if (req.nextUrl.pathname.startsWith('/dashboard')) {
+      return NextResponse.redirect(new URL('/', req.url));
+    }
+    return res;
+  }
+
   // Handle subdomains
   let subdomain: string | null = null;
   
@@ -34,12 +43,10 @@ export async function middleware(req: NextRequest) {
     subdomain = hostname.split('.')[0];
   }
 
-  // For the main domains, allow access to marketing pages only
-  if (!subdomain || MAIN_DOMAINS.includes(hostname!)) {
-    if (req.nextUrl.pathname.startsWith('/dashboard')) {
-      return NextResponse.redirect(new URL('/', req.url));
-    }
-    return res;
+  // If no subdomain is found and it's not a main domain, return 404
+  if (!subdomain) {
+    console.log('No subdomain found and not a main domain:', hostname);
+    return NextResponse.rewrite(new URL('/404', req.url));
   }
 
   try {
