@@ -24,9 +24,11 @@ export default function Pricing() {
           <Card className="bg-background/80 backdrop-blur-sm">
             <CardHeader className="text-center pb-2">
               <CardTitle className="mb-7">Basic</CardTitle>
-              <span className="font-bold text-5xl">€99</span>
+              <span className="font-bold text-5xl">€179</span>
+              <span className="text-sm text-muted-foreground mt-2">per month</span>
+              <span className="text-xs text-primary mt-1">Billed annually</span>
             </CardHeader>
-            <CardDescription className="text-center  w-11/12 mx-auto">The basics</CardDescription>
+            <CardDescription className="text-center w-11/12 mx-auto">Perfect for getting started with digital presence</CardDescription>
             <CardContent>
               <ul className="mt-7 space-y-2.5 text-sm">
                 <li className="flex space-x-2">
@@ -53,11 +55,13 @@ export default function Pricing() {
           {/* Card */}
           <Card className="border-primary bg-background/80 backdrop-blur-sm">
             <CardHeader className="text-center pb-2">
-              <Badge className="uppercase w-max self-center mb-3">Best value</Badge>
+              <Badge className="uppercase w-max self-center mb-3">Most popular</Badge>
               <CardTitle className="!mb-7">Plus</CardTitle>
-              <span className="font-bold text-5xl">€139</span>
+              <span className="font-bold text-5xl">€299</span>
+              <span className="text-sm text-muted-foreground mt-2">per month</span>
+              <span className="text-xs text-primary mt-1">Billed annually</span>
             </CardHeader>
-            <CardDescription className="text-center w-11/12 mx-auto">Everything you need for a growing business</CardDescription>
+            <CardDescription className="text-center w-11/12 mx-auto">Elevate your barbershop to the next level</CardDescription>
             <CardContent>
               <ul className="mt-7 space-y-2.5 text-sm">
                 <li className="flex space-x-2">

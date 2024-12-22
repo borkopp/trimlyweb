@@ -25,9 +25,14 @@ export default async function LoginPage() {
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="hidden h-screen bg-muted w-2/3 lg:block relative overflow-hidden">
         <div className="flex flex-col justify-between items-start h-full relative z-10 p-12">
-          <Link href={"/"} className="font-ff text-3xl">
-            {barbershop ? barbershop.name : "fadely"}
-          </Link>
+          <div className="flex flex-col gap-1">
+            <Link href={"/"} className="font-ff text-xl text-primary">
+              {barbershop ? "fadely" : ""}
+            </Link>
+            <Link href={"/"} className="font-ff text-3xl">
+              {barbershop ? barbershop.name : "fadely"}
+            </Link>
+          </div>
           <TypingAnimation
             className="text-lg font-semibold"
             text={barbershop ? "Welcome back to your barbershop dashboard." : "Keep your loyal customers happy and satisfied."}

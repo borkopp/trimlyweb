@@ -30,10 +30,16 @@ export async function middleware(req: NextRequest) {
   // Normalize hostname (remove www if present)
   const normalizedHostname = hostname?.replace('www.', '') || '';
 
-  // Check if it's a main domain first
-  if (MAIN_DOMAINS.includes(hostname!) || normalizedHostname === 'fadely.app') {
+  // Check if it's a main domain
+  const isMainDomain = MAIN_DOMAINS.includes(hostname!) || normalizedHostname === 'fadely.app';
+  
+  // Handle main domain access
+  if (isMainDomain) {
     console.log('Main domain detected:', hostname);
-    if (req.nextUrl.pathname.startsWith('/dashboard')) {
+    // Block access to tenant-specific routes on main domain
+    if (req.nextUrl.pathname.startsWith('/dashboard') || 
+        req.nextUrl.pathname.startsWith('/login') ||
+        req.nextUrl.pathname.startsWith('/register')) {
       return NextResponse.redirect(new URL('/', req.url));
     }
     return res;
@@ -47,10 +53,7 @@ export async function middleware(req: NextRequest) {
     subdomain = hostname.split('.')[0];
     // If the subdomain is www, treat it as main domain
     if (subdomain === 'www') {
-      if (req.nextUrl.pathname.startsWith('/dashboard')) {
-        return NextResponse.redirect(new URL('/', req.url));
-      }
-      return res;
+      return NextResponse.redirect(new URL('/', req.url));
     }
   }
 
@@ -99,45 +102,27 @@ export async function middleware(req: NextRequest) {
       response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
     }
 
-    // For subdomains:
-    // 1. Redirect root path to dashboard
-    // 2. Only allow access to dashboard routes and auth routes
     const path = req.nextUrl.pathname;
-    if (path === '/') {
-      const dashboardRedirect = NextResponse.redirect(new URL('/dashboard', req.url));
-      dashboardRedirect.headers.set('x-barbershop-id', barbershop.id.toString());
-      return dashboardRedirect;
+    const { data: { session } } = await supabase.auth.getSession();
+
+    // Define public and protected routes
+    const publicRoutes = ['/login', '/register', '/unauthorized', '/404'];
+    const protectedRoutes = ['/dashboard'];
+    const isPublicRoute = publicRoutes.some(route => path.startsWith(route));
+    const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
+
+    // Handle root path and marketing pages
+    if (path === '/' || path === '/solution' || path === '/features' || path.startsWith('/#')) {
+      if (session) {
+        return NextResponse.redirect(new URL('/dashboard', req.url));
+      }
+      return NextResponse.redirect(new URL('/login', req.url));
     }
 
-    // Allow access only to dashboard, auth, and necessary public routes
-    const allowedPaths = [
-      '/dashboard',
-      '/login',
-      '/register',
-      '/unauthorized',
-      '/404',
-      '/pricing',
-      '/api/trpc', // If using tRPC
-      '/api/webhooks', // For payment webhooks etc.
-      '/favicon.ico'
-    ];
-
-    const isAllowedPath = allowedPaths.some(allowedPath => 
-      path.startsWith(allowedPath)
-    );
-
-    if (!isAllowedPath) {
-      return NextResponse.redirect(new URL('/dashboard', req.url));
-    }
-
-    // Check authentication for dashboard routes
-    if (path.startsWith('/dashboard')) {
-      const { data: { session } } = await supabase.auth.getSession();
-      
+    // Handle protected routes
+    if (isProtectedRoute) {
       if (!session) {
-        const loginRedirect = NextResponse.redirect(new URL('/login', req.url));
-        loginRedirect.headers.set('x-barbershop-id', barbershop.id.toString());
-        return loginRedirect;
+        return NextResponse.redirect(new URL('/login', req.url));
       }
 
       // Verify user belongs to this barbershop
@@ -148,9 +133,7 @@ export async function middleware(req: NextRequest) {
         .single();
 
       if (!profile || profile.barbershop_id !== barbershop.id) {
-        const unauthorizedRedirect = NextResponse.redirect(new URL('/unauthorized', req.url));
-        unauthorizedRedirect.headers.set('x-barbershop-id', barbershop.id.toString());
-        return unauthorizedRedirect;
+        return NextResponse.redirect(new URL('/unauthorized', req.url));
       }
 
       // Check subscription status
@@ -166,16 +149,26 @@ export async function middleware(req: NextRequest) {
         (subscription.status !== 'active' && subscription.status !== 'trialing');
 
       if (isTrialExpired && isSubscriptionInactive) {
-        const pricingRedirect = NextResponse.redirect(new URL('/pricing', req.url));
-        pricingRedirect.headers.set('x-barbershop-id', barbershop.id.toString());
-        return pricingRedirect;
+        return NextResponse.redirect(new URL('/pricing', req.url));
       }
+    }
+
+    // Handle public routes
+    if (isPublicRoute) {
+      if (session) {
+        return NextResponse.redirect(new URL('/dashboard', req.url));
+      }
+      return response;
+    }
+
+    // Handle all other routes
+    if (!isPublicRoute && !isProtectedRoute) {
+      return NextResponse.redirect(new URL('/login', req.url));
     }
 
     return response;
   } catch (error) {
     console.error('Middleware error:', error);
-    // Return 404 for invalid subdomains
     return NextResponse.rewrite(new URL('/404', req.url));
   }
 }

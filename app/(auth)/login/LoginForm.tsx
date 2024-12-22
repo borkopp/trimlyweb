@@ -7,10 +7,12 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Mail} from "lucide-react";
 import PasswordInput from "./PasswordInput";
+import {useRouter} from "next/navigation";
 
-export default function LoginForm({login}: {login: (formData: FormData) => Promise<{error?: string}>}) {
+export default function LoginForm({login}: {login: (formData: FormData) => Promise<{error?: string; success?: boolean}>}) {
   const [error, setError] = useState<string | null>(null);
   const {toast} = useToast();
+  const router = useRouter();
 
   async function handleSubmit(formData: FormData) {
     setError(null);
@@ -23,11 +25,13 @@ export default function LoginForm({login}: {login: (formData: FormData) => Promi
           description: result.error,
           variant: "destructive",
         });
-      } else {
+      } else if (result?.success) {
         toast({
           title: "Login successful",
           description: "You have been logged in",
         });
+        // Use router.push for client-side navigation
+        router.push("/dashboard");
       }
     } catch (error) {
       setError("An unexpected error occurred");

@@ -6,7 +6,9 @@ import {usePathname, useRouter} from "next/navigation";
 import {Button} from "./ui/button";
 import {createClient} from "@/utils/supabase/client";
 import {signOut} from "@/app/(auth)/actions";
-import {Menu, X} from "lucide-react";
+import {Menu, X, ArrowRightIcon} from "lucide-react";
+import {CalendarScript} from "./CalendarScript";
+import InteractiveHoverButton from "./ui/interactive-hover-button";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -93,26 +95,20 @@ export default function Navbar() {
         <div
           className={`hidden md:flex items-center flex-shrink-0 transition-all duration-500 ease-in-out transform
           ${isScrolled ? "scale-90" : "scale-100"}`}>
-          {user ? (
-            <>
-              <form action={signOut}>
-                <Button variant="link" size="sm" className="text-xs" type="submit">
-                  Sign Out
-                </Button>
-              </form>
-              <Link href="/dashboard">
-                <div className="px-2 py-2 bg-primary text-xs text-white rounded-md">
-                  Dashboard
-                </div>
-              </Link>
-            </>
-          ) : (
-            <Link href="/login">
-              <div className="px-3 py-2 bg-primary text-xs text-white rounded-md hover:bg-primary/80" >
-                Login
-              </div>
-            </Link>
-          )}
+          {/* <div className="">
+            <InteractiveHoverButton text="Book a call" className="px-3 text-xs" />
+          </div> */}
+          <Button
+            variant="gooeyLeft"
+            iconPlacement="right"
+            Icon={ArrowRightIcon}
+            size="sm"
+            className="px-3 text-xs font-semibold"
+            data-cal-link="fadely/30min"
+            data-cal-namespace="30min"
+            data-cal-config='{"layout":"month_view"}'>
+            Book a call
+          </Button>
         </div>
 
         {/* Mobile menu button */}
@@ -136,6 +132,7 @@ export default function Navbar() {
           </div>
         )}
       </div>
+      <CalendarScript />
     </div>
   );
 }

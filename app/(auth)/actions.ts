@@ -35,7 +35,8 @@ export async function login(formData: FormData) {
     }
   }
 
-  redirect("/dashboard");
+  // Instead of using redirect, return a success response
+  return { success: true };
 }
 
 export async function signup(formData: FormData) {

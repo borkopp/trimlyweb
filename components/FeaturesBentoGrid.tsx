@@ -32,7 +32,7 @@ const features = [
     delay: 0,
     background: (
       <div className="absolute inset-0  overflow-hidden">
-        <Safari src="/dashboard.png" className="absolute -right-[780px] scale-[0.9] -top-0 opacity-80" />
+        <Safari src="/images/dashboard.png" className="absolute -right-[780px] scale-[0.9] -top-0 opacity-80" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-90" />
       </div>
     ),
