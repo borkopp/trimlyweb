@@ -88,7 +88,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
 
   let barbershop = null;
   if (barbershopId) {
-    const {data} = await supabase.from("barbershop").select("*").eq("id", barbershopId).single();
+    const {data} = await supabase.from("barbershops").select("*").eq("id", barbershopId).single();
     barbershop = data;
   }
 

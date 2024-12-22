@@ -4,7 +4,7 @@ import { Database } from '@/database.types'
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function updateBarbershopSettings(settings: Partial<Database['public']['Tables']['barbershop']['Update']>) {
+export async function updateBarbershopSettings(settings: Partial<Database['public']['Tables']['barbershops']['Update']>) {
   const supabase = createClient()
 
   const { data, error } = await supabase
