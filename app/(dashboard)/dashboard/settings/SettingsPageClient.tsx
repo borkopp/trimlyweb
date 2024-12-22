@@ -1,17 +1,17 @@
 "use client";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/components/ui/use-toast";
-import { updateBarbershopSettings } from "@/app/actions/barbershop-actions";
-import { Tables } from "@/database.types";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import {useState} from "react";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {Textarea} from "@/components/ui/textarea";
+import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
+import {toast} from "@/components/ui/use-toast";
+import {updateBarbershopSettings} from "@/app/actions/barbershop-actions";
+import {Tables} from "@/database.types";
+import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
 import Link from "next/link";
 
-type BarbershopSettings = Tables<"barbershop">;
+type BarbershopSettings = Tables<"barbershops">;
 
 export default function SettingsPageClient({
   initialSettings,
@@ -24,8 +24,8 @@ export default function SettingsPageClient({
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setSettings((prev) => ({ ...prev, [name]: value }));
+    const {name, value} = e.target;
+    setSettings((prev) => ({...prev, [name]: value}));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
