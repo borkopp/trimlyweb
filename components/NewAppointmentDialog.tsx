@@ -1,31 +1,19 @@
 "use client";
 
-import { useState, useTransition, useRef, useEffect, useCallback, useMemo } from "react";
-import { format, isBefore, isSameDay, set, parse, addDays } from "date-fns";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarIcon, Scissors, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Database } from "@/database.types";
-import { toast } from "./ui/use-toast";
-import {
-  createAppointment,
-  getBarberServices,
-  getBarberAvailability,
-} from "@/app/actions/appointment-actions";
-import { ScrollArea } from "./ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { createClient } from "@/utils/supabase/client";
+import {useState, useTransition, useRef, useEffect, useCallback, useMemo} from "react";
+import {format, isBefore, isSameDay, set, parse, addDays} from "date-fns";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
+import {CalendarIcon, CalendarPlus, Scissors, User} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {Calendar} from "@/components/ui/calendar";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
+import {Label} from "@/components/ui/label";
+import {Database} from "@/database.types";
+import {toast} from "./ui/use-toast";
+import {createAppointment, getBarberServices, getBarberAvailability} from "@/app/actions/appointment-actions";
+import {ScrollArea} from "./ui/scroll-area";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {createClient} from "@/utils/supabase/client";
 import Image from "next/image";
 
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
@@ -37,7 +25,7 @@ interface Props {
   user_id: string;
 }
 
-export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
+export function NewAppointmentDialog({initialBarbers, user_id}: Props) {
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date>();
   const [barber, setBarber] = useState("");
@@ -46,37 +34,30 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
   const [time, setTime] = useState<string>("");
   const [isPending, startTransition] = useTransition();
   const datePickerRef = useRef<HTMLDivElement>(null);
-  const [barberAvatars, setBarberAvatars] = useState<Record<number, string>>(
-    {}
-  );
-  const [serviceAvatars, setServiceAvatars] = useState<Record<number, string>>(
-    {}
-  );
+  const [barberAvatars, setBarberAvatars] = useState<Record<number, string>>({});
+  const [serviceAvatars, setServiceAvatars] = useState<Record<number, string>>({});
   const queryClient = useQueryClient();
   const today = new Date();
 
-  const getAvailabilityKey = (barberId: string, date: Date | undefined) =>
-    ['barber-availability', barberId, format(date ?? today, 'yyyy-MM-dd')];
+  const getAvailabilityKey = (barberId: string, date: Date | undefined) => ["barber-availability", barberId, format(date ?? today, "yyyy-MM-dd")];
 
-  const { data: currentSlots, isLoading } = useQuery({
+  const {data: currentSlots, isLoading} = useQuery({
     queryKey: getAvailabilityKey(barber, date),
     queryFn: () => {
       if (!date) return Promise.resolve([]);
-      return getBarberAvailability(parseInt(barber), format(date, 'yyyy-MM-dd'));
+      return getBarberAvailability(parseInt(barber), format(date, "yyyy-MM-dd"));
     },
     enabled: !!barber && !!date,
   });
 
   useEffect(() => {
     if (barber && date) {
-      const prefetchDates = Array.from({ length: 5 }, (_, i) =>
-        addDays(date, i + 1)
-      );
+      const prefetchDates = Array.from({length: 5}, (_, i) => addDays(date, i + 1));
 
       prefetchDates.forEach(async (prefetchDate) => {
         await queryClient.prefetchQuery({
           queryKey: getAvailabilityKey(barber, prefetchDate),
-          queryFn: () => getBarberAvailability(parseInt(barber), format(prefetchDate, 'yyyy-MM-dd')),
+          queryFn: () => getBarberAvailability(parseInt(barber), format(prefetchDate, "yyyy-MM-dd")),
         });
       });
     }
@@ -89,9 +70,7 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
 
       for (const b of initialBarbers) {
         if (b.image) {
-          const { data } = await supabase.storage
-            .from("barber-images")
-            .getPublicUrl(b.image);
+          const {data} = await supabase.storage.from("barber-images").getPublicUrl(b.image);
           if (data?.publicUrl) {
             avatarUrls[b.id] = data.publicUrl;
           }
@@ -106,10 +85,7 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        datePickerRef.current &&
-        !datePickerRef.current.contains(event.target as Node)
-      ) {
+      if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node)) {
         setOpen(false);
       }
     }
@@ -148,7 +124,7 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
   async function getImageUrl(path: string) {
     if (!path) return null;
     const supabase = createClient();
-    const { data } = await supabase.storage.from("barber-images").getPublicUrl(path);
+    const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
     return data?.publicUrl || null;
   }
 
@@ -163,7 +139,7 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
           service_ids: [parseInt(service)],
           date: format(date, "yyyy-MM-dd"),
           time,
-          barbershop_id: 1, 
+          barbershop_id: 1,
           user_id: user_id,
         });
         toast({
@@ -190,11 +166,7 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
     const slots = [];
     for (let hour = 9; hour <= 20; hour++) {
       for (let minute of [0, 30]) {
-        slots.push(
-          `${hour.toString().padStart(2, "0")}:${minute
-            .toString()
-            .padStart(2, "0")}`
-        );
+        slots.push(`${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`);
       }
     }
     return slots;
@@ -203,7 +175,7 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
   const isTimeSlotAvailable = (timeSlot: string) => {
     if (!date) return true;
     const [hours, minutes] = timeSlot.split(":").map(Number);
-    const slotDate = set(date, { hours, minutes });
+    const slotDate = set(date, {hours, minutes});
     const now = new Date();
     return isSameDay(date, now) ? !isBefore(slotDate, now) : true;
   };
@@ -212,7 +184,7 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="text-white" onClick={() => setOpen(true)}>
-          <CalendarIcon className="mr-2 h-4 w-4 text-white" />
+          <CalendarPlus className="mr-2 h-4 w-4 text-white" />
           New Appointment
         </Button>
       </DialogTrigger>
@@ -220,9 +192,7 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
           <DialogHeader>
             <DialogTitle>Create New Appointment</DialogTitle>
-            <DialogDescription>
-              Fill in the details to schedule a new appointment.
-            </DialogDescription>
+            <DialogDescription>Fill in the details to schedule a new appointment.</DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-[250px_250px_fit-content(100%)_250px] gap-6 py-6">
             {/* Barber Selection Column */}
@@ -233,22 +203,16 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
                   {initialBarbers.map((b) => (
                     <Button
                       key={b.id}
-                      variant={
-                        barber === b.id.toString() ? "secondary" : "outline"
-                      }
+                      variant={barber === b.id.toString() ? "secondary" : "outline"}
                       className="w-full justify-start  p-4 h-auto rounded-none"
                       onClick={() => {
                         setBarber(b.id.toString());
                         setService(""); // Reset service when barber changes
-                      }}
-                    >
+                      }}>
                       <div className="flex items-center w-full gap-3">
                         <Avatar className="w-12 h-12">
                           {barberAvatars[b.id] ? (
-                            <AvatarImage
-                              src={barberAvatars[b.id] || undefined}
-                              alt={b.name || ""}
-                            />
+                            <AvatarImage src={barberAvatars[b.id] || undefined} alt={b.name || ""} />
                           ) : (
                             <AvatarFallback>
                               <User className="h-6 w-6" />
@@ -256,9 +220,7 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
                           )}
                         </Avatar>
                         <div className="flex flex-col items-start">
-                          <span className="text-base font-medium">
-                            {b.name}
-                          </span>
+                          <span className="text-base font-medium">{b.name}</span>
                         </div>
                       </div>
                     </Button>
@@ -273,40 +235,24 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
               <ScrollArea className="h-[332px] border rounded-md bg-background">
                 <div>
                   {!barber ? (
-                    <div className="text-muted-foreground p-4">
-                      Please select a barber first
-                    </div>
+                    <div className="text-muted-foreground p-4">Please select a barber first</div>
                   ) : services.length === 0 ? (
-                    <div className="text-muted-foreground p-4">
-                      Loading services...
-                    </div>
+                    <div className="text-muted-foreground p-4">Loading services...</div>
                   ) : (
                     <div className="grid">
                       {services.map((s) => (
                         <Button
                           key={s.id}
-                          variant={
-                            service === s.id.toString() ? "secondary" : "outline"
-                          }
+                          variant={service === s.id.toString() ? "secondary" : "outline"}
                           className="w-full justify-start  p-4 h-auto rounded-none"
-                          onClick={() => setService(s.id.toString())}
-                        >
+                          onClick={() => setService(s.id.toString())}>
                           <div className="flex items-center w-full gap-3">
                             <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-muted">
-                              <Image
-                                src={serviceAvatars[s.id] || ""}
-                                alt={s.name || ""}
-                                fill
-                                className="object-cover"
-                              />
+                              <Image src={serviceAvatars[s.id] || ""} alt={s.name || ""} fill className="object-cover" />
                             </div>
                             <div className="flex flex-col items-start">
-                              <span className="text-base font-medium">
-                                {s.name}
-                              </span>
-                              <span className="text-sm text-muted-foreground">
-                                ${s.price}
-                              </span>
+                              <span className="text-base font-medium">{s.name}</span>
+                              <span className="text-sm text-muted-foreground">${s.price}</span>
                             </div>
                           </div>
                         </Button>
@@ -319,17 +265,10 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
 
             {/* Calendar Column */}
             <div className="space-y-4">
-              <Label className="text-lg font-semibold">
-                Choose Date
-              </Label>
+              <Label className="text-lg font-semibold">Choose Date</Label>
               <div>
                 <div className="bg-background border rounded-md items-center flex justify-center p-3">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    initialFocus
-                  />
+                  <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
                 </div>
               </div>
             </div>
@@ -344,13 +283,9 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                     </div>
                   ) : !barber ? (
-                    <div className="text-muted-foreground p-4">
-                      Select a barber to view available times
-                    </div>
+                    <div className="text-muted-foreground p-4">Select a barber to view available times</div>
                   ) : !currentSlots?.length ? (
-                    <div className="text-muted-foreground p-4">
-                      No available slots for this date
-                    </div>
+                    <div className="text-muted-foreground p-4">No available slots for this date</div>
                   ) : (
                     <div className="grid">
                       {currentSlots.map((slot) => (
@@ -361,8 +296,7 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
                           onClick={() => {
                             setTime(slot.slot_time);
                           }}
-                          type="button"
-                        >
+                          type="button">
                           {format(parse(slot.slot_time, "HH:mm:ss", new Date()), "h:mm a")}
                         </Button>
                       ))}
@@ -373,11 +307,7 @@ export function NewAppointmentDialog({ initialBarbers, user_id }: Props) {
             </div>
           </div>
           <div className="flex justify-end mt-2">
-            <Button
-              type="submit"
-              disabled={!date || !barber || !service || !time || isPending}
-              className="w-[200px]"
-            >
+            <Button type="submit" disabled={!date || !barber || !service || !time || isPending} className="w-[200px]">
               {isPending ? "Creating..." : "Create Appointment"}
             </Button>
           </div>

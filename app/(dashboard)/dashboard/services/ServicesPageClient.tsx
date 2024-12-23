@@ -220,20 +220,7 @@ export default function ServicesPageClient({
   };
 
   return (
-    <div className="container mx-auto py-10">
-      <Breadcrumb className="hidden md:flex ">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/dashboard">Dashboard</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Services</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+    <div className="container mx-auto ">
       <div className="py-10">
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-2">

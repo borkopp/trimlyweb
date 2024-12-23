@@ -403,8 +403,15 @@ export default function CalendarClient({initialAppointments}: Props) {
           color: hsl(var(--foreground)); /* Button text color */
           font-weight: 500; /* Button text weight */
           text-transform: capitalize; /* Capitalize first letter */
-          padding: 0.5rem 1rem; /* Button padding */
+          padding: 0.25rem 0.75rem; /* Reduced padding */
           border-radius: 0.375rem; /* Button corner radius */
+          font-size: 0.875rem; /* Smaller font size */
+          height: 2rem; /* Fixed height */
+          min-width: 2rem; /* Minimum width */
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.25rem;
         }
 
         /* Button hover state */
@@ -427,8 +434,44 @@ export default function CalendarClient({initialAppointments}: Props) {
 
         /* Calendar title styling */
         .fc-custom .fc-toolbar-title {
-          font-size: 1.25rem; /* Title text size */
+          font-size: 1.125rem; /* Smaller title size */
           font-weight: 600; /* Title text weight */
+          padding: 0 0.5rem; /* Add some padding */
+        }
+
+        /* Toolbar container */
+        .fc-custom .fc-toolbar {
+          gap: 0.5rem;
+          padding: 0.5rem;
+          align-items: center;
+        }
+
+        /* Button group spacing */
+        .fc-custom .fc-button-group {
+          gap: 0.25rem; /* Reduced gap between grouped buttons */
+        }
+
+        /* Prev/Next button icons */
+        .fc-custom .fc-prev-button,
+        .fc-custom .fc-next-button {
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+        }
+
+        /* Today button specific styling */
+        .fc-custom .fc-today-button {
+          background-color: hsl(var(--background)) !important;
+          border: 1px solid hsl(var(--border) / 0.6) !important;
+          color: hsl(var(--foreground)) !important;
+          padding: 0.25rem 0.75rem !important;
+          height: 2rem !important;
+        }
+
+        .fc-custom .fc-today-button:disabled {
+          background-color: hsl(var(--primary)) !important;
+          border-color: hsl(var(--primary)) !important;
+          color: hsl(var(--primary-foreground)) !important;
+          opacity: 1 !important;
         }
 
         /* Remove all event-related borders and backgrounds */

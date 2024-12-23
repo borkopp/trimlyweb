@@ -230,21 +230,7 @@ export default function BarbersPageClient({
   );
 
   return (
-    <div className="container mx-auto py-10">
-      <Breadcrumb className="hidden md:flex">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/dashboard">Dashboard</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Barbers</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
+    <div className="container mx-auto">
       <div className="flex items-center justify-between py-10">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold tracking-tight">Barbers</h1>

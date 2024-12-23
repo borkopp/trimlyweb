@@ -55,6 +55,16 @@ const config = {
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
+  			},
+  			sidebar: {
+  				DEFAULT: 'hsl(var(--background))',
+  				foreground: 'hsl(var(--foreground))',
+  				primary: 'hsl(var(--primary))',
+  				'primary-foreground': 'hsl(var(--primary-foreground))',
+  				accent: 'hsl(var(--accent))',
+  				'accent-foreground': 'hsl(var(--accent-foreground))',
+  				border: 'hsl(var(--border))',
+  				ring: 'hsl(var(--ring))'
   			}
   		},
   		borderRadius: {
@@ -63,10 +73,14 @@ const config = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		keyframes: {
-			"shine": {
-				from: { backgroundPosition: '200% 0' },
-				to: { backgroundPosition: '-200% 0' },
-			  },
+  			shine: {
+  				from: {
+  					backgroundPosition: '200% 0'
+  				},
+  				to: {
+  					backgroundPosition: '-200% 0'
+  				}
+  			},
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -87,14 +101,21 @@ const config = {
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out',
-			"shine": "shine 8s ease-in-out infinite",
+  			shine: 'shine 8s ease-in-out infinite'
   		},
   		fontFamily: {
-  			ff: ['var(--font-ff)'],
-  			inter: ['var(--font-inter)'],
-			montserrat: ["var(--font-montserrat)"],
-			lato: ["var(--font-lato)"],
-
+  			ff: [
+  				'var(--font-ff)'
+  			],
+  			inter: [
+  				'var(--font-inter)'
+  			],
+  			montserrat: [
+  				'var(--font-montserrat)'
+  			],
+  			lato: [
+  				'var(--font-lato)'
+  			]
   		}
   	}
   },

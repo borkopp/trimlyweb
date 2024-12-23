@@ -43,6 +43,10 @@ html {
   width: 250%;
 }
 
+.group\/collapsible {
+  border-color: hsl(215, 100%, 50%);
+}
+
 @layer base {
   :root {
     --background: 240 10% 3.9%;

@@ -66,19 +66,6 @@ export default function ClientsPageClient({initialClients}: ClientsPageClientPro
 
   return (
     <div className="mb-8 container mx-auto">
-      <Breadcrumb className=" mt-10">
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="/dashboard">Dashboard</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Clients</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
       <div className="py-10">
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-2">
