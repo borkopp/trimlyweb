@@ -99,9 +99,6 @@ export default function Navbar() {
             <InteractiveHoverButton text="Book a call" className="px-3 text-xs" />
           </div> */}
           <Button
-            variant="gooeyLeft"
-            iconPlacement="right"
-            Icon={ArrowRightIcon}
             size="sm"
             className="px-3 text-xs font-semibold"
             data-cal-link="fadely/30min"
