@@ -151,7 +151,7 @@ function DashboardSkeleton() {
             <Card className="sm:col-span-2">
               <CardHeader className="pb-3">
                 <CardTitle>Barbershop Overview</CardTitle>
-                <CardDescription className="max-w-lg text-balance leading-relaxed">
+                <CardDescription className="max-w-xl text-balance leading-relaxed">
                   Manage appointments, clients, barbers and services with ease.
                 </CardDescription>
               </CardHeader>
