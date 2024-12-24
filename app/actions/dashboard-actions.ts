@@ -176,7 +176,7 @@ export async function deleteBarber(barberId: number): Promise<void> {
 
   // Call the remove_barber_role RPC with the user_id
   const { error } = await supabase
-    .rpc('remove_barber_role', { p_user_id: barber.user_id, p_barbershop_id: barbershopId });
+    .rpc('remove_barber_role', { p_user_id: barber.user_id });
 
   if (error) {
     if (error.code === '23503') {
