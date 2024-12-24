@@ -292,30 +292,14 @@ export async function assignBarberRole(userId: string, serviceIds: number[] = []
     throw new Error('User profile not found or missing required data');
   }
 
-  // Call the RPC function
+  // Call the RPC function with barbershop_id
   const { error } = await supabase.rpc('assign_barber_role', {
     user_id: userId,
+    service_ids: serviceIds,
     p_barbershop_id: barbershopId
   });
 
   if (error) throw error;
-
-  // If there are any services to assign, add them after the barber is created
-  if (serviceIds.length > 0) {
-    // Get the newly created barber
-    const { data: barber } = await supabase
-      .from('barbers')
-      .select('id')
-      .eq('user_id', userId)
-      .single();
-
-    if (barber) {
-      // Add services to the barber
-      for (const serviceId of serviceIds) {
-        await addServiceToBarber(barber.id, serviceId);
-      }
-    }
-  }
 
   revalidatePath('/dashboard/barbers');
 }
