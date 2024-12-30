@@ -5,13 +5,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: "https://fadely.app",
       lastModified: new Date(),
-      changeFrequency: "yearly",
+      changeFrequency: "daily" as const,
       priority: 1,
     },
     {
       url: "https://fadely.app/contact",
       lastModified: new Date(),
-      changeFrequency: "monthly",
+      changeFrequency: "weekly" as const,
       priority: 0.8,
     },
   ];

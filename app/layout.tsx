@@ -9,6 +9,7 @@ import {Analytics} from "@vercel/analytics/react";
 import {headers} from "next/headers";
 import {createClient} from "@/utils/supabase/server";
 import {BarbershopProvider} from "@/contexts/BarbershopContext";
+import JsonLd from "@/components/JsonLd";
 
 const inter = localFont({
   src: "../public/fonts/Inter-VariableFont_opsz,wght.ttf",
@@ -34,33 +35,63 @@ const filmfiction = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://fadely.app"),
   title: {
-    default: "Fadely - Branded Barbershop Management System",
-    template: "%s | Fadely",
+    default: "Fadely - #1 Barbershop Management System | Book & Manage Appointments",
+    template: "%s | Fadely Barbershop Management",
   },
-  description: "Get your branded mobile app for your barbershop with Fadely. Book appointments, manage staff, and grow your business.",
-  keywords: ["barbershop software", "barber appointment system", "barbershop management", "fadely", "barber booking app"],
+  description:
+    "Fadely is the leading barbershop management system. Get your own branded mobile app, online booking system, and complete barbershop management solution. Perfect for modern barbershops.",
+  keywords: [
+    "fadely",
+    "barbershop management system",
+    "barbershop software",
+    "barber appointment system",
+    "barbershop management",
+    "barber booking app",
+    "barbershop scheduling",
+    "barber management software",
+    "barbershop pos",
+    "barbershop booking system",
+    "barbershop appointment app",
+  ],
   authors: [{name: "Fadely"}],
   creator: "Fadely",
+  publisher: "Fadely",
+  applicationName: "Fadely",
+  generator: "Next.js",
+  referrer: "origin-when-cross-origin",
+  colorScheme: "dark light",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: "https://fadely.app",
-    title: "Fadely - Branded Barbershop Management System",
-    description: "Get your branded mobile app & dashboard for your barbershop with Fadely. Book appointments, manage staff, and grow your business.",
+    title: "Fadely - #1 Barbershop Management System | Book & Manage Appointments",
+    description:
+      "Fadely is the leading barbershop management system. Get your own branded mobile app, online booking system, and complete barbershop management solution. Perfect for modern barbershops.",
     siteName: "Fadely",
     images: [
       {
-        url: "/og-image.png", // Make sure to create this image
+        url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Fadely - Barbershop Management System",
+        alt: "Fadely - The Complete Barbershop Management System",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Fadely - Branded Barbershop Management System",
-    description: "Get your branded mobile app & dashboard for your barbershop with Fadely. Book appointments, manage staff, and grow your business.",
+    title: "Fadely - #1 Barbershop Management System | Book & Manage Appointments",
+    description:
+      "Fadely is the leading barbershop management system. Get your own branded mobile app, online booking system, and complete barbershop management solution.",
     images: ["/og-image.png"],
     creator: "@fadely",
   },
@@ -76,7 +107,10 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "EyZ98HXkARVHeRpTS-zPRAOM4fXa_nuaLBs_KjOXZI4", // Add your Google Search Console verification code
+    google: "aN7Oml3UrzXpfFJ6UdI6KdhTOW3wOcXvHQ319IkQipU",
+  },
+  alternates: {
+    canonical: "https://fadely.app",
   },
 };
 
@@ -94,6 +128,9 @@ export default async function RootLayout({children}: {children: React.ReactNode}
 
   return (
     <html lang="en">
+      <head>
+        <JsonLd />
+      </head>
       <body className={`${inter.variable} ${filmfiction.variable} ${montserrat.variable} ${lato.variable} font-inter`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {barbershop ? <BarbershopProvider barbershop={barbershop}>{children}</BarbershopProvider> : children}
