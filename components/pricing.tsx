@@ -46,8 +46,13 @@ export default function Pricing() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant={"outline"}>
-                Contact us
+              <Button
+                data-cal-link="fadely/30min"
+                data-cal-namespace="30min"
+                data-cal-config='{"layout":"month_view"}'
+                className="w-full"
+                variant={"outline"}>
+                Book a call
               </Button>
             </CardFooter>
           </Card>
@@ -85,8 +90,13 @@ export default function Pricing() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant="outline">
-                Contact us
+              <Button
+                data-cal-link="fadely/30min"
+                data-cal-namespace="30min"
+                data-cal-config='{"layout":"month_view"}'
+                className="w-full"
+                variant="outline">
+                Book a call
               </Button>
             </CardFooter>
           </Card>
