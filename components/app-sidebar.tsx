@@ -125,10 +125,10 @@ const data = {
 export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="bg-[#18181B]">
+      <SidebarHeader className="bg-background dark:bg-[#18181B]">
         <NavUser user={data.user} />
       </SidebarHeader>
-      <SidebarContent className="bg-[#18181B]">
+      <SidebarContent className="bg-background dark:bg-[#18181B]">
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>

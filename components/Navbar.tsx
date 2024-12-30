@@ -9,6 +9,7 @@ import {signOut} from "@/app/(auth)/actions";
 import {Menu, X, ArrowRightIcon} from "lucide-react";
 import {CalendarScript} from "./CalendarScript";
 import InteractiveHoverButton from "./ui/interactive-hover-button";
+import {ModeToggle} from "./theme-toggle";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -60,24 +61,24 @@ export default function Navbar() {
       className={`fixed z-50 transition-all duration-500 ease-in-out transform left-1/2 -translate-x-1/2
       ${
         isScrolled
-          ? "h-14 w-[40%] rounded-full bg-black/70 backdrop-blur-lg border border-white/10 top-5 px-6"
+          ? "h-14 w-[40%] max-w-[100rem] rounded-full dark:bg-black/70 bg-white backdrop-blur-lg border border-black/10 shadow-lg dark:border-white/10 top-5 px-6"
           : "h-16 w-full top-0 backdrop-blur-none bg-transparent px-4 sm:px-8 md:px-16 lg:px-72"
       }
       origin-center`}>
-      <div className="w-full h-full flex items-center justify-between gap-4 transition-all duration-500 ease-in-out">
+      <div className="w-full h-full flex items-center justify-between gap-4 transition-all duration-500 ease-in-out relative">
         {/* Logo */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 z-10">
           <Link
             href="/"
             className={`font-ff cursor-pointer text-primary transform transition-all duration-500 ease-in-out inline-block
-            ${isScrolled ? "text-lg scale-90" : "text-xl scale-100"}`}>
+text-xl`}>
             fadely
           </Link>
         </div>
 
         {/* Desktop navigation - centered */}
         <div
-          className={`hidden md:flex items-center justify-center gap-1 transition-all duration-500 ease-in-out transform
+          className={`hidden md:flex items-center justify-center gap-1 transition-all duration-500 ease-in-out transform absolute left-1/2 -translate-x-1/2
           ${isScrolled ? "scale-90" : "scale-100"}`}>
           {navItems.map((item) => (
             <Link key={item.label} href={item.href} onClick={(e) => (item.href.startsWith("#") ? handleNavigation(e, item.href) : null)}>
@@ -92,14 +93,11 @@ export default function Navbar() {
         </div>
 
         {/* User actions - right aligned */}
-        <div
-          className={`hidden md:flex items-center flex-shrink-0 transition-all duration-500 ease-in-out transform
-          ${isScrolled ? "scale-90" : "scale-100"}`}>
-          {/* <div className="">
-            <InteractiveHoverButton text="Book a call" className="px-3 text-xs" />
-          </div> */}
+        <div className={`hidden md:flex items-center gap-2 flex-shrink-0 transition-all duration-500 ease-in-out transform z-10`}>
+          <ModeToggle />
           <Button
             size="sm"
+            variant="outline"
             className="px-3 text-xs font-semibold"
             data-cal-link="fadely/30min"
             data-cal-namespace="30min"
@@ -109,9 +107,10 @@ export default function Navbar() {
         </div>
 
         {/* Mobile menu button */}
-        <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <ModeToggle />
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? <X size={24} /> : <Menu size={24} />}</button>
+        </div>
 
         {/* Mobile navigation */}
         {isMenuOpen && (

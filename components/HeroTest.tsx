@@ -3,7 +3,6 @@ import WordPullUp from "./ui/word-pull-up";
 import Link from "next/link";
 import {Button} from "./ui/button";
 import {CalendarScript} from "./CalendarScript";
-import {ArrowRightIcon, Calendar} from "lucide-react";
 export function Hero() {
   return (
     <div className="h-[35rem] w-full rounded-md bg-background p-10 lg:p-20 relative flex flex-col items-center justify-center antialiased">
@@ -16,13 +15,13 @@ export function Hero() {
         </div>
         <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-primary/0 via-primary/90 to-primary/0 transition-opacity duration-500 group-hover:opacity-40"></span>
       </div> */}
-      <div className="max-w-2xl mx-auto relative z-10">
+      <div className="max-w-4xl mx-auto relative z-10">
         <WordPullUp
-          className="relative max-w-xl text-5xl md:text-6xl tracking-normal lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 text-center font-inter font-bold"
-          words="The upgrade for your barbershop"
+          className="relative text-5xl md:text-6xl tracking-normal lg:text-7xl text-center font-inter font-bold"
+          words="The upgrade your barbershop needs"
         />
         <p data-aos="fade-up" data-aos-delay="300" className="text-neutral-500 text-[1.2rem] max-w-xl mx-auto mt-10 text-center font-inter relative">
-          Branded app for your business, without paying thousands. Stand out from the competition. Gain loyal customers.
+          Empowering Barbershops to Shine with Their Own Branded App <br /> Simplify Scheduling and Attract More Clients!
         </p>
         <div className="flex flex-row gap-4 justify-center mt-12">
           {/* <button data-aos="fade-up" data-aos-delay="300" data-aos-duration="1000" className="herobutton font-inter font-semibold">
@@ -70,7 +69,7 @@ export function Hero() {
           <Button
             data-aos="fade-up"
             data-aos-delay="400"
-            variant="secondary"
+            variant="outline"
             className="px-8 bg-secondary hover:bg-secondary/80"
             data-cal-link="fadely/30min"
             data-cal-namespace="30min"

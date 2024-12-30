@@ -50,7 +50,7 @@ export default function WordPullUp({
               },
             },
           }}
-          className="inline-block bg-clip-text text-transparent bg-gradient-to-b from-neutral-200 to-neutral-600 px-[0.05em] leading-[1.2]">
+          className="inline-block dark:bg-clip-text dark:text-transparent dark:bg-gradient-to-b dark:from-neutral-200 dark:to-neutral-600 text-neutral-800 px-[0.05em] leading-[1.2]">
           {word === "" ? <span>&nbsp;</span> : word}
         </motion.span>
       ))}

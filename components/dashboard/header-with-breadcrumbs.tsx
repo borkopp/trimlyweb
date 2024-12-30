@@ -2,6 +2,7 @@
 
 import {usePathname} from "next/navigation";
 import {DashboardHeader} from "./header";
+import {ModeToggle} from "@/components/theme-toggle";
 
 const BREADCRUMB_TITLES: Record<string, string> = {
   calendar: "Calendar",
@@ -28,5 +29,12 @@ export function DashboardHeaderWithBreadcrumbs() {
           })),
         ];
 
-  return <DashboardHeader breadcrumbs={breadcrumbs} />;
+  return (
+    <div className="flex items-center justify-between">
+      <DashboardHeader breadcrumbs={breadcrumbs} />
+      <div className="flex items-center gap-2 pr-4">
+        <ModeToggle />
+      </div>
+    </div>
+  );
 }
