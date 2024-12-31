@@ -2,6 +2,7 @@
 import Faq from "@/components/Faq";
 import HeroMockup from "@/components/HeroMockup";
 import {Hero} from "@/components/HeroTest";
+import {HowItWorks} from "@/components/HowItWorks";
 import ProblemSection from "@/components/ProblemSection";
 import SolutionSection from "@/components/SolutionSection";
 import {FeaturesSection} from "@/components/features-new";
@@ -29,6 +30,7 @@ export default function Home() {
       </div>
       <ProblemSection />
       <SolutionSection />
+      <HowItWorks />
       <div className="relative">
         <FeaturesSection />
         <Pricing />
