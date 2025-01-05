@@ -61,7 +61,7 @@ export default function Navbar() {
       className={`fixed z-50 transition-all duration-500 ease-in-out transform left-1/2 -translate-x-1/2
       ${
         isScrolled
-          ? "h-14 w-[40%] max-w-[100rem] rounded-full dark:bg-black/70 bg-white backdrop-blur-lg border border-black/10 shadow-lg dark:border-white/10 top-5 px-6"
+          ? "h-14 w-[40%]  rounded-full dark:bg-black/70 bg-white backdrop-blur-lg border border-black/10 shadow-lg dark:border-white/10 top-5 px-6"
           : "h-16 w-full top-0 backdrop-blur-none bg-transparent px-4 sm:px-8 md:px-16 lg:px-72"
       }
       origin-center`}>
@@ -85,7 +85,7 @@ text-xl`}>
               <Button
                 variant="ghost"
                 size="sm"
-                className={`text-sm ${pathname === item.href ? "text-primary" : "text-neutral-500 hover:text-primary"}`}>
+                className={`text-sm font-semibold ${pathname === item.href ? "text-primary" : "text-neutral-500 hover:text-primary"}`}>
                 {item.label}
               </Button>
             </Link>

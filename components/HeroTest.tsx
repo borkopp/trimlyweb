@@ -17,11 +17,11 @@ export function Hero() {
       </div> */}
       <div className="max-w-4xl mx-auto relative z-10">
         <WordPullUp
-          className="relative text-5xl md:text-6xl tracking-normal lg:text-7xl text-center font-inter font-bold"
+          className="relative text-5xl md:text-6xl tracking-normal lg:text-7xl text-center font-inter font-semibold"
           words="The upgrade your barbershop needs"
         />
         <p data-aos="fade-up" data-aos-delay="300" className="text-neutral-500 text-[1.2rem] max-w-xl mx-auto mt-10 text-center font-inter relative">
-          Empowering Barbershops to Shine with Their Own Branded App <br /> Simplify Scheduling and Attract More Clients!
+          Empowering barbershops to shine with their own branded app. <br /> Simplify scheduling and attract more clients!
         </p>
         <div className="flex flex-row gap-4 justify-center mt-12">
           {/* <button data-aos="fade-up" data-aos-delay="300" data-aos-duration="1000" className="herobutton font-inter font-semibold">
