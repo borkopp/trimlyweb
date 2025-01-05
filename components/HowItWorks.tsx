@@ -82,7 +82,7 @@ export function HowItWorks() {
               <div key={index} className="relative flex gap-4 items-start group">
                 <motion.div
                   animate={{
-                    y: activeStep === index ? -4 : -4,
+                    y: activeStep === index ? -8 : -8,
                   }}
                   transition={{duration: 0.5}}
                   className={cn(
