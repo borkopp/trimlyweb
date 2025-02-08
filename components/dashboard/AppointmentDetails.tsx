@@ -38,7 +38,6 @@ export function AppointmentDetails({appointmentId, appointment: initialAppointme
 
       try {
         if (appointmentId) {
-          console.log("Fetching appointment with ID:", appointmentId);
           const details = await getAppointmentDetails(appointmentId);
           setSelectedAppointment(details.appointment as Appointment);
           setServices(details.services);

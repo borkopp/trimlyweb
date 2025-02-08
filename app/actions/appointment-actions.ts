@@ -90,8 +90,6 @@ export async function deleteAppointment(id: number) {
 export async function getBarberAvailability(barberId: number, date: string) {
   const supabase = createClient()
   
-  console.log('Fetching availability for:', { barberId, date });
-  
   // First get all potential slots
   const { data: slots, error: slotsError } = await supabase
     .from('barber_availability')
@@ -121,8 +119,6 @@ export async function getBarberAvailability(barberId: number, date: string) {
       availableSlots.push(slot);
     }
   }
-
-  console.log('Available slots after filtering:', availableSlots);
   return availableSlots;
 }
 

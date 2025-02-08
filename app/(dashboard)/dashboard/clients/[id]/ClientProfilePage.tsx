@@ -23,13 +23,14 @@ async function getImageUrl(path: string) {
 }
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-type Barber = Database["public"]["Tables"]["barbers"]["Row"] & {
-  avatar_url?: string | null;
-};
-type Appointment = Database["public"]["Tables"]["appointments"]["Row"] & {
-  barber: Barber;
-  services: Database["public"]["Tables"]["services"]["Row"][];
-};
+type AppointmentRow = Database["public"]["Tables"]["appointments"]["Row"];
+type BarberRow = Database["public"]["Tables"]["barbers"]["Row"];
+type ServiceRow = Database["public"]["Tables"]["services"]["Row"];
+
+interface Appointment extends AppointmentRow {
+  barber: BarberRow;
+  services: ServiceRow[];
+}
 
 interface ClientProfilePageProps {
   profile: Profile;
@@ -51,9 +52,10 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
 
       // Load barber avatars
       const urls: Record<number, string> = {};
+
       for (const apt of appointments) {
-        if (apt.barber?.avatar_url) {
-          const url = await getImageUrl(apt.barber.avatar_url);
+        if (apt.barber?.image) {
+          const url = await getImageUrl(apt.barber.image);
           if (url) {
             urls[apt.barber.id] = url;
           }
@@ -63,7 +65,7 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
     }
 
     loadAvatarUrls();
-  }, [profile.avatar_url, appointments]);
+  }, [profile.avatar_url, appointments, profile.id]);
 
   // Calculate statistics
   const totalAppointments = appointments.length;
@@ -101,12 +103,9 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
                   <span>{profile.email}</span>
                 </div>
                 <div className="flex gap-2 mt-2">
-                  <Badge variant="outline">Client since {formatDate(profile.updated_at || "")}</Badge>
+                  <Badge variant="outline">Client since - {formatDate(profile.updated_at || "")}</Badge>
                 </div>
               </div>
-              <Button asChild>
-                <Link href={`/dashboard/appointments/new?client=${profile.id}`}>Book Appointment</Link>
-              </Button>
             </div>
           </CardContent>
         </Card>

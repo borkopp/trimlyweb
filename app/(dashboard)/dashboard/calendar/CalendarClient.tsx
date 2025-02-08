@@ -83,8 +83,6 @@ export default function CalendarClient({initialAppointments}: Props) {
       const startDate = start.toISOString().split("T")[0];
       const endDate = end.toISOString().split("T")[0];
 
-      console.log("Fetching appointments for date range:", {startDate, endDate});
-
       try {
         const {data, error, status, statusText} = await supabase
           .from("appointments")
@@ -116,20 +114,10 @@ export default function CalendarClient({initialAppointments}: Props) {
 
         // Transform the data to flatten the services array
         const transformedData = (data || []).map((apt) => {
-          console.log("Processing appointment:", {
-            id: apt.id,
-            date: apt.date,
-            services: apt.services?.length || 0,
-          });
           return {
             ...apt,
             services: apt.services?.map((s: {services: ServiceRow}) => s.services).flat() || [],
           };
-        });
-
-        console.log("Transformed data:", {
-          count: transformedData.length,
-          firstRecord: transformedData[0],
         });
 
         setAppointments(transformedData);
@@ -155,7 +143,6 @@ export default function CalendarClient({initialAppointments}: Props) {
   );
 
   const events = useMemo(() => {
-    console.log("Creating events from appointments:", appointments);
     const calendarEvents = appointments.map((apt) => {
       // Create a start date object
       const startDate = new Date(`${apt.date}T${apt.time}`);
@@ -181,10 +168,8 @@ export default function CalendarClient({initialAppointments}: Props) {
         display: "block",
         className: cn("cursor-pointer transition-colors", apt.is_cancelled && "opacity-50"),
       };
-      console.log("Created event:", eventData);
       return eventData;
     });
-    console.log("Final events array:", calendarEvents);
     return calendarEvents;
   }, [appointments]);
 

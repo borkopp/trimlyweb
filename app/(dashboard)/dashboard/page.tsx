@@ -2,7 +2,6 @@ import {Suspense} from "react";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {AppointmentDetailsOverview} from "@/components/dashboard/AppointmentDetailsOverview";
 import {AppointmentsProvider} from "@/components/dashboard/AppointmentsContext";
-import {DashboardHeader} from "@/components/dashboard/header";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Button} from "@/components/ui/button";
 import {ListFilter, File} from "lucide-react";
@@ -54,7 +53,7 @@ async function DashboardContent() {
 
   return (
     <AppointmentsProvider>
-      <main className="grid flex-1 items-start gap-4 p-4 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
+      <main className="grid flex-1 items-start gap-2 p-10 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
         <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
             <Card className="sm:col-span-2">
