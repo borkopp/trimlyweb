@@ -11,7 +11,7 @@ export function DashboardHeader({
   }[];
 }) {
   return (
-    <div className="flex h-14 items-center gap-4 border-b bg-background px-4 lg:h-[60px] lg:px-6">
+    <div className="flex h-14 items-center gap-4 bg-background px-4 lg:h-[60px] lg:px-6">
       <nav className="flex gap-1 text-sm font-medium">
         {breadcrumbs.map((breadcrumb, index) => (
           <div key={breadcrumb.title} className="flex items-center gap-1">
