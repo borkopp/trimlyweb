@@ -8,17 +8,18 @@ import { headers } from 'next/headers';
 type NewAppointment = Database['public']['Tables']['appointments']['Insert']
 type Service = Database['public']['Tables']['services']['Row']
 
-export async function createAppointment(appointmentData: {
+// Add this new type
+type CreateAppointmentData = {
   barber_id: number;
   user_id: string;
   date: string;
   time: string;
   service_ids: number[];
   barbershop_id: number;
-}) {
+}
+
+export async function createAppointment(appointmentData: CreateAppointmentData) {
   const supabase = createClient()
-  
-  console.log('Attempting to book appointment with data:', appointmentData);
   
   const { data, error } = await supabase
     .rpc('book_appointment', {

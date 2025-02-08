@@ -8,6 +8,7 @@ import {AppSidebar} from "@/components/app-sidebar";
 import {SidebarProvider} from "@/components/ui/sidebar";
 import {SidebarInset} from "@/components/ui/sidebar";
 import {DashboardHeaderWithBreadcrumbs} from "@/components/dashboard/header-with-breadcrumbs";
+import {getUser} from "@/app/actions/dashboard-actions";
 
 export default async function DashboardLayout({children}: {children: React.ReactNode}) {
   const supabase = createClient();
@@ -17,6 +18,8 @@ export default async function DashboardLayout({children}: {children: React.React
   const {
     data: {user},
   } = await supabase.auth.getUser();
+
+  const userProfile = await getUser();
 
   if (!user) {
     redirect("/login");
@@ -38,7 +41,7 @@ export default async function DashboardLayout({children}: {children: React.React
         <BarbershopProvider barbershop={barbershop}>
           <div className="flex min-h-screen w-full">
             <TooltipProvider>
-              <AppSidebar />
+              <AppSidebar user={userProfile} />
               <SidebarInset>
                 <DashboardHeaderWithBreadcrumbs />
                 {children}

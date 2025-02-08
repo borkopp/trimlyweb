@@ -1,6 +1,6 @@
 "use client";
 import {useState, useEffect, useCallback} from "react";
-import {Search, Plus, X, MoreVertical, Trash, User, Scissors} from "lucide-react";
+import {Plus, X, MoreVertical, Trash, User, Scissors} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
@@ -13,8 +13,6 @@ import {ScrollArea} from "@/components/ui/scroll-area";
 import {Database} from "@/database.types";
 import {addServiceToBarber, removeServiceFromBarber, getNonBarberProfiles, assignBarberRole, deleteBarber} from "@/app/actions/dashboard-actions";
 import {toast} from "@/components/ui/use-toast";
-import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
-import Link from "next/link";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import {createClient} from "@/utils/supabase/client";
 import {EmptyState} from "@/components/ui/empty-state";

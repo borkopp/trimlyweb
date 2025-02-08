@@ -183,7 +183,7 @@ export function NewAppointmentDialog({initialBarbers, user_id}: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="text-white" onClick={() => setOpen(true)}>
+        <Button className="text-white font-medium" onClick={() => setOpen(true)}>
           <CalendarPlus className="mr-2 h-4 w-4 text-white" />
           New Appointment
         </Button>

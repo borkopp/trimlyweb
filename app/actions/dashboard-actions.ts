@@ -319,3 +319,23 @@ export async function getBarbershopSettings(): Promise<BarbershopSettings> {
   }
   return data;
 }
+
+export async function getUser(): Promise<Profile | null> {
+  const supabase = createClient();
+  
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError) throw userError;
+  
+  if (!user) return null;
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError) throw profileError;
+  
+  return profile;
+}
+

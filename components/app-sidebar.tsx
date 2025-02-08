@@ -24,113 +24,114 @@ import {
 import {NavMain} from "@/components/nav-main";
 import {NavProjects} from "@/components/nav-projects";
 import {NavUser} from "@/components/nav-user";
-import {TeamSwitcher} from "@/components/team-switcher";
 import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail} from "@/components/ui/sidebar";
+import {Database} from "@/database.types";
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/og-image.png",
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
+// Move the static data outside the component
+const navMainItems = [
+  {
+    title: "Dashboard",
+    url: "/dashboard",
+    icon: Home,
+    isActive: true,
+    items: [
+      {
+        title: "Overview",
+        url: "/dashboard",
+      },
+      {
+        title: "Analytics",
+        url: "/dashboard/analytics",
+      },
+    ],
   },
-  teams: [
-    {
-      name: "Bruno's Barbershop",
-      logo: Scissors,
-      plan: "Pro",
-    },
-  ],
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: Home,
-      isActive: true,
-      items: [
-        {
-          title: "Overview",
-          url: "/dashboard",
-        },
-        {
-          title: "Analytics",
-          url: "/dashboard/analytics",
-        },
-      ],
-    },
-    {
-      title: "Appointments",
-      url: "/dashboard/calendar",
-      icon: Calendar,
-      items: [
-        {
-          title: "Calendar",
-          url: "/dashboard/calendar",
-        },
-        {
-          title: "Clients",
-          url: "/dashboard/clients",
-        },
-      ],
-    },
-    {
-      title: "Management",
-      url: "#",
-      icon: Users2,
-      items: [
-        {
-          title: "Barbers",
-          url: "/dashboard/barbers",
-        },
-        {
-          title: "Services",
-          url: "/dashboard/services",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "/dashboard/settings",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "/dashboard/settings",
-        },
-        {
-          title: "Team",
-          url: "/dashboard/settings/team",
-        },
-        {
-          title: "Billing",
-          url: "/dashboard/settings/billing",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Book Appointment",
-      url: "/dashboard/calendar?new=true",
-      icon: CalendarPlus,
-    },
-    {
-      name: "Search Client",
-      url: "/dashboard/clients?search=true",
-      icon: Search,
-    },
-  ],
-};
+  {
+    title: "Appointments",
+    url: "/dashboard/calendar",
+    icon: Calendar,
+    items: [
+      {
+        title: "Calendar",
+        url: "/dashboard/calendar",
+      },
+      {
+        title: "Clients",
+        url: "/dashboard/clients",
+      },
+    ],
+  },
+  {
+    title: "Management",
+    url: "#",
+    icon: Users2,
+    items: [
+      {
+        title: "Barbers",
+        url: "/dashboard/barbers",
+      },
+      {
+        title: "Services",
+        url: "/dashboard/services",
+      },
+    ],
+  },
+  {
+    title: "Settings",
+    url: "/dashboard/settings",
+    icon: Settings2,
+    items: [
+      {
+        title: "General",
+        url: "/dashboard/settings",
+      },
+      {
+        title: "Team",
+        url: "/dashboard/settings/team",
+      },
+      {
+        title: "Billing",
+        url: "/dashboard/settings/billing",
+      },
+    ],
+  },
+];
 
-export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
+const projectItems = [
+  {
+    name: "Book Appointment",
+    url: "/dashboard/calendar?new=true",
+    icon: CalendarPlus,
+  },
+  {
+    name: "Search Client",
+    url: "/dashboard/clients?search=true",
+    icon: Search,
+  },
+];
+
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  user: Profile | null;
+}
+
+export function AppSidebar({user, ...props}: AppSidebarProps) {
+  if (!user) return null;
+
+  const userData = {
+    name: user.full_name || "Unknown",
+    email: user.email || "",
+    avatar: user.avatar_url || "/og-image.png",
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="bg-background dark:bg-[#18181B]">
-        <NavUser user={data.user} />
+      <SidebarHeader className="bg-white dark:bg-[#18181B]">
+        <NavUser user={userData} />
       </SidebarHeader>
-      <SidebarContent className="bg-background dark:bg-[#18181B]">
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+      <SidebarContent className="bg-white dark:bg-[#18181B]">
+        <NavMain items={navMainItems} />
+        <NavProjects projects={projectItems} />
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
