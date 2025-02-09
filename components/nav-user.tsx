@@ -1,6 +1,6 @@
 "use client";
 
-import {BadgeCheck, Bell, CreditCard, LogOut, Scissors, Sparkles, User, Calendar, Settings2} from "lucide-react";
+import {Bell, CreditCard, LogOut, Scissors, Settings2} from "lucide-react";
 
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {
