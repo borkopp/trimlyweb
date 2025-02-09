@@ -8,7 +8,7 @@ export async function updateBarbershopSettings(settings: Partial<Database['publi
   const supabase = createClient()
 
   const { data, error } = await supabase
-    .from('barbershop')
+    .from('barbershops')
     .update(settings)
     .eq('id', 1)
     .select()
@@ -26,7 +26,7 @@ export async function getBarbershopSettings() {
   const supabase = createClient()
 
   const { data, error } = await supabase
-    .from('barbershop')
+    .from('barbershops')
     .select('*')
     .eq('id', 1)
     .single()

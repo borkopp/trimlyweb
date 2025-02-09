@@ -1,7 +1,6 @@
-import { Suspense } from "react";
-import { getBarbershopSettings } from "@/app/actions/dashboard-actions";
+import {Suspense} from "react";
 import SettingsPageClient from "./SettingsPageClient";
-import { Skeleton } from "@/components/ui/skeleton";
+import {Skeleton} from "@/components/ui/skeleton";
 
 export default function Page() {
   return (
@@ -11,15 +10,20 @@ export default function Page() {
   );
 }
 
-async function SettingsPage() {
-  const barbershopSettings = await getBarbershopSettings();
+function SettingsPage() {
+  // Mock data
+  const mockSettings = {
+    id: 1,
+    name: "Sample Barbershop",
+    location: "123 Main St",
+    phone: "+1234567890",
+    opening_time: "09:00",
+    closing_time: "18:00",
+    description: null,
+    subdomain: "sample",
+  };
 
-  async function refreshSettings() {
-    "use server";
-    return await getBarbershopSettings();
-  }
-
-  return <SettingsPageClient initialSettings={barbershopSettings} refreshSettings={refreshSettings} />;
+  return <SettingsPageClient initialSettings={mockSettings} />;
 }
 
 function SettingsSkeleton() {

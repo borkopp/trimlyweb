@@ -1,26 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-  Scissors,
-  Home,
-  Calendar,
-  Users2,
-  LineChart,
-  CalendarPlus,
-  Search,
-} from "lucide-react";
-
+import {Settings2, Home, Calendar, Users2, CalendarPlus, Search} from "lucide-react";
 import {NavMain} from "@/components/nav-main";
 import {NavProjects} from "@/components/nav-projects";
 import {NavUser} from "@/components/nav-user";
@@ -84,15 +65,19 @@ const navMainItems = [
     items: [
       {
         title: "General",
-        url: "/dashboard/settings",
+        url: "/dashboard/settings?tab=general",
       },
       {
-        title: "Team",
-        url: "/dashboard/settings/team",
+        title: "Opening Hours",
+        url: "/dashboard/settings?tab=hours",
       },
       {
-        title: "Billing",
-        url: "/dashboard/settings/billing",
+        title: "Notifications",
+        url: "/dashboard/settings?tab=notifications",
+      },
+      {
+        title: "Payments",
+        url: "/dashboard/settings?tab=payments",
       },
     ],
   },

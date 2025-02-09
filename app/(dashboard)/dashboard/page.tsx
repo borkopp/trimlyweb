@@ -74,7 +74,7 @@ async function DashboardContent() {
               </CardHeader>
               <CardContent>
                 <div className="text-xs text-muted-foreground">
-                  {nextAppointment ? `Next appointment at ${formatTime(nextAppointment.time)}` : "No next appointment"}
+                  {nextAppointment ? `Next at ${formatTime(nextAppointment.time)}` : "No next appointment"}
                 </div>
               </CardContent>
               <CardFooter>
