@@ -33,6 +33,8 @@ export default function HeroMockup() {
               />
             </div>
           </div>
+          {/* Bottom fade overlay for SSR */}
+          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background via-background/90 to-transparent z-30"></div>
         </div>
       </div>
     );
@@ -61,6 +63,8 @@ export default function HeroMockup() {
             />
           </div>
         </div>
+        {/* Bottom fade overlay */}
+        
       </div>
     </div>
   );

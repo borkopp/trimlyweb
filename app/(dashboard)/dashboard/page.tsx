@@ -15,13 +15,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {getBarbers, getCurrentMonthRevenue, getDayAppointments, getServices, getTodayAppointments, getWeekAppointments} from "@/lib/supabase/queries";
-import {NewAppointmentDialog} from "@/components/NewAppointmentDialog";
+import {AppointmentDialog} from "@/components/appointment-dialog";
 import {formatTime} from "@/utils/dateUtils";
 import {getDaysInMonth} from "date-fns";
 import AppointmentsSection from "@/components/dashboard/AppointmentsSection";
 import {createClient} from "@/utils/supabase/server";
 import {redirect} from "next/navigation";
 import {Skeleton} from "@/components/ui/skeleton";
+import {headers} from "next/headers";
 
 export default function DashboardPage() {
   return (
@@ -40,6 +41,9 @@ async function DashboardContent() {
   if (!user) {
     redirect("/login");
   }
+
+  const headersList = headers();
+  const barbershopId = headersList.get("x-barbershop-id") || "1";
 
   const todayAppointments = await getTodayAppointments();
   const currentMonthRevenue = await getCurrentMonthRevenue();
@@ -64,7 +68,7 @@ async function DashboardContent() {
                 </CardDescription>
               </CardHeader>
               <CardFooter>
-                <NewAppointmentDialog initialBarbers={barbers} initialServices={services} user_id={user.id} />
+                <AppointmentDialog userId={user.id} barbershopId={barbershopId} />
               </CardFooter>
             </Card>
             <Card>

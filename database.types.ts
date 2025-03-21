@@ -21,6 +21,7 @@ export type Database = {
           is_archived: boolean | null
           is_cancelled: boolean
           is_cancelled_by_barber: boolean
+          name: string | null
           service_ids: number[]
           temporary_user_id: number | null
           time: string
@@ -37,6 +38,7 @@ export type Database = {
           is_archived?: boolean | null
           is_cancelled?: boolean
           is_cancelled_by_barber?: boolean
+          name?: string | null
           service_ids: number[]
           temporary_user_id?: number | null
           time: string
@@ -53,6 +55,7 @@ export type Database = {
           is_archived?: boolean | null
           is_cancelled?: boolean
           is_cancelled_by_barber?: boolean
+          name?: string | null
           service_ids?: number[]
           temporary_user_id?: number | null
           time?: string

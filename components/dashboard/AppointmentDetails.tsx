@@ -12,6 +12,8 @@ import {useTransition} from "react";
 import {deleteAppointment, getAppointmentDetails} from "@/app/actions/appointment-actions";
 import {Appointment} from "@/types/appointments";
 import {RescheduleDialog} from "./RescheduleDialog";
+import {Badge} from "@/components/ui/badge";
+import {formatDate, formatTime} from "@/utils/dateUtils";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
@@ -109,99 +111,86 @@ export function AppointmentDetails({appointmentId, appointment: initialAppointme
     }
   };
 
+  const isCompletedAppointment = new Date(`${selectedAppointment.date}T${selectedAppointment.time}`) < new Date();
+  const customerName = selectedAppointment.name || selectedAppointment.client?.full_name;
+  const customerEmail = selectedAppointment.client?.email;
+
   const content = (
     <>
-      <div className="grid gap-0.5">
-        <CardTitle className="group flex items-center gap-2 text-lg">
-          Appointment #{selectedAppointment.id}
-          <div className="ml-auto flex items-center gap-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size="icon" variant="outline" className="h-8 w-8">
-                  <MoreVertical className="h-3.5 w-3.5" />
-                  <span className="sr-only">More</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setIsRescheduleDialogOpen(true)}>Reschedule</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-500" onClick={() => setIsDeleteDialogOpen(true)}>
-                  Cancel Appointment
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+      <div className="space-y-4">
+        <div className="flex items-center space-x-2">
+          <h3 className="text-lg font-semibold">Appointment Details</h3>
+          <Badge variant={isCompletedAppointment ? "secondary" : "outline"}>
+            {isCompletedAppointment ? "Completed" : "Upcoming"}
+          </Badge>
+        </div>
+
+        <Card className="p-4 space-y-4">
+          <div className="space-y-3">
+            <div className="flex items-start space-x-2">
+              <Users className="h-5 w-5 text-muted-foreground mt-0.5" />
+              <div>
+                <p className="font-medium">{customerName}</p>
+                {customerEmail && <p className="text-sm text-muted-foreground">{customerEmail}</p>}
+                {!customerEmail && selectedAppointment.name && (
+                  <p className="text-xs text-muted-foreground italic">Phone/walk-in customer</p>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-2">
+              <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
+              <div>
+                <p className="font-medium">{formatDate(selectedAppointment.date)}</p>
+                <p className="text-sm text-muted-foreground">Appointment Date</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start space-x-2">
+              <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
+              <div>
+                <p className="font-medium">{formatTime(selectedAppointment.time)}</p>
+                <p className="text-sm text-muted-foreground">Appointment Time</p>
+              </div>
+            </div>
           </div>
-        </CardTitle>
-        <CardDescription className="flex flex-row gap-2 text-sm">
-          <span className="flex items-center gap-1">
-            <Calendar className="h-4 w-4" />
-            {selectedAppointment.date}
-          </span>
-          <span className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            {selectedAppointment.time.slice(0, 5)}
-          </span>
-        </CardDescription>
-      </div>
+        </Card>
 
-      <div className="mt-6 grid gap-3">
-        <div className="font-semibold">Appointment Details</div>
-        <ul className="grid gap-3">
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Service</span>
-            <span>{services.map((service) => service.name).join(", ")}</span>
-          </li>
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Duration</span>
-            <span>{totalDuration} minutes</span>
-          </li>
-        </ul>
-        <Separator className="my-2" />
-        <ul className="grid gap-3">
-          <li className="flex items-center justify-between">
-            <span className="text-muted-foreground">Price</span>
-            <span>€ {totalPrice.toFixed(2)}</span>
-          </li>
-          <li className="flex items-center justify-between font-semibold">
-            <span className="text-muted-foreground">Total</span>
-            <span>€ {totalPrice.toFixed(2)}</span>
-          </li>
-        </ul>
-      </div>
-
-      <Separator className="my-4" />
-
-      <div className="grid gap-3">
-        <div className="font-semibold">Client Information</div>
-        <dl className="grid gap-3">
-          <div className="flex items-center justify-between">
-            <dt className="text-muted-foreground">Name</dt>
-            <dd>{selectedAppointment.client.full_name}</dd>
+        <div>
+          <h4 className="text-sm font-medium mb-2">Services</h4>
+          <div className="space-y-2">
+            {services.map((service) => (
+              <Card key={service.id} className="p-3">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="font-medium">{service.name}</p>
+                    {service.description && (
+                      <p className="text-xs text-muted-foreground">{service.description}</p>
+                    )}
+                  </div>
+                  <p className="font-medium">€{service.price}</p>
+                </div>
+              </Card>
+            ))}
           </div>
-          <div className="flex items-center justify-between">
-            <dt className="text-muted-foreground">Email</dt>
-            <dd>
-              <a className="hover:underline" href={`mailto:${selectedAppointment.client.email}`}>
-                {selectedAppointment.client.email}
-              </a>
-            </dd>
-          </div>
-        </dl>
-      </div>
+        </div>
 
-      <Separator className="my-4" />
+        <div className="flex justify-between items-center px-1">
+          <p className="font-medium">Total</p>
+          <p className="font-bold">
+            €{totalPrice.toFixed(2)}
+          </p>
+        </div>
 
-      <div className="grid gap-3">
-        <div className="font-semibold">Barber Information</div>
-        <dl className="grid gap-3">
-          <div className="flex items-center justify-between">
-            <dt className="flex items-center gap-1 text-muted-foreground">
-              <Users className="h-4 w-4" />
-              Barber
-            </dt>
-            <dd>{barber?.name}</dd>
-          </div>
-        </dl>
+        {!isCompletedAppointment && (
+          <Button 
+            variant="destructive" 
+            className="w-full"
+            onClick={() => setIsDeleteDialogOpen(true)}
+          >
+            Cancel Appointment
+          </Button>
+        )}
       </div>
 
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
