@@ -17,7 +17,7 @@ export function Hero() {
       </div> */}
       <div className="max-w-4xl mx-auto relative z-10">
         <WordPullUp
-          className="relative text-5xl md:text-6xl tracking-normal lg:text-7xl text-center font-inter font-semibold"
+          className="relative text-5xl md:text-6xl tracking-normal lg:text-7xl text-center font-lato font-semibold"
           words="The upgrade your barbershop needs"
         />
         <p data-aos="fade-up" data-aos-delay="300" className="text-neutral-500 text-[1.2rem] max-w-xl mx-auto mt-10 text-center font-inter relative">

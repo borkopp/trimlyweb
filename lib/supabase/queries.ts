@@ -77,13 +77,23 @@ export async function getCurrentMonthRevenue(): Promise<number> {
   return totalRevenue;
 }
 
+/**
+ * Fetches all appointments for the current week, including client details
+ * @returns Array of appointments with associated client profiles
+ */
 export async function getWeekAppointments(): Promise<(Appointment & { client: Profile })[]> {
+    // Initialize Supabase client
     const supabase = createClient();
+    
+    // Calculate start and end dates for current week
     const today = new Date();
     const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay()).toISOString().split('T')[0];
     const endOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay() + 6).toISOString().split('T')[0];
+    
+    // Get barbershop ID for filtering
     const barbershopId = await getBarbershopId();
   
+    // Query appointments with client profile join
     const { data, error } = await supabase
       .from('appointments')
       .select(`
@@ -91,11 +101,12 @@ export async function getWeekAppointments(): Promise<(Appointment & { client: Pr
         client:profiles!appointments_user_id_fkey(full_name, email)
       `)
       .eq('barbershop_id', barbershopId)
-      .gte('date', startOfWeek)
-      .lte('date', endOfWeek)
-      .order('date', { ascending: true })
-      .order('time', { ascending: true });
+      .gte('date', startOfWeek)  // Greater than or equal to start of week
+      .lte('date', endOfWeek)    // Less than or equal to end of week
+      .order('date', { ascending: true })  // Sort by date first
+      .order('time', { ascending: true }); // Then by time
   
+    // Handle any errors
     if (error) {
       console.error('Error fetching week appointments:', error);
       return [];
