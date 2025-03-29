@@ -1,0 +1,7 @@
+{
+  "ignores": ["react", "next"],
+  "ignoreMatches": ["*.test.tsx", "*.stories.tsx"],
+  "parsers": {
+    "**/*.tsx": ["typescript"]
+  }
+}
