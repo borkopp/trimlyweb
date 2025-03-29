@@ -21,6 +21,7 @@ export type Database = {
           is_archived: boolean | null
           is_cancelled: boolean
           is_cancelled_by_barber: boolean
+          name: string | null
           service_ids: number[]
           temporary_user_id: number | null
           time: string
@@ -37,6 +38,7 @@ export type Database = {
           is_archived?: boolean | null
           is_cancelled?: boolean
           is_cancelled_by_barber?: boolean
+          name?: string | null
           service_ids: number[]
           temporary_user_id?: number | null
           time: string
@@ -53,6 +55,7 @@ export type Database = {
           is_archived?: boolean | null
           is_cancelled?: boolean
           is_cancelled_by_barber?: boolean
+          name?: string | null
           service_ids?: number[]
           temporary_user_id?: number | null
           time?: string
@@ -199,6 +202,7 @@ export type Database = {
           id: number
           image: string | null
           name: string
+          phone: string | null
           user_id: string | null
         }
         Insert: {
@@ -208,6 +212,7 @@ export type Database = {
           id?: number
           image?: string | null
           name: string
+          phone?: string | null
           user_id?: string | null
         }
         Update: {
@@ -217,6 +222,7 @@ export type Database = {
           id?: number
           image?: string | null
           name?: string
+          phone?: string | null
           user_id?: string | null
         }
         Relationships: [
@@ -232,32 +238,41 @@ export type Database = {
       barbershops: {
         Row: {
           closing_time: string | null
-          description: string | null
           id: number
+          last_minute_booking_buffer: number
           location: string | null
+          max_advance_booking_days: number
           name: string | null
           opening_time: string | null
           phone: string | null
+          service_duration: number
+          slot_interval: number
           subdomain: string
         }
         Insert: {
           closing_time?: string | null
-          description?: string | null
           id?: number
+          last_minute_booking_buffer?: number
           location?: string | null
+          max_advance_booking_days?: number
           name?: string | null
           opening_time?: string | null
           phone?: string | null
+          service_duration?: number
+          slot_interval?: number
           subdomain?: string
         }
         Update: {
           closing_time?: string | null
-          description?: string | null
           id?: number
+          last_minute_booking_buffer?: number
           location?: string | null
+          max_advance_booking_days?: number
           name?: string | null
           opening_time?: string | null
           phone?: string | null
+          service_duration?: number
+          slot_interval?: number
           subdomain?: string
         }
         Relationships: []
@@ -525,28 +540,24 @@ export type Database = {
       }
     }
     Functions: {
-      assign_barber_role:
-        | {
-            Args: {
-              user_id: string
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              user_id: string
-              service_ids: number[]
-            }
-            Returns: undefined
-          }
-      assign_barber_role_with_data: {
+      assign_barber_role: {
         Args: {
-          p_user_id: string
-          barber_name: string
-          barber_email: string
-          service_ids: number[]
+          user_id: string
+          service_ids?: number[]
+          p_barbershop_id?: number
         }
         Returns: undefined
+      }
+      available_time_slots: {
+        Args: {
+          p_barber_id: number
+          p_date: string
+          p_duration?: number
+        }
+        Returns: {
+          time_slot: string
+          is_available: boolean
+        }[]
       }
       book_appointment:
         | {
@@ -568,6 +579,34 @@ export type Database = {
               p_date: string
               p_time: string
               p_is_guest?: boolean
+              p_check_only?: boolean
+            }
+            Returns: Json
+          }
+      book_appointment_v2:
+        | {
+            Args: {
+              p_barber_id: number
+              p_user_id: string
+              p_service_ids: number[]
+              p_date: string
+              p_time: string
+              p_is_guest?: boolean
+              p_temporary_user_id?: number
+              p_check_only?: boolean
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_barber_id: number
+              p_user_id: string
+              p_service_ids: number[]
+              p_date: string
+              p_time: string
+              p_name?: string
+              p_is_guest?: boolean
+              p_temporary_user_id?: number
               p_check_only?: boolean
             }
             Returns: Json
@@ -594,6 +633,28 @@ export type Database = {
       delete_user_account: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      get_barber_available_dates: {
+        Args: {
+          p_barber_id: number
+          p_days_ahead?: number
+        }
+        Returns: {
+          date_value: string
+          has_availability: boolean
+        }[]
+      }
+      get_barber_available_slots: {
+        Args: {
+          p_barber_id: number
+          p_date: string
+          p_service_ids?: number[]
+        }
+        Returns: {
+          time_slot: string
+          end_time: string
+          is_available: boolean
+        }[]
       }
       http: {
         Args: {
