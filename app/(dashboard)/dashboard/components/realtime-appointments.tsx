@@ -40,9 +40,14 @@ export default function RealtimeAppointments({barbershopId}: {barbershopId: stri
           table: "appointments",
           filter: `barbershop_id=eq.${barbershopId}`, // Only for current barbershop
         },
-        () => {
-          console.log("Appointment change detected via Realtime, refreshing...");
+        (payload) => {
+          console.log("Appointment change detected via Realtime:", payload.eventType);
+          // Force router to revalidate data by using refresh() and prefetch()
           router.refresh();
+
+          // Also prefetch key routes to ensure they're updated
+          router.prefetch("/dashboard/appointments");
+          router.prefetch("/dashboard");
         }
       )
       .subscribe();

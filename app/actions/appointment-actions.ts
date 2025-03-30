@@ -2,7 +2,7 @@
 
 import { Database } from '@/database.types';
 import { createClient } from '@/utils/supabase/server'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { headers } from 'next/headers';
 
 type NewAppointment = Database['public']['Tables']['appointments']['Insert']
@@ -262,4 +262,23 @@ export async function getAppointmentDetails(appointmentId: string | number) {
     console.error('Error fetching appointment details:', error);
     throw error;
   }
+}
+
+/**
+ * Server action to revalidate appointment data
+ * This can be called from client components via useTransition
+ */
+export async function revalidateAppointments() {
+  // Revalidate by tag
+  revalidateTag('appointments');
+  
+  // Also revalidate specific paths
+  revalidatePath('/dashboard', 'layout');
+  revalidatePath('/dashboard/appointments');
+  revalidatePath('/dashboard/overview');
+  revalidatePath('/dashboard/appointments/week');
+  revalidatePath('/dashboard/appointments/today');
+  revalidatePath('/appointments');
+  
+  return { success: true };
 }

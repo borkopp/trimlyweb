@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 export async function POST(request: NextRequest) {
   try {
@@ -122,7 +122,10 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: insertError.message }, { status: 500 });
           }
           
-          // Revalidate all appointment-related paths
+          // Use both revalidation strategies to ensure reliable updates
+          revalidateTag('appointments'); // Revalidate all requests tagged with 'appointments'
+          
+          // Also revalidate specific paths
           revalidatePath('/dashboard', 'layout');
           revalidatePath('/dashboard/appointments');
           revalidatePath('/dashboard/overview');
@@ -140,7 +143,10 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: data.message }, { status: 400 });
       }
       
-      // Revalidate all appointment-related paths
+      // Use both revalidation strategies to ensure reliable updates
+      revalidateTag('appointments'); // Revalidate all requests tagged with 'appointments'
+      
+      // Also revalidate specific paths
       revalidatePath('/dashboard', 'layout');
       revalidatePath('/dashboard/appointments');
       revalidatePath('/dashboard/overview');

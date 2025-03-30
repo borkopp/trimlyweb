@@ -94,7 +94,8 @@ export async function getWeekAppointments(): Promise<(Appointment & { client: Pr
     // Get barbershop ID for filtering
     const barbershopId = await getBarbershopId();
   
-    // Query appointments with client profile join
+    // Query appointments with client profile join with Next.js cache tags using fetch
+    const fetchOptions = { next: { tags: ['appointments'], revalidate: 0 } };
     const { data, error } = await supabase
       .from('appointments')
       .select(`
@@ -105,7 +106,7 @@ export async function getWeekAppointments(): Promise<(Appointment & { client: Pr
       .gte('date', startOfWeek)  // Greater than or equal to start of week
       .lte('date', endOfWeek)    // Less than or equal to end of week
       .order('date', { ascending: true })  // Sort by date first
-      .order('time', { ascending: true }); // Then by time
+      .order('time', { ascending: true });  // Then by time
   
     // Handle any errors
     if (error) {
@@ -120,6 +121,7 @@ export async function getDayAppointments(date: string): Promise<(Appointment & {
   const supabase = createClient();
   const barbershopId = await getBarbershopId();
 
+  // Query with Next.js cache tags
   const { data, error } = await supabase
     .from('appointments')
     .select(`

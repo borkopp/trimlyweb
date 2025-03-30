@@ -18,6 +18,8 @@ import {Database} from "@/database.types";
 import {cn} from "@/lib/utils";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
+import {revalidateAppointments} from "@/app/actions/appointment-actions";
+import {useRouter} from "next/navigation";
 
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
 type Service = Database["public"]["Tables"]["services"]["Row"];
@@ -46,6 +48,7 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
   const [customerName, setCustomerName] = useState<string>("");
   const [isPending, startTransition] = useTransition();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   // Reset state when dialog closes
   useEffect(() => {
@@ -249,6 +252,12 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
         if (!response.ok) {
           throw new Error(data.error || "Failed to create appointment");
         }
+
+        // Call the server action to revalidate the data
+        await revalidateAppointments();
+
+        // Force router refresh for client-side navigation update
+        router.refresh();
 
         toast({
           title: "Success",

@@ -4,6 +4,10 @@ import {getDayAppointments, getWeekAppointments, getAllAppointments} from "@/lib
 import {Suspense} from "react";
 import ClientTabsUI from "./client-tabs-ui";
 
+// Set the entire component to be dynamically rendered
+export const dynamic = "force-dynamic";
+export const revalidate = 0; // Disable cache for this route
+
 // Server component to fetch data
 async function AppointmentsData({view}: {view: string}) {
   if (view === "week") {
