@@ -19,7 +19,7 @@ export default function AppointmentRow({appointment}: Props) {
 
   const isConfirmed = new Date(`${appointment.date}T${appointment.time}`) < new Date();
   const isSelected = selectedAppointment?.id === appointment.id;
-  
+
   // Determine customer name - use the appointment.name field if available,
   // otherwise use the client profile name from the user relationship
   const customerName = appointment.name || appointment.client?.full_name;
@@ -31,12 +31,8 @@ export default function AppointmentRow({appointment}: Props) {
       className={`cursor-pointer transition-colors ${isSelected ? "bg-muted/50" : "hover:bg-muted/50"}`}>
       <TableCell>
         <div className="font-medium">{customerName}</div>
-        {customerEmail && (
-          <div className="text-sm text-muted-foreground">{customerEmail}</div>
-        )}
-        {!customerEmail && appointment.name && (
-          <div className="text-xs text-muted-foreground italic">Phone/walk-in customer</div>
-        )}
+        {customerEmail && <div className="text-sm text-muted-foreground">{customerEmail}</div>}
+        {!customerEmail && appointment.name && <div className="text-xs text-muted-foreground italic">Phone/walk-in customer</div>}
       </TableCell>
       <TableCell>
         <Badge variant={isConfirmed ? "secondary" : "outline"}>{isConfirmed ? "Completed" : "Upcoming"}</Badge>

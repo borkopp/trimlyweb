@@ -46,7 +46,7 @@ export default async function DashboardContent({searchParams}: {searchParams?: {
         </div>
 
         {/* Desktop appointment details (hidden on mobile) */}
-        <div className="col-span-4 hidden space-y-4 lg:col-span-1 lg:block">
+        <div className="col-span-4 hidden space-y-4 sticky top-20 lg:col-span-1 lg:block">
           <AppointmentDetailsOverview />
         </div>
       </main>

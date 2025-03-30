@@ -120,9 +120,7 @@ export function AppointmentDetails({appointmentId, appointment: initialAppointme
       <div className="space-y-4">
         <div className="flex items-center space-x-2">
           <h3 className="text-lg font-semibold">Appointment Details</h3>
-          <Badge variant={isCompletedAppointment ? "secondary" : "outline"}>
-            {isCompletedAppointment ? "Completed" : "Upcoming"}
-          </Badge>
+          <Badge variant={isCompletedAppointment ? "secondary" : "outline"}>{isCompletedAppointment ? "Completed" : "Upcoming"}</Badge>
         </div>
 
         <Card className="p-4 space-y-4">
@@ -132,12 +130,10 @@ export function AppointmentDetails({appointmentId, appointment: initialAppointme
               <div>
                 <p className="font-medium">{customerName}</p>
                 {customerEmail && <p className="text-sm text-muted-foreground">{customerEmail}</p>}
-                {!customerEmail && selectedAppointment.name && (
-                  <p className="text-xs text-muted-foreground italic">Phone/walk-in customer</p>
-                )}
+                {!customerEmail && selectedAppointment.name && <p className="text-xs text-muted-foreground italic">Phone/walk-in customer</p>}
               </div>
             </div>
-            
+
             <div className="flex items-start space-x-2">
               <Calendar className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
@@ -145,7 +141,7 @@ export function AppointmentDetails({appointmentId, appointment: initialAppointme
                 <p className="text-sm text-muted-foreground">Appointment Date</p>
               </div>
             </div>
-            
+
             <div className="flex items-start space-x-2">
               <Clock className="h-5 w-5 text-muted-foreground mt-0.5" />
               <div>
@@ -164,9 +160,7 @@ export function AppointmentDetails({appointmentId, appointment: initialAppointme
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="font-medium">{service.name}</p>
-                    {service.description && (
-                      <p className="text-xs text-muted-foreground">{service.description}</p>
-                    )}
+                    {service.description && <p className="text-xs text-muted-foreground">{service.description}</p>}
                   </div>
                   <p className="font-medium">€{service.price}</p>
                 </div>
@@ -177,17 +171,11 @@ export function AppointmentDetails({appointmentId, appointment: initialAppointme
 
         <div className="flex justify-between items-center px-1">
           <p className="font-medium">Total</p>
-          <p className="font-bold">
-            €{totalPrice.toFixed(2)}
-          </p>
+          <p className="font-bold">€{totalPrice.toFixed(2)}</p>
         </div>
 
         {!isCompletedAppointment && (
-          <Button 
-            variant="destructive" 
-            className="w-full"
-            onClick={() => setIsDeleteDialogOpen(true)}
-          >
+          <Button variant="destructive" className="w-full" onClick={() => setIsDeleteDialogOpen(true)}>
             Cancel Appointment
           </Button>
         )}

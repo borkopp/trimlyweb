@@ -26,14 +26,14 @@ export default function ClientTabsUI({currentView}: {currentView: string}) {
   return (
     <div className="flex items-center">
       <TabsList>
+        <TabsTrigger value="all" onClick={() => handleTabChange("all")} data-state={currentView === "all" ? "active" : ""}>
+          All
+        </TabsTrigger>
         <TabsTrigger value="today" onClick={() => handleTabChange("today")} data-state={currentView === "today" ? "active" : ""}>
           Today
         </TabsTrigger>
         <TabsTrigger value="week" onClick={() => handleTabChange("week")} data-state={currentView === "week" ? "active" : ""}>
           Week
-        </TabsTrigger>
-        <TabsTrigger value="all" onClick={() => handleTabChange("all")} data-state={currentView === "all" ? "active" : ""}>
-          All
         </TabsTrigger>
       </TabsList>
       <div className="ml-auto flex items-center gap-2">

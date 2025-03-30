@@ -13,6 +13,7 @@ import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, Di
 import {useTransition} from "react";
 import {deleteAppointment} from "@/app/actions/appointment-actions";
 import {RescheduleDialog} from "./RescheduleDialog";
+import {formatDateShort} from "@/utils/dateUtils";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
@@ -99,7 +100,7 @@ export function AppointmentDetailsOverview() {
           <CardDescription className="flex flex-row gap-2 text-sm">
             <span className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
-              {selectedAppointment.date}
+              {formatDateShort(selectedAppointment.date)}
             </span>
             <span className="flex items-center gap-1">
               <Clock className="h-4 w-4" />
@@ -110,7 +111,7 @@ export function AppointmentDetailsOverview() {
         <div className="ml-auto flex items-center gap-1">
           <Button size="sm" variant="outline" className="h-8 gap-1" onClick={() => setIsRescheduleDialogOpen(true)}>
             <Clock className="h-3.5 w-3.5" />
-            <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">Reschedule</span>
+            <span className="lg:sr-only  xl:not-sr-only xl:whitespace-nowrap">Reschedule</span>
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -146,10 +147,6 @@ export function AppointmentDetailsOverview() {
           <ul className="grid gap-3">
             <li className="flex items-center justify-between">
               <span className="text-muted-foreground">Price</span>
-              <span>€ {totalPrice.toFixed(2)}</span>
-            </li>
-            <li className="flex items-center justify-between font-semibold">
-              <span className="text-muted-foreground">Total</span>
               <span>€ {totalPrice.toFixed(2)}</span>
             </li>
           </ul>

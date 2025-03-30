@@ -313,7 +313,7 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="w-[90vw] h-fit max-w-[1200px] flex flex-col">
+      <DialogContent className="w-[90vw] min-h-[50vh] max-w-[1200px] flex flex-col">
         <div className="flex flex-col h-full">
           <DialogHeader>
             <DialogTitle>Book an Appointment</DialogTitle>

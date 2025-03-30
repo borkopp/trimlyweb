@@ -30,7 +30,7 @@ export function DashboardHeaderWithBreadcrumbs() {
         ];
 
   return (
-    <div className="flex items-center justify-between border-b sticky top-0 z-10">
+    <div className="flex items-center justify-between bg-background border-b sticky top-0 z-10">
       <DashboardHeader breadcrumbs={breadcrumbs} />
       <div className="flex items-center gap-2 pr-4">
         <ModeToggle />
