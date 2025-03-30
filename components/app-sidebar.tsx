@@ -1,12 +1,12 @@
 "use client";
 
 import * as React from "react";
-import {Settings2, Home, Calendar, Users2, CalendarPlus, Search} from "lucide-react";
+import {Settings2, Home, Calendar, Users2} from "lucide-react";
 import {NavMain} from "@/components/nav-main";
-import {NavProjects} from "@/components/nav-projects";
 import {NavUser} from "@/components/nav-user";
 import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail} from "@/components/ui/sidebar";
 import {Database} from "@/database.types";
+import {QuickActions} from "@/components/quick-actions";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
@@ -83,19 +83,6 @@ const navMainItems = [
   },
 ];
 
-const projectItems = [
-  {
-    name: "Book Appointment",
-    url: "/dashboard/calendar?new=true",
-    icon: CalendarPlus,
-  },
-  {
-    name: "Search Client",
-    url: "/dashboard/clients?search=true",
-    icon: Search,
-  },
-];
-
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: Profile | null;
 }
@@ -116,7 +103,7 @@ export function AppSidebar({user, ...props}: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent className="bg-white dark:bg-[#18181B]">
         <NavMain items={navMainItems} />
-        <NavProjects projects={projectItems} />
+        <QuickActions userId={user.id} />
       </SidebarContent>
       <SidebarRail />
     </Sidebar>

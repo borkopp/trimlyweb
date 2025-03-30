@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useEffect, useTransition, useCallback, useMemo} from "react";
+import {useState, useEffect, useTransition, useCallback, useMemo, ReactNode} from "react";
 import {format, addDays, isSameDay, set, isBefore} from "date-fns";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {CalendarIcon, CalendarPlus, Scissors, User, Loader2} from "lucide-react";
@@ -33,9 +33,10 @@ type AvailableSlot = {
 interface AppointmentDialogProps {
   userId: string;
   barbershopId?: string;
+  children?: ReactNode;
 }
 
-export function AppointmentDialog({userId, barbershopId = "1"}: AppointmentDialogProps) {
+export function AppointmentDialog({userId, barbershopId = "1", children}: AppointmentDialogProps) {
   // State
   const [open, setOpen] = useState(false);
   const [selectedBarber, setSelectedBarber] = useState<number | null>(null);
@@ -214,7 +215,9 @@ export function AppointmentDialog({userId, barbershopId = "1"}: AppointmentDialo
   };
 
   // Handle creating the appointment
-  const handleCreateAppointment = () => {
+  const handleCreateAppointment = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
     if (!selectedBarber || !selectedDate || !selectedTime || selectedServices.length === 0) {
       toast({
         title: "Incomplete selection",
@@ -303,259 +306,270 @@ export function AppointmentDialog({userId, barbershopId = "1"}: AppointmentDialo
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="text-white font-medium" onClick={() => setOpen(true)}>
-          <CalendarPlus className="mr-2 h-4 w-4" />
-          New Appointment
-        </Button>
+        {children || (
+          <Button className="text-white font-medium" onClick={() => setOpen(true)}>
+            <CalendarPlus className="mr-2 h-4 w-4" />
+            New Appointment
+          </Button>
+        )}
       </DialogTrigger>
-      <DialogContent className="w-[90vw] h-[80vh] max-w-[1200px] flex flex-col">
-        <DialogHeader>
-          <DialogTitle>Book an Appointment</DialogTitle>
-          <DialogDescription>Select a barber, services, date and time to book your appointment</DialogDescription>
-        </DialogHeader>
+      <DialogContent className="w-[90vw] h-fit max-w-[1200px] flex flex-col">
+        <div className="flex flex-col h-full">
+          <DialogHeader>
+            <DialogTitle>Book an Appointment</DialogTitle>
+            <DialogDescription>Select a barber, services, date and time to book your appointment</DialogDescription>
+          </DialogHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-1 overflow-auto py-4">
-          {/* Step 1: Barber Selection */}
-          <Card className="flex flex-col h-full">
-            <CardHeader>
-              <CardTitle className="text-lg">Select Barber</CardTitle>
-            </CardHeader>
-            <div className="flex-1 overflow-hidden px-3 pb-3">
-              <ScrollArea className="h-full w-full pr-3">
-                <div className="space-y-3">
-                  {isLoadingBarbers ? (
-                    <div className="flex items-center justify-center py-10">
-                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : barberError ? (
-                    <div className="text-center py-4">
-                      <div className="text-red-500 mb-2">Failed to load barbers</div>
-                      <p className="text-muted-foreground text-sm mb-2">
-                        {barberError instanceof Error ? barberError.message : "An unknown error occurred"}
-                      </p>
-                      <Button variant="outline" size="sm" onClick={() => refetchBarbers()}>
-                        Retry
-                      </Button>
-                    </div>
-                  ) : barbers.length === 0 ? (
-                    <div className="text-center py-8">No barbers available</div>
-                  ) : (
-                    barbers.map((barber: Barber) => (
-                      <Card
-                        key={barber.id}
-                        className={cn("cursor-pointer transition-all hover:bg-muted", selectedBarber === barber.id && "border-primary bg-primary/10")}
-                        onClick={() => handleBarberSelect(barber.id)}>
-                        <CardContent className="p-2 flex items-center space-x-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarFallback>
-                              <User className="h-5 w-5" />
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <h3 className="font-medium text-sm">{barber.name}</h3>
-                            {barber.description && <p className="text-xs text-muted-foreground line-clamp-1">{barber.description}</p>}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))
-                  )}
-                </div>
-              </ScrollArea>
-            </div>
-          </Card>
-
-          {/* Step 2: Service Selection */}
-          <Card className="flex flex-col h-full">
-            <CardHeader>
-              <CardTitle className="text-lg">Choose Services</CardTitle>
-            </CardHeader>
-            <div className="flex-1 overflow-hidden px-3 pb-3">
-              <ScrollArea className="h-full w-full pr-3">
-                <div className="space-y-3">
-                  {!selectedBarber ? (
-                    <div className="text-center py-8 text-muted-foreground">Please select a barber first</div>
-                  ) : isLoadingServices ? (
-                    <div className="flex items-center justify-center py-10">
-                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : servicesError ? (
-                    <div className="text-center py-4">
-                      <div className="text-red-500 mb-2">Failed to load services</div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() =>
-                          queryClient.invalidateQueries({
-                            queryKey: ["barber-services", selectedBarber],
-                          })
-                        }>
-                        Retry
-                      </Button>
-                    </div>
-                  ) : services.length === 0 ? (
-                    <div className="text-center py-8">No services available for this barber</div>
-                  ) : (
-                    services.map((service) => (
-                      <Card
-                        key={service.id}
-                        className={cn(
-                          "cursor-pointer transition-all hover:bg-muted",
-                          selectedServices.includes(service.id) && "border-primary bg-primary/10"
-                        )}
-                        onClick={() => handleServiceToggle(service.id)}>
-                        <CardContent className="p-2 flex items-center space-x-3">
-                          <div className="h-10 w-10 rounded-md overflow-hidden flex items-center justify-center bg-muted">
-                            <Scissors className="h-5 w-5" />
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex justify-between items-center">
-                              <h3 className="font-medium text-sm">{service.name}</h3>
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm">${service.price}</span>
-                                <Badge variant="outline" className="text-xs">
-                                  {service.time} min
-                                </Badge>
-                              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-1 overflow-auto py-4">
+            {/* Step 1: Barber Selection */}
+            <Card className="flex flex-col h-[460px]">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Select Barber</CardTitle>
+              </CardHeader>
+              <div className="flex-1 overflow-hidden px-3 pb-3">
+                <ScrollArea className="h-full w-full pr-3">
+                  <div className="space-y-3">
+                    {isLoadingBarbers ? (
+                      <div className="flex items-center justify-center py-10">
+                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                      </div>
+                    ) : barberError ? (
+                      <div className="text-center py-4">
+                        <div className="text-red-500 mb-2">Failed to load barbers</div>
+                        <p className="text-muted-foreground text-sm mb-2">
+                          {barberError instanceof Error ? barberError.message : "An unknown error occurred"}
+                        </p>
+                        <Button variant="outline" size="sm" onClick={() => refetchBarbers()} type="button">
+                          Retry
+                        </Button>
+                      </div>
+                    ) : barbers.length === 0 ? (
+                      <div className="text-center py-8">No barbers available</div>
+                    ) : (
+                      barbers.map((barber: Barber) => (
+                        <Card
+                          key={barber.id}
+                          className={cn(
+                            "cursor-pointer transition-all hover:bg-muted",
+                            selectedBarber === barber.id && "border-primary bg-primary/10"
+                          )}
+                          onClick={() => handleBarberSelect(barber.id)}>
+                          <CardContent className="p-2 flex items-center space-x-3">
+                            <Avatar className="h-10 w-10">
+                              <AvatarFallback>
+                                <User className="h-5 w-5" />
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                              <h3 className="font-medium text-sm">{barber.name}</h3>
+                              {barber.description && <p className="text-xs text-muted-foreground line-clamp-1">{barber.description}</p>}
                             </div>
-                            {service.description && <p className="text-xs text-muted-foreground line-clamp-1">{service.description}</p>}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))
-                  )}
-                </div>
-              </ScrollArea>
-            </div>
-          </Card>
+                          </CardContent>
+                        </Card>
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
+              </div>
+            </Card>
 
-          {/* Step 3: Date Selection */}
-          <Card className="flex flex-col h-full">
-            <CardHeader>
-              <CardTitle className="text-lg">Select Date</CardTitle>
-            </CardHeader>
-            <div className="flex-1 overflow-hidden px-3 pb-3 flex items-center justify-center">
-              {!selectedBarber || selectedServices.length === 0 ? (
-                <div className="text-center text-muted-foreground">Select barber and at least one service first</div>
-              ) : isLoadingDates ? (
-                <div className="flex items-center justify-center py-10">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                </div>
-              ) : datesError ? (
-                <div className="text-center py-4">
-                  <div className="text-red-500 mb-2">Failed to load available dates</div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      queryClient.invalidateQueries({
-                        queryKey: ["available-dates", selectedBarber, selectedServices],
-                      })
-                    }>
-                    Retry
-                  </Button>
-                </div>
-              ) : (
-                <div className="w-full flex justify-center h-full">
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={handleDateSelect}
-                    disabled={(date) => {
-                      // Disable dates that don't have availability
-                      const dateStr = format(date, "yyyy-MM-dd");
-                      const availableDate = availableDates.find((d) => d.date_value === dateStr);
+            {/* Step 2: Service Selection */}
+            <Card className="flex flex-col h-[460px]">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Choose Services</CardTitle>
+              </CardHeader>
+              <div className="flex-1 overflow-hidden px-3 pb-3">
+                <ScrollArea className="h-full w-full pr-3">
+                  <div className="space-y-3">
+                    {!selectedBarber ? (
+                      <div className="text-center py-8 text-muted-foreground">Please select a barber first</div>
+                    ) : isLoadingServices ? (
+                      <div className="flex items-center justify-center py-10">
+                        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                      </div>
+                    ) : servicesError ? (
+                      <div className="text-center py-4">
+                        <div className="text-red-500 mb-2">Failed to load services</div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          type="button"
+                          onClick={() =>
+                            queryClient.invalidateQueries({
+                              queryKey: ["barber-services", selectedBarber],
+                            })
+                          }>
+                          Retry
+                        </Button>
+                      </div>
+                    ) : services.length === 0 ? (
+                      <div className="text-center py-8">No services available for this barber</div>
+                    ) : (
+                      services.map((service) => (
+                        <Card
+                          key={service.id}
+                          className={cn(
+                            "cursor-pointer transition-all hover:bg-muted",
+                            selectedServices.includes(service.id) && "border-primary bg-primary/10"
+                          )}
+                          onClick={() => handleServiceToggle(service.id)}>
+                          <CardContent className="p-2 flex items-center space-x-3">
+                            <div className="h-10 w-10 rounded-md overflow-hidden flex items-center justify-center bg-muted">
+                              <Scissors className="h-5 w-5" />
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex justify-between items-center">
+                                <h3 className="font-medium text-sm">{service.name}</h3>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm">${service.price}</span>
+                                  <Badge variant="outline" className="text-xs">
+                                    {service.time} min
+                                  </Badge>
+                                </div>
+                              </div>
+                              {service.description && <p className="text-xs text-muted-foreground line-clamp-1">{service.description}</p>}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
+              </div>
+            </Card>
 
-                      return isBefore(date, new Date()) || !availableDate?.has_availability;
-                    }}
-                    initialFocus
-                    className="mx-auto"
-                  />
-                </div>
-              )}
-            </div>
-          </Card>
-
-          {/* Step 4: Time Selection */}
-          <Card className="flex flex-col h-full">
-            <CardHeader>
-              <CardTitle className="text-lg">Select Time</CardTitle>
-            </CardHeader>
-            <div className="flex-1 overflow-hidden px-3 pb-3">
-              <ScrollArea className="h-full w-full pr-3">
-                {!selectedBarber || selectedServices.length === 0 || !selectedDate ? (
-                  <div className="text-center py-8 text-muted-foreground">Complete previous selections first</div>
-                ) : isLoadingSlots ? (
+            {/* Step 3: Date Selection */}
+            <Card className="flex flex-col h-[460px]">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Select Date</CardTitle>
+              </CardHeader>
+              <div className="flex-1 overflow-hidden px-3 pb-3 flex items-center justify-center">
+                {!selectedBarber || selectedServices.length === 0 ? (
+                  <div className="text-center text-muted-foreground">Select barber and at least one service first</div>
+                ) : isLoadingDates ? (
                   <div className="flex items-center justify-center py-10">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                   </div>
-                ) : slotsError ? (
+                ) : datesError ? (
                   <div className="text-center py-4">
-                    <div className="text-red-500 mb-2">Failed to load time slots</div>
+                    <div className="text-red-500 mb-2">Failed to load available dates</div>
                     <Button
                       variant="outline"
                       size="sm"
+                      type="button"
                       onClick={() =>
                         queryClient.invalidateQueries({
-                          queryKey: ["available-slots", selectedBarber, selectedDate?.toISOString(), selectedServices],
+                          queryKey: ["available-dates", selectedBarber, selectedServices],
                         })
                       }>
                       Retry
                     </Button>
                   </div>
-                ) : availableSlots.length === 0 ? (
-                  <div className="text-center py-8">No available times for this date</div>
                 ) : (
-                  <div className="grid grid-cols-3 gap-1">
-                    {availableSlots.map((slot, index) => (
-                      <Button
-                        key={index}
-                        variant={selectedTime === slot.time_slot ? "default" : "outline"}
-                        onClick={() => handleTimeSelect(slot.time_slot)}
-                        className="h-8 text-xs">
-                        {slot.time_slot}
-                      </Button>
-                    ))}
+                  <div className="w-full flex justify-center h-full">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={handleDateSelect}
+                      disabled={(date) => {
+                        // Disable dates that don't have availability
+                        const dateStr = format(date, "yyyy-MM-dd");
+                        const availableDate = availableDates.find((d) => d.date_value === dateStr);
+
+                        return isBefore(date, new Date()) || !availableDate?.has_availability;
+                      }}
+                      initialFocus
+                      className="mx-auto"
+                    />
                   </div>
                 )}
-              </ScrollArea>
-            </div>
-          </Card>
-        </div>
+              </div>
+            </Card>
 
-        <DialogFooter className="pt-4">
-          <div className="w-full flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
-            <div className="flex-1 flex items-center gap-3">
-              <div className="sm:max-w-[200px] w-full">
-                <Input
-                  id="customer-name"
-                  placeholder="Customer Name (optional)"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  className="h-9"
-                />
+            {/* Step 4: Time Selection */}
+            <Card className="flex flex-col h-[460px]">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Select Time</CardTitle>
+              </CardHeader>
+              <div className="flex-1 overflow-hidden px-3 pb-3">
+                <ScrollArea className="h-full w-full pr-3">
+                  {!selectedBarber || selectedServices.length === 0 || !selectedDate ? (
+                    <div className="text-center py-8 text-muted-foreground">Complete previous selections first</div>
+                  ) : isLoadingSlots ? (
+                    <div className="flex items-center justify-center py-10">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : slotsError ? (
+                    <div className="text-center py-4">
+                      <div className="text-red-500 mb-2">Failed to load time slots</div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        type="button"
+                        onClick={() =>
+                          queryClient.invalidateQueries({
+                            queryKey: ["available-slots", selectedBarber, selectedDate?.toISOString(), selectedServices],
+                          })
+                        }>
+                        Retry
+                      </Button>
+                    </div>
+                  ) : availableSlots.length === 0 ? (
+                    <div className="text-center py-8">No available times for this date</div>
+                  ) : (
+                    <div className="flex flex-col space-y-1">
+                      {availableSlots.map((slot, index) => (
+                        <Button
+                          key={index}
+                          type="button"
+                          variant={selectedTime === slot.time_slot ? "default" : "outline"}
+                          onClick={() => handleTimeSelect(slot.time_slot)}
+                          className="w-full justify-start text-left h-10">
+                          {slot.time_slot.substring(0, 5)}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
+                </ScrollArea>
               </div>
-              <div className="text-xs text-muted-foreground hidden sm:block">
-                {selectedBarber && selectedDate && selectedTime && selectedServices.length > 0 ? (
-                  <p>
-                    {serviceDuration} min, {selectedDate ? format(selectedDate, "PPP") : ""}, {selectedTime}
-                  </p>
-                ) : (
-                  <p>Complete all selections to book</p>
-                )}
-              </div>
-            </div>
-            <Button disabled={isBookingDisabled} onClick={handleCreateAppointment} className="sm:min-w-28 w-full sm:w-auto">
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Booking...
-                </>
-              ) : (
-                "Book Appointment"
-              )}
-            </Button>
+            </Card>
           </div>
-        </DialogFooter>
+
+          <DialogFooter className="pt-4">
+            <div className="w-full flex flex-col-reverse sm:flex-row items-center justify-between gap-4">
+              <div className="flex-1 flex items-center gap-3">
+                <div className="sm:max-w-[200px] w-full">
+                  <Input
+                    id="customer-name"
+                    placeholder="Customer Name (optional)"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    className="h-9"
+                  />
+                </div>
+                <div className="text-xs text-muted-foreground hidden sm:block">
+                  {selectedBarber && selectedDate && selectedTime && selectedServices.length > 0 ? (
+                    <p>
+                      {serviceDuration} min, {selectedDate ? format(selectedDate, "PPP") : ""}, {selectedTime}
+                    </p>
+                  ) : (
+                    <p>Complete all selections to book</p>
+                  )}
+                </div>
+              </div>
+              <Button type="button" disabled={isBookingDisabled} onClick={handleCreateAppointment} className="sm:min-w-28 w-full sm:w-auto">
+                {isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Booking...
+                  </>
+                ) : (
+                  "Book Appointment"
+                )}
+              </Button>
+            </div>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
