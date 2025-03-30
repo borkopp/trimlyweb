@@ -1,5 +1,4 @@
 import {Tabs, TabsContent} from "@/components/ui/tabs";
-
 import AppointmentsSection from "@/components/dashboard/AppointmentsSection";
 import {getDayAppointments, getWeekAppointments, getAllAppointments} from "@/lib/supabase/queries";
 import {Suspense} from "react";
