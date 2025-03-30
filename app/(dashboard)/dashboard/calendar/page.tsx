@@ -7,6 +7,7 @@ import {Skeleton} from "@/components/ui/skeleton";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import {Sheet, SheetContent, SheetHeader, SheetTitle} from "@/components/ui/sheet";
 import {AppointmentDetails} from "@/components/dashboard/AppointmentDetails";
+import RealtimeAppointments from "../components/realtime-appointments";
 
 export const dynamic = "force-dynamic";
 
@@ -57,12 +58,19 @@ async function getAppointments(): Promise<Appointment[]> {
 }
 
 export default async function CalendarPage() {
+  const headersList = headers();
+  const barbershopId = headersList.get("x-barbershop-id") || "1";
   const appointments = await getAppointments();
 
   return (
-    <Suspense fallback={<CalendarSkeleton />}>
-      <CalendarClient initialAppointments={appointments} />
-    </Suspense>
+    <>
+      {/* Real-time subscription component */}
+      <RealtimeAppointments barbershopId={barbershopId} />
+
+      <Suspense fallback={<CalendarSkeleton />}>
+        <CalendarClient initialAppointments={appointments} />
+      </Suspense>
+    </>
   );
 }
 

@@ -1,8 +1,9 @@
 import { createBrowserClient } from "@supabase/ssr";
 
 export function createClient() {
+  const isBrowser = typeof window !== 'undefined';
   const isDevelopment = process.env.NODE_ENV === 'development';
-  const domain = isDevelopment ? 'localhost' : window.location.hostname.split('.').slice(-2).join('.');
+  const domain = isDevelopment ? 'localhost' : (isBrowser ? window.location.hostname.split('.').slice(-2).join('.') : '');
 
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,12 +11,16 @@ export function createClient() {
     {
       cookies: {
         get(name: string) {
+          if (!isBrowser) return undefined;
+          
           const cookie = document.cookie
             .split('; ')
             .find((row) => row.startsWith(`${name}=`));
           return cookie ? cookie.split('=')[1] : undefined;
         },
         set(name: string, value: string, options: { domain?: string; path?: string; sameSite?: string; secure?: boolean }) {
+          if (!isBrowser) return;
+          
           let cookieString = `${name}=${value}`;
           if (options.domain) cookieString += `; domain=${options.domain}`;
           if (options.path) cookieString += `; path=${options.path}`;
@@ -24,6 +29,8 @@ export function createClient() {
           document.cookie = cookieString;
         },
         remove(name: string, options: { domain?: string; path?: string }) {
+          if (!isBrowser) return;
+          
           let cookieString = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
           if (options.domain) cookieString += `; domain=${options.domain}`;
           if (options.path) cookieString += `; path=${options.path}`;

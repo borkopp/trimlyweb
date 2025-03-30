@@ -14,6 +14,7 @@ import {createAppointment, getBarberServices, getBarberAvailability} from "@/app
 import {ScrollArea} from "./ui/scroll-area";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 import {createClient} from "@/utils/supabase/client";
+import {Input} from "@/components/ui/input";
 import Image from "next/image";
 
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
@@ -32,6 +33,7 @@ export function NewAppointmentDialog({initialBarbers, user_id}: Props) {
   const [service, setService] = useState("");
   const [services, setServices] = useState<any[]>([]);
   const [time, setTime] = useState<string>("");
+  const [clientName, setClientName] = useState("");
   const [isPending, startTransition] = useTransition();
   const datePickerRef = useRef<HTMLDivElement>(null);
   const [barberAvatars, setBarberAvatars] = useState<Record<number, string>>({});
@@ -141,6 +143,7 @@ export function NewAppointmentDialog({initialBarbers, user_id}: Props) {
           time,
           barbershop_id: 1,
           user_id: user_id,
+          client_name: clientName || undefined,
         });
         toast({
           title: "Success",
@@ -151,6 +154,7 @@ export function NewAppointmentDialog({initialBarbers, user_id}: Props) {
         setBarber("");
         setService("");
         setTime("");
+        setClientName("");
       } catch (error) {
         console.error("Error creating appointment:", error);
         toast({
@@ -190,14 +194,14 @@ export function NewAppointmentDialog({initialBarbers, user_id}: Props) {
       </DialogTrigger>
       <DialogContent className="w-fit max-w-[90vw] h-[600px] flex flex-col bg-black">
         <form onSubmit={handleSubmit} className="flex flex-col h-full">
-          <DialogHeader>
+          <DialogHeader className="pb-2">
             <DialogTitle>Create New Appointment</DialogTitle>
-            <DialogDescription>Fill in the details to schedule a new appointment.</DialogDescription>
+            <DialogDescription className="text-xs">Fill in the details to schedule a new appointment.</DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-[250px_250px_fit-content(100%)_250px] gap-6 py-6">
+          <div className="grid grid-cols-[250px_250px_fit-content(100%)_250px] gap-6 py-4">
             {/* Barber Selection Column */}
-            <div className="space-y-4">
-              <Label className="text-lg font-semibold">Choose Barber</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Choose Barber</Label>
               <ScrollArea className="h-[332px] border rounded-md bg-background">
                 <div className="grid">
                   {initialBarbers.map((b) => (
@@ -230,8 +234,8 @@ export function NewAppointmentDialog({initialBarbers, user_id}: Props) {
             </div>
 
             {/* Service Selection Column */}
-            <div className="space-y-4">
-              <Label className="text-lg font-semibold">Select Service</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Select Service</Label>
               <ScrollArea className="h-[332px] border rounded-md bg-background">
                 <div>
                   {!barber ? (
@@ -264,8 +268,8 @@ export function NewAppointmentDialog({initialBarbers, user_id}: Props) {
             </div>
 
             {/* Calendar Column */}
-            <div className="space-y-4">
-              <Label className="text-lg font-semibold">Choose Date</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Choose Date</Label>
               <div>
                 <div className="bg-background border rounded-md items-center flex justify-center p-3">
                   <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
@@ -274,8 +278,8 @@ export function NewAppointmentDialog({initialBarbers, user_id}: Props) {
             </div>
 
             {/* Time Selection Column */}
-            <div className="space-y-4">
-              <Label className="text-lg font-semibold">Select Time</Label>
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Select Time</Label>
               <ScrollArea className="h-[332px] border rounded-md bg-background">
                 <div className="">
                   {isLoading ? (
@@ -306,9 +310,21 @@ export function NewAppointmentDialog({initialBarbers, user_id}: Props) {
               </ScrollArea>
             </div>
           </div>
-          <div className="flex justify-end mt-2">
-            <Button type="submit" disabled={!date || !barber || !service || !time || isPending} className="w-[200px]">
-              {isPending ? "Creating..." : "Create Appointment"}
+          <div className="flex gap-4 items-center mt-2">
+            <div className="flex-1">
+              <Label htmlFor="client_name" className="text-sm sr-only">
+                Client Name
+              </Label>
+              <Input
+                id="client_name"
+                placeholder="Client Name (optional)"
+                value={clientName}
+                onChange={(e) => setClientName(e.target.value)}
+                className="h-10"
+              />
+            </div>
+            <Button type="submit" disabled={!date || !barber || !service || !time || isPending} className="px-6">
+              {isPending ? "Creating..." : "Book Appointment"}
             </Button>
           </div>
         </form>

@@ -1,3 +1,4 @@
+import 'server-only';
 import { createClient } from "@/utils/supabase/server";
 import { Database } from "@/database.types";
 import { headers } from "next/headers";
@@ -204,6 +205,46 @@ export async function getServices(): Promise<Service[]> {
       return [];
     }
     return data;
+}
+
+/**
+ * Fetches all upcoming appointments, sorted by date and time
+ * @returns Array of appointments with associated client profiles
+ */
+export async function getAllAppointments(): Promise<(Appointment & { client: Profile })[]> {
+  const supabase = createClient();
+  const barbershopId = await getBarbershopId();
+  const today = new Date().toISOString().split('T')[0];
+  
+  // First get upcoming appointments (today or future dates)
+  const { data: upcomingAppointments, error: upcomingError } = await supabase
+    .from('appointments')
+    .select(`
+      *,
+      client:profiles!appointments_user_id_fkey(full_name, email)
+    `)
+    .eq('barbershop_id', barbershopId)
+    .gte('date', today) // Only get today and future appointments
+    .is('is_cancelled', false) // Exclude cancelled appointments
+    .order('date', { ascending: true })
+    .order('time', { ascending: true });
+  
+  if (upcomingError) {
+    console.error('Error fetching upcoming appointments:', upcomingError);
+    return [];
+  }
+  
+  // Get the current time to determine which appointments are in the future
+  const now = new Date();
+  const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:00`;
+  
+  // Filter out appointments from today that have already passed
+  // Then combine with future appointments and sort by date and time
+  const todayAppointments = upcomingAppointments.filter(
+    apt => apt.date !== today || apt.time > currentTime
+  );
+    
+  return todayAppointments as (Appointment & { client: Profile })[];
 }
 
 

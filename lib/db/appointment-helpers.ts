@@ -149,6 +149,13 @@ export async function createAppointment(
 ) {
   const supabase = createClient();
   
+  // For debugging purposes
+  if (typeof window !== 'undefined') {
+    console.log('Creating appointment client-side');
+  } else {
+    console.log('Creating appointment server-side');
+  }
+  
   const { data, error } = await supabase
     .rpc('book_appointment_v2', {
       p_barber_id: barberId,
@@ -170,8 +177,12 @@ export async function createAppointment(
     throw new Error(data.message || 'Failed to create appointment');
   }
   
-  // Revalidate relevant paths to update UI
+  // Comprehensive revalidation of all appointment-related paths
+  revalidatePath('/dashboard', 'layout'); // Revalidate entire dashboard layout
   revalidatePath('/dashboard/appointments');
+  revalidatePath('/dashboard/overview');
+  revalidatePath('/dashboard/appointments/week');
+  revalidatePath('/dashboard/appointments/today');
   revalidatePath('/appointments');
   
   return data;

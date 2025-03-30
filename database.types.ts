@@ -559,58 +559,20 @@ export type Database = {
           is_available: boolean
         }[]
       }
-      book_appointment:
-        | {
-            Args: {
-              p_barber_id: number
-              p_user_id: string
-              p_barbershop_id: number
-              p_date: string
-              p_time: string
-              p_service_ids: number[]
-            }
-            Returns: number
-          }
-        | {
-            Args: {
-              p_user_id: string
-              p_barber_id: number
-              p_service_ids: number[]
-              p_date: string
-              p_time: string
-              p_is_guest?: boolean
-              p_check_only?: boolean
-            }
-            Returns: Json
-          }
-      book_appointment_v2:
-        | {
-            Args: {
-              p_barber_id: number
-              p_user_id: string
-              p_service_ids: number[]
-              p_date: string
-              p_time: string
-              p_is_guest?: boolean
-              p_temporary_user_id?: number
-              p_check_only?: boolean
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_barber_id: number
-              p_user_id: string
-              p_service_ids: number[]
-              p_date: string
-              p_time: string
-              p_name?: string
-              p_is_guest?: boolean
-              p_temporary_user_id?: number
-              p_check_only?: boolean
-            }
-            Returns: Json
-          }
+      book_appointment_v2: {
+        Args: {
+          p_barber_id: number
+          p_user_id: string
+          p_service_ids: number[]
+          p_date: string
+          p_time: string
+          p_name?: string
+          p_is_guest?: boolean
+          p_temporary_user_id?: number
+          p_check_only?: boolean
+        }
+        Returns: Json
+      }
       bytea_to_text: {
         Args: {
           data: string

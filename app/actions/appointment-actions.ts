@@ -16,19 +16,21 @@ type CreateAppointmentData = {
   time: string;
   service_ids: number[];
   barbershop_id: number;
+  client_name?: string; // Optional client name for manual client entry
 }
 
 export async function createAppointment(appointmentData: CreateAppointmentData) {
   const supabase = createClient()
   
   const { data, error } = await supabase
-    .rpc('book_appointment', {
+    .rpc('book_appointment_v2', {
       p_barber_id: appointmentData.barber_id,
       p_user_id: appointmentData.user_id,
-      p_barbershop_id: appointmentData.barbershop_id,
+      p_service_ids: appointmentData.service_ids,
       p_date: appointmentData.date,
       p_time: appointmentData.time,
-      p_service_ids: appointmentData.service_ids
+      p_check_only: false,
+      p_client_name: appointmentData.client_name
     })
 
   if (error) {
@@ -39,7 +41,14 @@ export async function createAppointment(appointmentData: CreateAppointmentData) 
     throw new Error(`Failed to create appointment: ${error.message}`)
   }
 
-  revalidatePath('/dashboard/appointments')
+  // Comprehensive revalidation of all appointment-related paths
+  revalidatePath('/dashboard', 'layout');
+  revalidatePath('/dashboard/appointments');
+  revalidatePath('/dashboard/overview');
+  revalidatePath('/dashboard/appointments/week');
+  revalidatePath('/dashboard/appointments/today');
+  revalidatePath('/appointments');
+  
   return data
 }
 
@@ -84,7 +93,13 @@ export async function deleteAppointment(id: number) {
     throw new Error('Failed to delete appointment')
   }
 
-  revalidatePath('/dashboard/appointments')
+  // Comprehensive revalidation of all appointment-related paths
+  revalidatePath('/dashboard', 'layout');
+  revalidatePath('/dashboard/appointments');
+  revalidatePath('/dashboard/overview');
+  revalidatePath('/dashboard/appointments/week');
+  revalidatePath('/dashboard/appointments/today');
+  revalidatePath('/appointments');
 }
 
 export async function getBarberAvailability(barberId: number, date: string) {
@@ -138,9 +153,9 @@ export async function rescheduleAppointment(
 
     if (appointmentError) throw appointmentError;
 
-    // Use the existing book_appointment function to check availability
+    // Use book_appointment_v2 function to check availability
     const { data: bookingCheck, error: bookingError } = await supabase
-      .rpc('book_appointment', {
+      .rpc('book_appointment_v2', {
         p_user_id: appointment.user_id,
         p_barber_id: appointment.barber_id,
         p_service_ids: appointment.service_ids,
@@ -164,7 +179,14 @@ export async function rescheduleAppointment(
 
     if (updateError) throw updateError;
 
-    revalidatePath('/dashboard');
+    // Comprehensive revalidation of all appointment-related paths
+    revalidatePath('/dashboard', 'layout');
+    revalidatePath('/dashboard/appointments');
+    revalidatePath('/dashboard/overview');
+    revalidatePath('/dashboard/appointments/week');
+    revalidatePath('/dashboard/appointments/today');
+    revalidatePath('/appointments');
+    
     return { success: true };
   } catch (error) {
     console.error('Error rescheduling appointment:', error);

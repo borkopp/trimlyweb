@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/utils/supabase/server';
+import { revalidatePath } from 'next/cache';
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,6 +34,24 @@ export async function POST(request: NextRequest) {
     
     const supabase = createClient();
     
+    // Get barbershop_id from headers or from barber record
+    let barbershopId = parseInt(request.headers.get('x-barbershop-id') || '0', 10);
+    
+    // If barbershopId is not in headers, get it from the barber record
+    if (!barbershopId) {
+      const { data: barberData, error: barberError } = await supabase
+        .from('barbers')
+        .select('barbershop_id')
+        .eq('id', barberId)
+        .single();
+      
+      if (!barberError && barberData) {
+        barbershopId = barberData.barbershop_id;
+      }
+    }
+    
+    console.log('Using barbershop_id:', barbershopId);
+    
     // First verify if the UUID is valid by querying the user
     const { data: userData, error: userError } = await supabase
       .from('users')
@@ -55,9 +74,7 @@ export async function POST(request: NextRequest) {
           p_service_ids: serviceIds,
           p_date: date,
           p_time: time,
-          p_name: name,
-          p_is_guest: isGuest,
-          p_temporary_user_id: temporaryUserId,
+          p_client_name: name,
           p_check_only: false
         });
       
@@ -93,7 +110,9 @@ export async function POST(request: NextRequest) {
               time: time,
               end_time: endTime,
               name: name,
-              is_cancelled: false
+              is_cancelled: false,
+              barbershop_id: barbershopId,
+              duration: totalDuration
             })
             .select()
             .single();
@@ -102,6 +121,14 @@ export async function POST(request: NextRequest) {
             console.error('Error with direct insert:', insertError);
             return NextResponse.json({ error: insertError.message }, { status: 500 });
           }
+          
+          // Revalidate all appointment-related paths
+          revalidatePath('/dashboard', 'layout');
+          revalidatePath('/dashboard/appointments');
+          revalidatePath('/dashboard/overview');
+          revalidatePath('/dashboard/appointments/week');
+          revalidatePath('/dashboard/appointments/today');
+          revalidatePath('/appointments');
           
           return NextResponse.json({ success: true, appointment: insertData });
         }
@@ -112,6 +139,14 @@ export async function POST(request: NextRequest) {
       if (!data.success) {
         return NextResponse.json({ error: data.message }, { status: 400 });
       }
+      
+      // Revalidate all appointment-related paths
+      revalidatePath('/dashboard', 'layout');
+      revalidatePath('/dashboard/appointments');
+      revalidatePath('/dashboard/overview');
+      revalidatePath('/dashboard/appointments/week');
+      revalidatePath('/dashboard/appointments/today');
+      revalidatePath('/appointments');
       
       return NextResponse.json(data);
     } catch (rpcError) {
