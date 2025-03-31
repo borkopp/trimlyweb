@@ -1,23 +1,20 @@
 "use client";
 
-import {useState, useEffect, useTransition, useCallback, useMemo, ReactNode} from "react";
-import {format, addDays, isSameDay, set, isBefore} from "date-fns";
+import {useState, useEffect, useTransition, useCallback, ReactNode} from "react";
+import {format, isBefore} from "date-fns";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {CalendarIcon, CalendarPlus, Scissors, User, Loader2} from "lucide-react";
+import {CalendarPlus, Scissors, User, Loader2} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {ScrollArea} from "@/components/ui/scroll-area";
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {Badge} from "@/components/ui/badge";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {toast} from "@/components/ui/use-toast";
 import {Database} from "@/database.types";
 import {cn} from "@/lib/utils";
 import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
 import {revalidateAppointments} from "@/app/actions/appointment-actions";
 import {useRouter} from "next/navigation";
 
@@ -452,9 +449,9 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
               <CardHeader className="pb-2">
                 <CardTitle className="text-lg">Select Date</CardTitle>
               </CardHeader>
-              <div className="flex-1 overflow-hidden px-3 pb-3 flex items-center justify-center">
+              <div className="flex-1 overflow-hidden px-3 pb-3">
                 {!selectedBarber || selectedServices.length === 0 ? (
-                  <div className="text-center text-muted-foreground">Select barber and at least one service first</div>
+                  <div className="text-center py-8 text-muted-foreground">Select barber and at least one service first</div>
                 ) : isLoadingDates ? (
                   <div className="flex items-center justify-center py-10">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />

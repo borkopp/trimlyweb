@@ -3,6 +3,9 @@
 import {usePathname} from "next/navigation";
 import {DashboardHeader} from "./header";
 import {ModeToggle} from "@/components/theme-toggle";
+import {PanelLeft, PanelRightClose} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {useSidebar} from "@/components/ui/sidebar";
 
 const BREADCRUMB_TITLES: Record<string, string> = {
   calendar: "Calendar",
@@ -17,6 +20,8 @@ const BREADCRUMB_TITLES: Record<string, string> = {
 export function DashboardHeaderWithBreadcrumbs() {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
+  const {state, toggleSidebar} = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   const breadcrumbs =
     segments.length === 1
@@ -31,7 +36,17 @@ export function DashboardHeaderWithBreadcrumbs() {
 
   return (
     <div className="flex items-center justify-between bg-background border-b sticky top-0 z-10">
-      <DashboardHeader breadcrumbs={breadcrumbs} />
+      <div className="flex items-center">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-9 w-9 ml-2"
+          onClick={toggleSidebar}
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}>
+          {isCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelRightClose className="h-4 w-4" />}
+        </Button>
+        <DashboardHeader breadcrumbs={breadcrumbs} />
+      </div>
       <div className="flex items-center gap-2 pr-4">
         <ModeToggle />
       </div>
