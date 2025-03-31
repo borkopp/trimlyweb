@@ -3,17 +3,19 @@
 import {ChevronRight, type LucideIcon} from "lucide-react";
 import {useEffect, useState} from "react";
 import {usePathname} from "next/navigation";
+import Link from "next/link";
 
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuButton,
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 export function NavMain({
@@ -32,6 +34,8 @@ export function NavMain({
 }) {
   const pathname = usePathname();
   const [openStates, setOpenStates] = useState<Record<string, boolean>>({});
+  const {state} = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   // Load initial states from localStorage
   useEffect(() => {
@@ -60,6 +64,22 @@ export function NavMain({
       <SidebarMenu>
         {items.map((item) => {
           const isActive = isItemActive(item);
+
+          // When sidebar is collapsed, make the icon clickable to the main URL
+          if (isCollapsed) {
+            return (
+              <SidebarMenuItem key={item.title}>
+                <Link href={item.url} passHref>
+                  <SidebarMenuButton tooltip={item.title} className="hover:bg-secondary">
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+            );
+          }
+
+          // Regular expandable menu when sidebar is expanded
           return (
             <Collapsible
               key={item.title}
@@ -80,9 +100,9 @@ export function NavMain({
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild className="hover:bg-secondary">
-                          <a href={subItem.url}>
+                          <Link href={subItem.url}>
                             <span>{subItem.title}</span>
-                          </a>
+                          </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     ))}

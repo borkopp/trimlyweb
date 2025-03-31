@@ -45,7 +45,7 @@ const navMainItems = [
   },
   {
     title: "Management",
-    url: "#",
+    url: "/dashboard/services",
     icon: Users2,
     items: [
       {
