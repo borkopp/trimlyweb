@@ -1,6 +1,6 @@
 import type {Metadata} from "next";
 import localFont from "next/font/local";
-import {Montserrat, Lato} from "next/font/google";
+import {Montserrat, Lato, Inter} from "next/font/google";
 import "./globals.css";
 import {ThemeProvider} from "@/components/theme-provider";
 import {Toaster} from "@/components/ui/toaster";
@@ -11,8 +11,8 @@ import {createClient} from "@/utils/supabase/server";
 import {BarbershopProvider} from "@/contexts/BarbershopContext";
 import JsonLd from "@/components/JsonLd";
 
-const inter = localFont({
-  src: "../public/fonts/Inter-VariableFont_opsz,wght.ttf",
+const inter = Inter({
+  subsets: ["latin"],
   variable: "--font-inter",
 });
 
