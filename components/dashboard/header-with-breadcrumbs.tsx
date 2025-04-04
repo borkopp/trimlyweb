@@ -35,7 +35,7 @@ export function DashboardHeaderWithBreadcrumbs() {
         ];
 
   return (
-    <div className="flex items-center justify-between bg-background border-b sticky top-0 z-10">
+    <div className="flex items-center justify-between bg-background border-b sticky top-0 z-50">
       <div className="flex items-center">
         <Button
           variant="ghost"
