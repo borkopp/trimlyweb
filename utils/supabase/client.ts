@@ -2,8 +2,6 @@ import { createBrowserClient } from "@supabase/ssr";
 
 export function createClient() {
   const isBrowser = typeof window !== 'undefined';
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  const domain = isDevelopment ? 'localhost' : (isBrowser ? window.location.hostname.split('.').slice(-2).join('.') : '');
 
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

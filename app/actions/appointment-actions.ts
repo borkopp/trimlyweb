@@ -81,19 +81,20 @@ export async function getBarberServices(barberId: number): Promise<Service[]> {
   return data?.map(item => item.services) ?? []
 }
 
-export async function deleteAppointment(id: number) {
+export async function cancelAppointmentByBarber(id: number) {
   const supabase = createClient()
-  
+
   const { error } = await supabase
     .from("appointments")
-    .delete()
+    .update({ is_cancelled_by_barber: true, is_cancelled: true }) // Also set is_cancelled for consistency
     .eq('id', id)
 
   if (error) {
-    throw new Error('Failed to delete appointment')
+    console.error("Error cancelling appointment:", error); // Add log
+    throw new Error('Failed to cancel appointment')
   }
 
-  // Comprehensive revalidation of all appointment-related paths
+  // Revalidation remains important as the appointment state changed
   revalidatePath('/dashboard', 'layout');
   revalidatePath('/dashboard/appointments');
   revalidatePath('/dashboard/overview');

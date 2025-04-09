@@ -11,14 +11,19 @@ import {Database} from "@/database.types";
 import {toast} from "@/components/ui/use-toast";
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {useTransition} from "react";
-import {deleteAppointment} from "@/app/actions/appointment-actions";
+import {cancelAppointmentByBarber} from "@/app/actions/appointment-actions";
 import {RescheduleDialog} from "./RescheduleDialog";
-import {formatDateShort} from "@/utils/dateUtils";
+import {formatDate, formatDateShort} from "@/utils/dateUtils";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
 
-export function AppointmentDetailsOverview() {
+// Add loggedInUserId to props
+interface AppointmentDetailsOverviewProps {
+  loggedInUserId: string;
+}
+
+export function AppointmentDetailsOverview({ loggedInUserId }: AppointmentDetailsOverviewProps) {
   const {selectedAppointment, removeAppointment} = useAppointments();
   const [services, setServices] = useState<Service[]>([]);
   const [barber, setBarber] = useState<Barber | null>(null);
@@ -66,19 +71,21 @@ export function AppointmentDetailsOverview() {
     );
   }
 
+  // Determine if it's a walk-in based on user ID comparison
+  const isWalkIn = selectedAppointment.user_id === loggedInUserId && !!selectedAppointment.name;
+
   const totalDuration = services.reduce((total, service) => total + (service.time || 0), 0);
   const totalPrice = services.reduce((total, service) => total + service.price, 0);
 
-  const handleRemoveAppointment = async (): Promise<void> => {
+  const handleCancelAppointment = async (): Promise<void> => {
     if (!selectedAppointment) return;
 
     try {
       startTransition(async () => {
-        await deleteAppointment(selectedAppointment.id);
-        removeAppointment(selectedAppointment.id);
+        await cancelAppointmentByBarber(selectedAppointment.id);
         toast({
           title: "Appointment cancelled",
-          description: "The appointment has been successfully cancelled.",
+          description: "The appointment has been marked as cancelled.",
         });
       });
     } catch (error) {
@@ -152,31 +159,63 @@ export function AppointmentDetailsOverview() {
           </ul>
         </div>
         <Separator className="my-4" />
-        <div className="grid gap-3">
-          <div className="font-semibold">Client Information</div>
-          <dl className="grid gap-3">
-            <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Name</dt>
-              <dd>{selectedAppointment.client.full_name}</dd>
-            </div>
-            <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Email</dt>
-              <dd>
-                <a className="hover:underline" href={`mailto:${selectedAppointment.client.email}`}>
-                  {selectedAppointment.client.email}
-                </a>
-              </dd>
-            </div>
-            <div className="flex items-center justify-between">
-              <dt className="text-muted-foreground">Phone</dt>
-              <dd>
-                <a className="hover:underline" href={`tel:+1234567890`}>
-                  +1 234 567 890
-                </a>
-              </dd>
-            </div>
-          </dl>
-        </div>
+
+        {/* Conditionally render Client Information */}
+        {isWalkIn ? (
+          <div className="grid gap-3">
+            <div className="font-semibold">Client Information</div>
+            <dl className="grid gap-3">
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Name</dt>
+                {/* Display appointment.name for walk-ins */}
+                <dd>{selectedAppointment.name}</dd>
+              </div>
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Type</dt>
+                <dd className="italic">Walk-in / Phone</dd>
+              </div>
+            </dl>
+          </div>
+        ) : selectedAppointment.client ? (
+          // Render full client info if it's a registered client
+          <div className="grid gap-3">
+            <div className="font-semibold">Client Information</div>
+            <dl className="grid gap-3">
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Name</dt>
+                <dd>{selectedAppointment.client.full_name}</dd>
+              </div>
+              {selectedAppointment.client.email && (
+                 <div className="flex items-center justify-between">
+                   <dt className="text-muted-foreground">Email</dt>
+                   <dd>
+                     <a className="hover:underline" href={`mailto:${selectedAppointment.client.email}`}>
+                       {selectedAppointment.client.email}
+                     </a>
+                   </dd>
+                 </div>
+              )}
+               {/* Add Phone display if available on profile */}
+               {selectedAppointment.client.phone && (
+                  <div className="flex items-center justify-between">
+                    <dt className="text-muted-foreground">Phone</dt>
+                    <dd>
+                      <a className="hover:underline" href={`tel:${selectedAppointment.client.phone}`}>
+                         {selectedAppointment.client.phone}
+                      </a>
+                    </dd>
+                  </div>
+               )}
+            </dl>
+          </div>
+        ) : (
+          // Optional: Fallback if client data is missing unexpectedly
+           <div className="grid gap-3">
+            <div className="font-semibold">Client Information</div>
+             <p className="text-muted-foreground text-sm italic">Client details not available.</p>
+           </div>
+        )}
+
         <Separator className="my-4" />
         <div className="grid gap-3">
           <div className="font-semibold">Barber Information</div>
@@ -192,8 +231,9 @@ export function AppointmentDetailsOverview() {
         </div>
       </CardContent>
       <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
-        <div className="text-xs text-muted-foreground">
-          Created <time dateTime={selectedAppointment.date}>{selectedAppointment.date}</time>
+        <div className="text-xs flex justify-between w-full text-muted-foreground">
+          <span>Appointment-ID: {selectedAppointment.id}</span>
+          <span>Created <time dateTime={selectedAppointment.date}>{formatDate(selectedAppointment.date)}</time></span>
         </div>
         {/* <Pagination className="ml-auto mr-0 w-auto">
           <PaginationContent>
@@ -222,7 +262,7 @@ export function AppointmentDetailsOverview() {
             <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
               No, Keep Appointment
             </Button>
-            <Button variant="destructive" onClick={handleRemoveAppointment}>
+            <Button variant="destructive" onClick={handleCancelAppointment}>
               Yes, Cancel Appointment
             </Button>
           </DialogFooter>

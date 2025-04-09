@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CalendarPlus, Columns, Grid3X3, List, Plus } from "lucide-react";
 
-import { Button, ButtonGroup } from "@/components/ui-calendar/button";
+import { Button } from "@/components/ui-calendar/button";
 
 import { UserSelect } from "@/calendar/components/header/user-select";
 import { TodayButton } from "@/calendar/components/header/today-button";
@@ -25,30 +25,42 @@ export function CalendarHeader({ view, events }: IProps) {
       </div>
 
       <div className="flex items-center justify-between gap-2">
-        <ButtonGroup >
-          <Button asChild aria-label="View by day" variant={view === "day" ? "primary" : "outline"}>
+        <div className="flex rounded-md border overflow-hidden">
+          <Button 
+            asChild 
+            className={`rounded-none border-r ${view === "day" ? "bg-primary text-white font-medium" : "bg-backgroundMuted hover:bg-accent"}`}
+            aria-label="View by day"
+          >
             <Link href="/dashboard/day-view">
-              <List />
+              <List className="h-4 w-4" />
             </Link>
           </Button>
 
-          <Button asChild aria-label="View by week" className="hidden md:flex" variant={view === "week" ? "primary" : "outline"}>
+          <Button 
+            asChild 
+            className={`rounded-none border-r hidden md:flex ${view === "week" ? "bg-primary text-white font-medium" : "bg-backgroundMuted hover:bg-accent"}`}
+            aria-label="View by week"
+          >
             <Link href="/dashboard/week-view">
-              <Columns />
+              <Columns className="h-4 w-4" />
             </Link>
           </Button>
 
-          <Button asChild aria-label="View by month" variant={view === "month" ? "primary" : "outline"}>
+          <Button 
+            asChild 
+            className={`rounded-none ${view === "month" ? "bg-primary text-white font-medium" : "bg-backgroundMuted hover:bg-accent"}`}
+            aria-label="View by month"
+          >
             <Link href="/dashboard/month-view">
-              <Grid3X3 />
+              <Grid3X3 className="h-4 w-4" />
             </Link>
           </Button>
-        </ButtonGroup>
+        </div>
 
         <div className="flex items-center gap-4">
           <UserSelect />
 
-            <Button size="sm">
+          <Button size="sm">
             <CalendarPlus/>
             Book Appointment
           </Button>

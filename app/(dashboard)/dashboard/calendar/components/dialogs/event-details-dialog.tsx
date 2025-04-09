@@ -20,7 +20,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
     <Dialog.Root>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
 
-      <Dialog.Content size="xs">
+      <Dialog.Content size="xs" className="max-w-2xl">
         <Dialog.Close />
 
         <Dialog.Header>

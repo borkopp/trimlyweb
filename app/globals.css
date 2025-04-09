@@ -60,6 +60,11 @@ body {
     --chart-1: 20.5 90.2% 48.2%;
     --chart-2: 20.58 97.16% 72.35%;
     --chart-3: 20.71 97.67% 83.14%;
+
+    /* Custom button utility variables */
+    --bg-primary-hover: 240 4.8% 90%;
+    --bg-disabled: 220 25% 94%;
+    --t-disabled: 240 3.8% 65%;
   }
 
   .dark {
@@ -104,6 +109,11 @@ body {
 
     --calendar-border: hsl(240 3.7% 15.9% / 0.5);
     --calendar-time-color: hsl(240 5% 64.9%);
+
+    /* Custom button utility variables for dark mode */
+    --bg-primary-hover: 240 3.7% 20%;
+    --bg-disabled: 240 3.7% 10%;
+    --t-disabled: 240 5% 50%;
   }
 }
 
@@ -113,6 +123,19 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Custom utility classes for button component */
+@layer utilities {
+  .bg-bg-primary-hover {
+    background-color: hsl(var(--bg-primary-hover));
+  }
+  .bg-bg-disabled {
+    background-color: hsl(var(--bg-disabled));
+  }
+  .text-t-disabled {
+    color: hsl(var(--t-disabled));
   }
 }
 

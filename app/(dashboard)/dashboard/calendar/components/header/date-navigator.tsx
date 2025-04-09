@@ -34,7 +34,7 @@ export function DateNavigator({ view, events }: IProps) {
         <span className="text-lg font-semibold">
           {month} {year}
         </span>
-        <Badge>{eventCount} events</Badge>
+        <Badge>{eventCount} appointments</Badge>
       </div>
 
       <div className="flex items-center gap-2">

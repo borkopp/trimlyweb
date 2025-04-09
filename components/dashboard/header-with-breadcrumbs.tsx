@@ -15,6 +15,9 @@ const BREADCRUMB_TITLES: Record<string, string> = {
   analytics: "Analytics",
   settings: "Settings",
   overview: "Overview",
+  "month-view": "Calendar",
+  "day-view": "Calendar",
+  "week-view": "Calendar",
 };
 
 export function DashboardHeaderWithBreadcrumbs() {
@@ -23,16 +26,33 @@ export function DashboardHeaderWithBreadcrumbs() {
   const {state, toggleSidebar} = useSidebar();
   const isCollapsed = state === "collapsed";
 
-  const breadcrumbs =
-    segments.length === 1
-      ? [{title: "Dashboard", href: "/dashboard"}, {title: "Overview"}]
-      : [
-          {title: "Dashboard", href: "/dashboard"},
-          ...segments.slice(1).map((segment, index) => ({
-            title: BREADCRUMB_TITLES[segment] || segment,
-            href: index === segments.length - 2 ? undefined : `/dashboard/${segments.slice(1, index + 2).join("/")}`,
-          })),
-        ];
+  const isCalendarView = pathname.includes("/month-view") || 
+                         pathname.includes("/day-view") || 
+                         pathname.includes("/week-view");
+
+  let processedBreadcrumbs = [];
+
+  if (segments.length === 1) {
+    processedBreadcrumbs = [{title: "Dashboard", href: "/dashboard"}, {title: "Overview"}];
+  } else if (isCalendarView) {
+    processedBreadcrumbs = [
+      {title: "Dashboard", href: "/dashboard"},
+      {title: "Calendar", href: "/dashboard/month-view"}
+    ];
+  } else {
+    processedBreadcrumbs = [
+      {title: "Dashboard", href: "/dashboard"},
+      ...segments.slice(1).map((segment, index) => {
+        const href = index === segments.length - 2 ? undefined : `/dashboard/${segments.slice(1, index + 2).join("/")}`;
+        const title = BREADCRUMB_TITLES[segment] || segment;
+        
+        return {
+          title,
+          href,
+        };
+      }),
+    ];
+  }
 
   return (
     <div className="flex items-center justify-between bg-background border-b sticky top-0 z-50">
@@ -45,7 +65,7 @@ export function DashboardHeaderWithBreadcrumbs() {
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}>
           {isCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelRightClose className="h-4 w-4" />}
         </Button>
-        <DashboardHeader breadcrumbs={breadcrumbs} />
+        <DashboardHeader breadcrumbs={processedBreadcrumbs} />
       </div>
       <div className="flex items-center gap-2 pr-4">
         <ModeToggle />
