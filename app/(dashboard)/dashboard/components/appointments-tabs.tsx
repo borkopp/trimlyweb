@@ -1,7 +1,11 @@
-import {Tabs, TabsContent} from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import AppointmentsSection from "@/components/dashboard/AppointmentsSection";
-import {getDayAppointments, getWeekAppointments, getAllAppointments} from "@/lib/supabase/queries";
-import {Suspense} from "react";
+import {
+  getDayAppointments,
+  getWeekAppointments,
+  getAllAppointments,
+} from "@/lib/supabase/queries";
+import { Suspense } from "react";
 import ClientTabsUI from "./client-tabs-ui";
 
 // Set the entire component to be dynamically rendered
@@ -9,7 +13,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0; // Disable cache for this route
 
 // Server component to fetch data
-async function AppointmentsData({view}: {view: string}) {
+async function AppointmentsData({ view }: { view: string }) {
   if (view === "week") {
     const weekAppointments = await getWeekAppointments();
     return <AppointmentsSection appointments={weekAppointments} />;
@@ -18,13 +22,19 @@ async function AppointmentsData({view}: {view: string}) {
     return <AppointmentsSection appointments={allAppointments} />;
   } else {
     // Default to 'today'
-    const dayAppointments = await getDayAppointments(new Date().toISOString().split("T")[0]);
+    const dayAppointments = await getDayAppointments(
+      new Date().toISOString().split("T")[0]
+    );
     return <AppointmentsSection appointments={dayAppointments} />;
   }
 }
 
 // Main AppointmentsTabs component
-export default async function AppointmentsTabs({searchParams}: {searchParams?: {view?: string}}) {
+export default async function AppointmentsTabs({
+  searchParams,
+}: {
+  searchParams?: { view?: string };
+}) {
   const view = searchParams?.view || "all";
 
   return (
@@ -37,7 +47,8 @@ export default async function AppointmentsTabs({searchParams}: {searchParams?: {
               <div className="flex items-center justify-center">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary self-center"></div>
               </div>
-            }>
+            }
+          >
             <AppointmentsData view="all" />
           </Suspense>
         )}
@@ -49,7 +60,8 @@ export default async function AppointmentsTabs({searchParams}: {searchParams?: {
               <div className="flex items-center justify-center">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary self-center"></div>
               </div>
-            }>
+            }
+          >
             <AppointmentsData view="today" />
           </Suspense>
         )}
@@ -61,7 +73,8 @@ export default async function AppointmentsTabs({searchParams}: {searchParams?: {
               <div className="flex items-center justify-center">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary self-center"></div>
               </div>
-            }>
+            }
+          >
             <AppointmentsData view="week" />
           </Suspense>
         )}

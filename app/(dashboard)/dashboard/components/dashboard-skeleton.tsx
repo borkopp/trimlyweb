@@ -1,8 +1,17 @@
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Skeleton} from "@/components/ui/skeleton";
-import {AppointmentDetailsOverview} from "@/components/dashboard/AppointmentDetailsOverview";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AppointmentDetailsOverview } from "@/components/dashboard/AppointmentDetailsOverview";
+import { getUser } from "@/app/actions/dashboard-actions";
 
-export default function DashboardSkeleton() {
+export default async function DashboardSkeleton() {
+  const user = await getUser();
   return (
     <main className="grid flex-1 items-start gap-4 p-10 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
       <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
@@ -58,7 +67,7 @@ export default function DashboardSkeleton() {
           </CardHeader>
           <CardContent className="p-4">
             <div className="space-y-4">
-              {Array.from({length: 3}).map((_, i) => (
+              {Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="flex items-center gap-4">
                   <Skeleton className="h-12 w-12 rounded-full" />
                   <div className="space-y-2">
@@ -72,7 +81,7 @@ export default function DashboardSkeleton() {
         </Card>
       </div>
       <div className="col-span-4 hidden space-y-4 lg:col-span-1 lg:block">
-        <AppointmentDetailsOverview />
+        <AppointmentDetailsOverview loggedInUserId={user?.id ?? null} />
       </div>
     </main>
   );
