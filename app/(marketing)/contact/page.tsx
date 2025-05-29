@@ -1,14 +1,20 @@
 "use client";
-import {useState} from "react";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Calendar, Mail, MapPin, Phone, Send} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Textarea} from "@/components/ui/textarea";
-import {Label} from "@/components/ui/label";
-import {CalendarScript} from "@/components/CalendarScript";
-import {BackgroundBeams} from "@/components/ui/background-beams";
-import {InstagramLogoIcon} from "@radix-ui/react-icons";
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Calendar, Mail, MapPin, Phone, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { CalendarScript } from "@/components/CalendarScript";
+import { BackgroundBeams } from "@/components/ui/background-beams";
+import { InstagramLogoIcon } from "@radix-ui/react-icons";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -26,10 +32,15 @@ export default function ContactPage() {
   return (
     <div className="container mx-auto px-4 py-12 md:py-24 lg:py-32 max-w-4xl">
       <div className="space-y-4 items-center text-center mb-24">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">CONTACT</h3>
-        <h2 className="text-4xl font-semibold tracking-tighter font-montserrat sm:text-5xl">Let&apos;s get in touch</h2>
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">
+          CONTACT
+        </h3>
+        <h2 className="text-4xl font-semibold tracking-tighter font-montserrat sm:text-5xl">
+          Let&apos;s get in touch
+        </h2>
         <p className="text-neutral-500 text-[1.2rem] font-lato mx-auto my-4 text-center relative">
-          Feel free to write us an email or schedule a 30 minute meeting with us.
+          Feel free to write us an email or schedule a 30 minute meeting with
+          us.
         </p>
       </div>
 
@@ -43,19 +54,27 @@ export default function ContactPage() {
             <CardContent className="space-y-4">
               <div className="flex items-center space-x-3">
                 <Mail className="h-5 w-5 text-muted-foreground" />
-                <span className="text-muted-foreground text-sm uppercase">soon</span>
+                <span className="text-muted-foreground text-sm uppercase">
+                  coming soon
+                </span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-muted-foreground" />
-                <span className="text-muted-foreground text-sm uppercase">soon</span>
+                <span className="text-muted-foreground text-sm uppercase">
+                  coming soon
+                </span>
               </div>
               <div className="flex items-center space-x-3">
                 <InstagramLogoIcon className="h-5 w-5 text-muted-foreground" />
-                <span className="text-muted-foreground text-sm uppercase">soon</span>
+                <span className="text-muted-foreground text-sm uppercase">
+                  coming soon
+                </span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="h-5 w-5 text-muted-foreground" />
-                <span className="text-muted-foreground text-sm uppercase">soon</span>
+                <span className="text-muted-foreground text-sm uppercase">
+                  coming soon
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -66,7 +85,13 @@ export default function ContactPage() {
               <CardDescription>Book a time that works for you</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button className="w-full" data-cal-link="fadely/30min" data-cal-namespace="30min" data-cal-config='{"layout":"month_view"}'>
+              <Button
+                disabled
+                className="w-full"
+                data-cal-link="fadely/30min"
+                data-cal-namespace="30min"
+                data-cal-config='{"layout":"month_view"}'
+              >
                 <Calendar className="w-4 h-4 mr-2" />
                 Schedule a Call
               </Button>
@@ -77,13 +102,22 @@ export default function ContactPage() {
         <Card className="z-10">
           <CardHeader>
             <CardTitle>Send us a Message</CardTitle>
-            <CardDescription>We&apos;ll get back to you as soon as possible</CardDescription>
+            <CardDescription>
+              We&apos;ll get back to you as soon as possible
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Your name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} />
+                <Input
+                  id="name"
+                  placeholder="Your name"
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
@@ -92,7 +126,9 @@ export default function ContactPage() {
                   type="email"
                   placeholder="your@email.com"
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -102,10 +138,12 @@ export default function ContactPage() {
                   placeholder="Your message"
                   className="min-h-[120px]"
                   value={formData.message}
-                  onChange={(e) => setFormData({...formData, message: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, message: e.target.value })
+                  }
                 />
               </div>
-              <Button type="submit" className="w-full">
+              <Button disabled type="submit" className="w-full">
                 <Send className="w-4 h-4 mr-2" />
                 Send Message
               </Button>

@@ -1,4 +1,9 @@
-import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export default function FAQ() {
   const faqItems = [
@@ -39,16 +44,26 @@ export default function FAQ() {
     <section id="faq" className="w-full py-12 md:py-24 lg:py-32">
       <div className="container px-4 md:px-6">
         <div className="space-y-4 items-center text-center mb-24">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">FAQ</h3>
-          <h2 className="text-4xl font-semibold tracking-tighter font-montserrat sm:text-5xl">Frequently Asked Questions</h2>
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">
+            FAQ
+          </h3>
+          <h2 className="text-4xl font-semibold tracking-tighter font-montserrat sm:text-5xl">
+            Frequently Asked Questions
+          </h2>
         </div>
-        <Accordion type="single" collapsible className="w-full max-w-3xl mx-auto">
+        <Accordion
+          type="single"
+          collapsible
+          className="w-full max-w-3xl mx-auto"
+        >
           {faqItems.map((item, index) => (
             <AccordionItem value={`item-${index}`} key={index}>
               <AccordionTrigger className="text-left text-secondary-foreground hover:text-primary transition-colors">
                 {item.question}
               </AccordionTrigger>
-              <AccordionContent className="text-secondary-foreground">{item.answer}</AccordionContent>
+              <AccordionContent className="text-secondary-foreground">
+                {item.answer}
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>

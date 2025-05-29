@@ -1,27 +1,39 @@
-import {cn} from "@/lib/utils";
-import {IconHeart} from "@tabler/icons-react";
-import {BellRing, Calendar, Clock4, ImageIcon, Settings, Smartphone, Star} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { IconHeart } from "@tabler/icons-react";
+import {
+  BellRing,
+  Calendar,
+  Clock4,
+  ImageIcon,
+  Settings,
+  Smartphone,
+  Star,
+} from "lucide-react";
 
 export function FeaturesSection() {
   const features = [
     {
       title: "Your own mobile app",
-      description: "You get your own app with your own branding including your barbershop name and logo on both iOS and Android.",
+      description:
+        "You get your own app with your own branding including your barbershop name and logo on both iOS and Android.",
       icon: <Smartphone />,
     },
     {
       title: "Appointment booking",
-      description: "Book appointments with preferred barbers, select desired services with our easy to use booking interface.",
+      description:
+        "Book appointments with preferred barbers, select desired services with our easy to use booking interface.",
       icon: <Calendar />,
     },
     {
       title: "Automatic notifications",
-      description: "Receive reminders, notifications for new appointments, changes in schedules and important updates.",
+      description:
+        "Receive reminders, notifications for new appointments, changes in schedules and important updates.",
       icon: <BellRing />,
     },
     {
       title: "Gallery",
-      description: "Showcase your work and talent with the haircuts gallery. Upload your work and attract more customers.",
+      description:
+        "Showcase your work and talent with the haircuts gallery. Upload your work and attract more customers.",
       icon: <ImageIcon />,
     },
     {
@@ -32,12 +44,14 @@ export function FeaturesSection() {
     },
     {
       title: "Feedback and rating system",
-      description: "Collect client feedback and ratings to improve service quality, enhance customer satisfaction, and foster loyalty.",
+      description:
+        "Collect client feedback and ratings to improve service quality, enhance customer satisfaction, and foster loyalty.",
       icon: <Star />,
     },
     {
       title: "Admin dashboard",
-      description: "Manage your barbershop with ease. Add barbers, manage appointments, and view analytics.",
+      description:
+        "Manage your barbershop with ease. Add barbers, manage appointments, and view analytics.",
       icon: <Settings />,
     },
     // {
@@ -54,10 +68,14 @@ export function FeaturesSection() {
   ];
   return (
     <div className="bg-background">
-      <div className="container py-24 lg:py-36">
+      <div className="container py-24 pt-40">
         <div className="space-y-4 items-center text-center mb-24">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">FEATURES</h3>
-          <h2 className="text-4xl font-semibold tracking-tighter font-montserrat sm:text-5xl">Everything you need to run your barbershop</h2>
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">
+            FEATURES
+          </h3>
+          <h2 className="text-4xl font-semibold tracking-tighter font-montserrat sm:text-5xl">
+            Everything you need to run your barbershop
+          </h2>
           <p className="text-neutral-500 text-[1.2rem] font-lato mx-auto my-4 text-center relative">
             From booking appointments to managing your team and much more.
           </p>
@@ -72,14 +90,25 @@ export function FeaturesSection() {
   );
 }
 
-const Feature = ({title, description, icon, index}: {title: string; description: string; icon: React.ReactNode; index: number}) => {
+const Feature = ({
+  title,
+  description,
+  icon,
+  index,
+}: {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  index: number;
+}) => {
   return (
     <div
       className={cn(
         "flex flex-col lg:border-r py-10 relative group/feature dark:border-neutral-800",
         (index === 0 || index === 4) && "lg:border-l dark:border-neutral-800",
         index < 4 && "lg:border-b dark:border-neutral-800"
-      )}>
+      )}
+    >
       {index < 4 && (
         <div className="opacity-0 group-hover/feature:opacity-100 transition duration-200 absolute inset-0 h-full w-full bg-gradient-to-t from-neutral-100 dark:from-neutral-800 to-transparent pointer-events-none" />
       )}
@@ -93,7 +122,9 @@ const Feature = ({title, description, icon, index}: {title: string; description:
           {title}
         </span>
       </div>
-      <p className="text-sm text-neutral-500 max-w-xs relative z-10 px-10 font-lato">{description}</p>
+      <p className="text-sm text-neutral-500 max-w-xs relative z-10 px-10 font-lato">
+        {description}
+      </p>
     </div>
   );
 };
