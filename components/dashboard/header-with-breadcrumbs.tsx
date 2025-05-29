@@ -41,7 +41,7 @@ export function DashboardHeaderWithBreadcrumbs() {
   } else if (isCalendarView) {
     processedBreadcrumbs = [
       { title: "Dashboard", href: "/dashboard" },
-      { title: "Calendar", href: "/dashboard/month-view" },
+      { title: "Calendar", href: "/dashboard/calendar/month-view" },
     ];
   } else {
     processedBreadcrumbs = [

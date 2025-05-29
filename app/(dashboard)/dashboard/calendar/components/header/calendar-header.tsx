@@ -26,32 +26,44 @@ export function CalendarHeader({ view, events }: IProps) {
 
       <div className="flex items-center justify-between gap-2">
         <div className="flex rounded-md border overflow-hidden">
-          <Button 
-            asChild 
-            className={`rounded-none border-r ${view === "day" ? "bg-primary text-white font-medium" : "bg-backgroundMuted hover:bg-accent"}`}
+          <Button
+            asChild
+            className={`rounded-none border-r ${
+              view === "day"
+                ? "bg-primary text-white font-medium"
+                : "bg-backgroundMuted hover:bg-accent"
+            }`}
             aria-label="View by day"
           >
-            <Link href="/dashboard/day-view">
+            <Link href="/dashboard/calendar/day-view">
               <List className="h-4 w-4" />
             </Link>
           </Button>
 
-          <Button 
-            asChild 
-            className={`rounded-none border-r hidden md:flex ${view === "week" ? "bg-primary text-white font-medium" : "bg-backgroundMuted hover:bg-accent"}`}
+          <Button
+            asChild
+            className={`rounded-none border-r hidden md:flex ${
+              view === "week"
+                ? "bg-primary text-white font-medium"
+                : "bg-backgroundMuted hover:bg-accent"
+            }`}
             aria-label="View by week"
           >
-            <Link href="/dashboard/week-view">
+            <Link href="/dashboard/calendar/week-view">
               <Columns className="h-4 w-4" />
             </Link>
           </Button>
 
-          <Button 
-            asChild 
-            className={`rounded-none ${view === "month" ? "bg-primary text-white font-medium" : "bg-backgroundMuted hover:bg-accent"}`}
+          <Button
+            asChild
+            className={`rounded-none ${
+              view === "month"
+                ? "bg-primary text-white font-medium"
+                : "bg-backgroundMuted hover:bg-accent"
+            }`}
             aria-label="View by month"
           >
-            <Link href="/dashboard/month-view">
+            <Link href="/dashboard/calendar/month-view">
               <Grid3X3 className="h-4 w-4" />
             </Link>
           </Button>
@@ -61,7 +73,7 @@ export function CalendarHeader({ view, events }: IProps) {
           <UserSelect />
 
           <Button size="sm">
-            <CalendarPlus/>
+            <CalendarPlus />
             Book Appointment
           </Button>
         </div>

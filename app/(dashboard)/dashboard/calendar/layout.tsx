@@ -4,7 +4,11 @@ import { ChangeBadgeVariantInput } from "@/calendar/components/change-badge-vari
 
 import { getEvents, getUsers } from "@/calendar/requests";
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [events, users] = await Promise.all([getEvents(), getUsers()]);
 
   return (
