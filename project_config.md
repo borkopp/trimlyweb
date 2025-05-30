@@ -37,4 +37,5 @@ Modern Dashboard for barbershop management, where the user can manage appointmen
 
 ## Changelog
 
+- Created SearchClientDialog component with smooth UX, debounced search, profile pictures/initials fallback, and integrated it into QuickActions for seamless client search throughout the app
 - Replaced calendar dummy data with real barbershop appointments using Supabase realtime for live updates without page refresh

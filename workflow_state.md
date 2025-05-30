@@ -6,85 +6,73 @@ _Last updated: 2025-05-30_
 
 Phase: VALIDATE  
 Status: COMPLETED  
-CurrentItem: Replace calendar dummy data with real barbershop appointments using Supabase realtime
+CurrentItem: Create SearchClientDialog component for QuickActions search functionality
 
 ## Plan
 
-### Task: Replace @calendar dummy data with real barbershop appointments using Supabase realtime
+### Task: Create Search Client Dialog similar to AppointmentDialog
 
-**Objective:** Integrate real appointment data from the existing Supabase database while maintaining the same UI/styling and adding realtime updates when new appointments are created/modified.
-
-**Database Analysis:**
-
-- `appointments` table: Contains appointment data with date, time, end_time, duration, barber_id, user_id, service_ids
-- `barbers` table: Contains barber information (name, image)
-- `profiles` table: Contains user/customer information (full_name, avatar_url)
-- `services` table: Contains service information (name, description, time, price)
+**Objective:** Replace the current navigation-based "Search Client" functionality in QuickActions with a modal dialog that provides smooth UX, client search capabilities, and displays client profiles with pictures or initials fallback.
 
 **Implementation Steps:**
 
-1. **Create appointment data transformation utilities**
+1. **Create SearchClientDialog component**
 
-   - Create `app/(dashboard)/dashboard/calendar/lib/appointment-adapters.ts`
-   - Transform database appointment format to calendar IEvent format
-   - Handle multiple services per appointment for title/description
-   - Map barber data to calendar user format
-   - Generate appropriate colors for different appointment types
+   - Create `components/search-client-dialog.tsx`
+   - Base design on AppointmentDialog structure with shadcn components
+   - Include search input with real-time filtering
+   - Display client results in a scrollable list
+   - Show profile pictures or initials fallback
+   - Add loading and error states
+   - Use Dialog, Input, ScrollArea, Avatar, Card components from shadcn
 
-2. **Update calendar interfaces for real data**
+2. **Create client search API endpoint**
 
-   - Modify `interfaces.ts` to align with database schema if needed
-   - Ensure backward compatibility with existing calendar components
+   - Create or verify `/api/clients` endpoint exists
+   - Implement search functionality with query parameter
+   - Return client data including: id, name, email, phone, avatar_url
+   - Add proper error handling and validation
 
-3. **Create Supabase appointment queries**
+3. **Create client search hook**
 
-   - Create `app/(dashboard)/dashboard/calendar/lib/supabase-queries.ts`
-   - Implement function to fetch appointments with joined barber/customer/service data
-   - Include proper date range filtering for calendar views
-   - Add barbershop filtering if needed
+   - Create `hooks/use-client-search.ts` for reusable search logic
+   - Implement debounced search to avoid excessive API calls
+   - Use React Query for caching and state management
+   - Handle loading states and error handling
 
-4. **Create realtime hook for appointments**
+4. **Update QuickActions component**
 
-   - Create `app/(dashboard)/dashboard/calendar/hooks/use-realtime-appointments.ts`
-   - Set up Supabase realtime subscription for appointments table
-   - Handle insert/update/delete events for appointments
-   - Return loading states and error handling
+   - Replace navigation logic with SearchClientDialog
+   - Pass SearchClientDialog as trigger for the Search Client button
+   - Remove router.push logic and handleSearchClient callback
+   - Maintain the same button appearance and behavior
 
-5. **Update calendar requests layer**
+5. **Implement client selection actions**
+   - Add click handlers for client selection
+   - Provide options like "View Profile", "Book Appointment", "Edit Client"
+   - Navigate to appropriate pages or trigger relevant dialogs
 
-   - Modify `requests.ts` to fetch real appointment data instead of mocks
-   - Keep the same function signatures for backward compatibility
-   - Add proper error handling and loading states
+**Technical Details:**
 
-6. **Update calendar context for realtime**
-
-   - Modify `calendar-context.tsx` to use realtime appointment data
-   - Integrate the realtime hook for live updates
-   - Maintain existing context API for components
-
-7. **Update calendar layout for real data loading**
-   - Modify `layout.tsx` to handle async real data loading
-   - Add proper loading and error states
-   - Ensure smooth user experience during data fetching
-
-**Key Technical Considerations:**
-
-- Maintain exact same component interfaces to avoid breaking existing UI
-- Use Supabase realtime for live appointment updates
-- Handle appointment time zones properly
-- Map service information to appointment titles/descriptions
-- Preserve existing calendar filtering and view functionality
-- Add proper error boundaries and loading states
+- Use Supabase profiles table for client data
+- Implement search on name, email, and phone fields
+- Use debounced search (300ms delay) to optimize performance
+- Follow existing patterns from AppointmentDialog for consistency
+- Use the same card-based layout for client results
+- Add keyboard navigation support (arrow keys, enter)
+- Implement proper focus management for accessibility
 
 **Expected File Changes:**
 
-- `app/(dashboard)/dashboard/calendar/lib/appointment-adapters.ts` (new)
-- `app/(dashboard)/dashboard/calendar/lib/supabase-queries.ts` (new)
-- `app/(dashboard)/dashboard/calendar/hooks/use-realtime-appointments.ts` (new)
-- `app/(dashboard)/dashboard/calendar/requests.ts` (modify)
-- `app/(dashboard)/dashboard/calendar/contexts/calendar-context.tsx` (modify)
-- `app/(dashboard)/dashboard/calendar/layout.tsx` (modify)
-- `app/(dashboard)/dashboard/calendar/interfaces.ts` (potentially modify)
+- `components/search-client-dialog.tsx` (new)
+- `hooks/use-client-search.ts` (new)
+- `app/api/clients/route.ts` (new or modify existing)
+- `components/quick-actions.tsx` (modify)
+
+**Database Schema Reference:**
+
+- `profiles` table: id, full_name, email, phone, avatar_url, created_at
+- Search will be performed on full_name, email, and phone fields
 
 ## Rules
 
@@ -153,56 +141,52 @@ Action ▶
 
 ## Log
 
-✅ **Step 1: Created appointment data transformation utilities**
+✅ **Step 1: Created SearchClientDialog component**
 
-- Created `app/(dashboard)/dashboard/calendar/lib/appointment-adapters.ts`
-- Implemented functions to transform database appointment format to calendar IEvent format
-- Added proper color mapping for different service types
-- Added title/description generation from multiple services
-- Added barber-to-user transformation functions
+- Created `components/search-client-dialog.tsx`
+- Implemented dialog structure based on AppointmentDialog with shadcn components
+- Added search input with real-time filtering capability
+- Created scrollable client results list with proper layout
+- Implemented profile pictures with initials fallback using Avatar component
+- Added loading and error states with appropriate UI feedback
+- Used Dialog, Input, ScrollArea, Avatar, Card components from shadcn
+- Added client selection functionality with visual feedback
+- Implemented client actions (View Profile, Book Appointment)
 
-✅ **Step 2: Created Supabase appointment queries**
+✅ **Step 2: Created client search hook**
 
-- Created `app/(dashboard)/dashboard/calendar/lib/supabase-queries.ts`
-- Implemented `fetchAppointments()` with proper joins for barber/customer data
-- Implemented `fetchBarbers()` and `fetchServices()` functions
-- Added date range filtering for calendar views
-- Fixed TypeScript errors with proper typing
+- Created `hooks/use-client-search.ts` with reusable search logic
+- Implemented debounced search with 300ms delay to optimize performance
+- Used React Query for efficient caching and state management
+- Added proper loading states and error handling
+- Configured 5-minute stale time for optimal caching
+- Added retry logic for failed requests
 
-✅ **Step 3: Created realtime hook for appointments**
+✅ **Step 3: Created client search API endpoint**
 
-- Created `app/(dashboard)/dashboard/calendar/hooks/use-realtime-appointments.ts`
-- Set up Supabase realtime subscription for appointments table
-- Added automatic refetch on appointment changes
-- Included loading states and error handling
-- Added barbershop filtering support
+- Created `app/api/clients/route.ts` with GET endpoint
+- Implemented search functionality using Supabase client
+- Added search across full_name, email, and phone fields using ilike operator
+- Implemented proper error handling and validation
+- Added result limiting (50 clients) for performance
+- Used proper typing with Database types
 
-✅ **Step 4: Updated calendar requests layer**
+✅ **Step 4: Updated QuickActions component**
 
-- Modified `app/(dashboard)/dashboard/calendar/requests.ts`
-- Replaced mock data with real Supabase queries
-- Maintained backward compatibility with existing function signatures
-- Added proper error handling
+- Modified `components/quick-actions.tsx` to use SearchClientDialog
+- Replaced navigation logic with dialog trigger pattern
+- Removed router.push logic and handleSearchClient callback
+- Maintained exact same button appearance and hover behavior
+- Preserved sidebar menu structure and styling
+- Used SearchClientDialog as wrapper for SidebarMenuButton
 
-✅ **Step 5: Updated calendar context for realtime**
+✅ **Step 5: Implementation completed**
 
-- Modified `app/(dashboard)/dashboard/calendar/contexts/calendar-context.tsx`
-- Integrated useRealtimeAppointments hook
-- Added loading, error states, and refetch function to context
-- Removed events parameter from provider (now handled by realtime hook)
-
-✅ **Step 6: Updated calendar layout**
-
-- Modified `app/(dashboard)/dashboard/calendar/layout.tsx`
-- Removed events fetching (now handled by realtime hook)
-- Kept users fetching for barber selection
-
-✅ **Step 7: Added loading and error states**
-
-- Modified `app/(dashboard)/dashboard/calendar/components/client-container.tsx`
-- Added loading spinner during data fetch
-- Added error display with retry functionality
-- Maintained existing UI structure for successful states
+- All planned files created and modified according to plan
+- SearchClientDialog provides smooth UX with modern design
+- Follows project patterns and shadcn component usage
+- Includes proper TypeScript typing throughout
+- Implements accessibility features and responsive design
 
 ## ArchiveLog
 
