@@ -20,7 +20,7 @@ type CreateAppointmentData = {
 }
 
 export async function createAppointment(appointmentData: CreateAppointmentData) {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase
     .rpc('book_appointment_v2', {
@@ -53,7 +53,7 @@ export async function createAppointment(appointmentData: CreateAppointmentData) 
 }
 
 export async function getBarberServices(barberId: number): Promise<Service[]> {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   type ServiceResponse = {
     services: Service
@@ -82,7 +82,7 @@ export async function getBarberServices(barberId: number): Promise<Service[]> {
 }
 
 export async function cancelAppointmentByBarber(id: number) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { error } = await supabase
     .from("appointments")
@@ -104,7 +104,7 @@ export async function cancelAppointmentByBarber(id: number) {
 }
 
 export async function getBarberAvailability(barberId: number, date: string) {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   // First get all potential slots
   const { data: slots, error: slotsError } = await supabase
@@ -143,7 +143,7 @@ export async function rescheduleAppointment(
   date: string,
   time: string,
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     const { data: appointment, error: appointmentError } = await supabase
@@ -196,10 +196,10 @@ export async function rescheduleAppointment(
 }
 
 export async function getAppointments() {
-  const headersList = headers();
+  const headersList = await headers();
   const barbershopId = headersList.get('x-barbershop-id');
   
-  const supabase = createClient();
+  const supabase = await createClient();
   
   const { data, error } = await supabase
     .from('appointments')
@@ -215,8 +215,8 @@ export async function getAppointments() {
 }
 
 export async function getAppointmentDetails(appointmentId: string | number) {
-  const supabase = createClient();
-  const headersList = headers();
+  const supabase = await createClient();
+  const headersList = await headers();
   const barbershopId = headersList.get('x-barbershop-id');
 
   try {

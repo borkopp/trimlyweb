@@ -5,7 +5,7 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 export async function updateBarbershopSettings(settings: Partial<Database['public']['Tables']['barbershops']['Update']>) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('barbershops')
@@ -23,7 +23,7 @@ export async function updateBarbershopSettings(settings: Partial<Database['publi
 }
 
 export async function getBarbershopSettings() {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('barbershops')

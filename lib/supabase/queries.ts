@@ -9,12 +9,12 @@ type Profile = Database['public']['Tables']['profiles']['Row'];
 type Barber = Database['public']['Tables']['barbers']['Row'];
 
 async function getBarbershopId(): Promise<string | null> {
-  const headersList = headers();
+  const headersList = await headers();
   return headersList.get("x-barbershop-id");
 }
 
 export async function getTodayAppointments(): Promise<Appointment[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const today = new Date().toISOString().split('T')[0];
   const barbershopId = await getBarbershopId();
 
@@ -34,7 +34,7 @@ export async function getTodayAppointments(): Promise<Appointment[]> {
 }
 
 export async function getCurrentMonthRevenue(): Promise<number> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const now = new Date();
   const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
   const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
@@ -84,7 +84,7 @@ export async function getCurrentMonthRevenue(): Promise<number> {
  */
 export async function getWeekAppointments(): Promise<(Appointment & { client: Profile })[]> {
     // Initialize Supabase client
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Calculate start and end dates for current week
     const today = new Date();
@@ -118,7 +118,7 @@ export async function getWeekAppointments(): Promise<(Appointment & { client: Pr
 }
 
 export async function getDayAppointments(date: string): Promise<(Appointment & { client: Profile })[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   // Query with Next.js cache tags
@@ -141,7 +141,7 @@ export async function getDayAppointments(date: string): Promise<(Appointment & {
 }
 
 export async function getServicesById(ids: number[]): Promise<Service[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const barbershopId = await getBarbershopId();
 
     const { data, error } = await supabase
@@ -159,7 +159,7 @@ export async function getServicesById(ids: number[]): Promise<Service[]> {
 }
   
 export async function getBarberById(id: number): Promise<Barber | null> {
-    const supabase = createClient();
+    const supabase = await  createClient();
     const barbershopId = await getBarbershopId();
 
     const { data, error } = await supabase
@@ -178,7 +178,7 @@ export async function getBarberById(id: number): Promise<Barber | null> {
 }
 
 export async function getBarbers(): Promise<Barber[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const barbershopId = await getBarbershopId();
 
     const { data, error } = await supabase
@@ -194,7 +194,7 @@ export async function getBarbers(): Promise<Barber[]> {
 }
 
 export async function getServices(): Promise<Service[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
     const barbershopId = await getBarbershopId();
 
     const { data, error } = await supabase
@@ -214,7 +214,7 @@ export async function getServices(): Promise<Service[]> {
  * @returns Array of appointments with associated client profiles
  */
 export async function getAllAppointments(): Promise<(Appointment & { client: Profile })[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
   const today = new Date().toISOString().split('T')[0];
   

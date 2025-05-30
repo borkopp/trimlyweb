@@ -4,7 +4,7 @@ import {headers} from "next/headers";
 
 export default async function ServicesPage() {
   const services = await getServices();
-  const headersList = headers();
+  const headersList = await headers();
   const barbershopId = parseInt(headersList.get("x-barbershop-id") || "0");
 
   async function refreshServices() {

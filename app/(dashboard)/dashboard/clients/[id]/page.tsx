@@ -1,18 +1,26 @@
-import {createClient} from "@/utils/supabase/server";
-import {notFound} from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
+import { notFound } from "next/navigation";
 import ClientProfilePage from "./ClientProfilePage";
-import {Database} from "@/database.types";
+import { Database } from "@/database.types";
 
-type AppointmentWithDetails = Database["public"]["Tables"]["appointments"]["Row"] & {
-  barber: Database["public"]["Tables"]["barbers"]["Row"];
-  services: Database["public"]["Tables"]["services"]["Row"][];
-};
+type AppointmentWithDetails =
+  Database["public"]["Tables"]["appointments"]["Row"] & {
+    barber: Database["public"]["Tables"]["barbers"]["Row"];
+    services: Database["public"]["Tables"]["services"]["Row"][];
+  };
 
-export default async function ClientProfile({params}: {params: {id: string}}) {
-  const supabase = createClient();
+export default async function ClientProfile(props: {
+  params: Promise<{ id: string }>;
+}) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   // Fetch client profile
-  const {data: profile, error: profileError} = await supabase.from("profiles").select("*").eq("id", params.id).single();
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", params.id)
+    .single();
 
   if (profileError) {
     console.error("Error fetching profile:", profileError);
@@ -24,7 +32,7 @@ export default async function ClientProfile({params}: {params: {id: string}}) {
   }
 
   // Fetch client's appointments with services and barber details
-  const {data: appointments, error: appointmentsError} = await supabase
+  const { data: appointments, error: appointmentsError } = await supabase
     .from("appointments")
     .select(
       `
@@ -38,8 +46,8 @@ export default async function ClientProfile({params}: {params: {id: string}}) {
     `
     )
     .eq("user_id", params.id)
-    .order("date", {ascending: false})
-    .order("time", {ascending: false});
+    .order("date", { ascending: false })
+    .order("time", { ascending: false });
 
   if (appointmentsError) {
     console.error("Error fetching appointments:", appointmentsError);
@@ -47,7 +55,10 @@ export default async function ClientProfile({params}: {params: {id: string}}) {
 
   // Fetch all services for these appointments
   const serviceIds = appointments?.flatMap((apt) => apt.service_ids) || [];
-  const {data: services, error: servicesError} = await supabase.from("services").select("*").in("id", serviceIds);
+  const { data: services, error: servicesError } = await supabase
+    .from("services")
+    .select("*")
+    .in("id", serviceIds);
 
   if (servicesError) {
     console.error("Error fetching services:", servicesError);
@@ -60,13 +71,22 @@ export default async function ClientProfile({params}: {params: {id: string}}) {
   }, {} as Record<number, Database["public"]["Tables"]["services"]["Row"]>);
 
   // Transform the appointments data to match the expected format
-  const transformedAppointments: AppointmentWithDetails[] = (appointments || []).map((apt) => {
+  const transformedAppointments: AppointmentWithDetails[] = (
+    appointments || []
+  ).map((apt) => {
     return {
       ...apt,
       barber: apt.barber,
-      services: apt.service_ids.map((id: number) => servicesMap[id]).filter(Boolean),
+      services: apt.service_ids
+        .map((id: number) => servicesMap[id])
+        .filter(Boolean),
     };
   });
 
-  return <ClientProfilePage profile={profile} appointments={transformedAppointments} />;
+  return (
+    <ClientProfilePage
+      profile={profile}
+      appointments={transformedAppointments}
+    />
+  );
 }

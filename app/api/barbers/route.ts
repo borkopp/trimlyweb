@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   const barbershopId = searchParams.get('barbershopId') || '1';
   
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     const { data, error } = await supabase
       .from('barbers')

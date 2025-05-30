@@ -1,22 +1,26 @@
-import {createClient} from "@/utils/supabase/server";
-import {TooltipProvider} from "@radix-ui/react-tooltip";
-import {redirect} from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { redirect } from "next/navigation";
 import QueryClientProvider from "@/components/providers/QueryClientProvider";
-import {headers} from "next/headers";
-import {BarbershopProvider} from "@/contexts/BarbershopContext";
-import {AppSidebar} from "@/components/app-sidebar";
-import {SidebarProvider} from "@/components/ui/sidebar";
-import {SidebarInset} from "@/components/ui/sidebar";
-import {DashboardHeaderWithBreadcrumbs} from "@/components/dashboard/header-with-breadcrumbs";
-import {getUser} from "@/app/actions/dashboard-actions";
+import { headers } from "next/headers";
+import { BarbershopProvider } from "@/contexts/BarbershopContext";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarInset } from "@/components/ui/sidebar";
+import { DashboardHeaderWithBreadcrumbs } from "@/components/dashboard/header-with-breadcrumbs";
+import { getUser } from "@/app/actions/dashboard-actions";
 
-export default async function DashboardLayout({children}: {children: React.ReactNode}) {
-  const supabase = createClient();
-  const headersList = headers();
+export default async function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const supabase = await createClient();
+  const headersList = await headers();
   const barbershopId = headersList.get("x-barbershop-id");
 
   const {
-    data: {user},
+    data: { user },
   } = await supabase.auth.getUser();
 
   const userProfile = await getUser();
@@ -29,7 +33,11 @@ export default async function DashboardLayout({children}: {children: React.React
     throw new Error("No barbershop ID found");
   }
 
-  const {data: barbershop} = await supabase.from("barbershops").select("*").eq("id", parseInt(barbershopId)).single();
+  const { data: barbershop } = await supabase
+    .from("barbershops")
+    .select("*")
+    .eq("id", parseInt(barbershopId))
+    .single();
 
   if (!barbershop) {
     throw new Error("Barbershop not found");

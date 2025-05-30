@@ -1,22 +1,29 @@
 import Link from "next/link";
 import TypingAnimation from "@/components/ui/typing-animation";
 import AnimatedGridPattern from "@/components/magicui/animated-grid-pattern";
-import {cn} from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import LoginForm from "./LoginForm";
-import {login} from "../actions";
-import {headers} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
+import { login } from "../actions";
+import { headers } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function LoginPage() {
-  const headersList = headers();
+  const headersList = await headers();
   const barbershopId = headersList.get("x-barbershop-id");
-  console.log("Login page - headers:", Object.fromEntries(headersList.entries()));
+  console.log(
+    "Login page - headers:",
+    Object.fromEntries(headersList.entries())
+  );
   console.log("Login page - barbershopId:", barbershopId);
 
   let barbershop = null;
   if (barbershopId) {
-    const supabase = createClient();
-    const {data} = await supabase.from("barbershops").select("*").eq("id", barbershopId).single();
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("barbershops")
+      .select("*")
+      .eq("id", barbershopId)
+      .single();
     console.log("Login page - barbershop data:", data);
     barbershop = data;
   }
@@ -35,7 +42,11 @@ export default async function LoginPage() {
           </div>
           <TypingAnimation
             className="text-lg font-semibold"
-            text={barbershop ? "Welcome back to your barbershop dashboard." : "Keep your loyal customers happy and satisfied."}
+            text={
+              barbershop
+                ? "Welcome back to your barbershop dashboard."
+                : "Keep your loyal customers happy and satisfied."
+            }
             duration={90}
           />
         </div>
@@ -55,9 +66,13 @@ export default async function LoginPage() {
       <div className="flex items-center justify-center w-full lg:w-2/3 py-12">
         <div className="mx-auto grid w-[400px] gap-6">
           <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">{barbershop ? `Login to ${barbershop.name}` : "Login"}</h1>
+            <h1 className="text-3xl font-bold">
+              {barbershop ? `Login to ${barbershop.name}` : "Login"}
+            </h1>
             <p className="text-balance text-muted-foreground">
-              {barbershop ? "Enter your credentials to access your barbershop dashboard" : "Enter your email below to login to your account"}
+              {barbershop
+                ? "Enter your credentials to access your barbershop dashboard"
+                : "Enter your email below to login to your account"}
             </p>
           </div>
           <LoginForm login={login} />

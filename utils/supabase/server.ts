@@ -2,9 +2,9 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { headers } from "next/headers";
 
-export function createClient() {
-  const cookieStore = cookies();
-  const headersList = headers();
+export async function createClient() {
+  const cookieStore = await cookies();
+  const headersList = await headers();
   const host = headersList.get('host') || '';
   const isDevelopment = process.env.NODE_ENV === 'development';
   

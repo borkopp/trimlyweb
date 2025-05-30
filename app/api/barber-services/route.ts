@@ -11,11 +11,11 @@ export async function GET(request: NextRequest) {
   }
   
   try {
-    const supabase = createClient();
-    
+    const supabase = await createClient();
+
     // Get service IDs for this barber
     const { data: serviceLinks, error: linkError } = await supabase
-      .from('barber_services')
+      .from("barber_services")
       .select('service_id')
       .eq('barber_id', barberId);
     

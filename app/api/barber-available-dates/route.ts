@@ -16,10 +16,9 @@ export async function GET(request: NextRequest) {
   }
   
   try {
-    const supabase = createClient();
-    
-    const { data, error } = await supabase
-      .rpc('get_barber_available_dates', {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase.rpc("get_barber_available_dates", {
         p_barber_id: parseInt(barberId, 10),
         p_days_ahead: parseInt(daysAhead, 10)
       });

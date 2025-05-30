@@ -11,13 +11,13 @@ type Props = {
 };
 
 async function getBarbershopId(): Promise<string | null> {
-  const headersList = headers();
+  const headersList = await headers();
   return headersList.get("x-barbershop-id");
 }
 
 export default async function AppointmentsSection({ appointments }: Props) {
   // Get current user
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

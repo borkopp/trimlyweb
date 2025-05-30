@@ -1,14 +1,14 @@
-import type {Metadata} from "next";
+import type { Metadata } from "next";
 import localFont from "next/font/local";
-import {Montserrat, Lato, Inter} from "next/font/google";
+import { Montserrat, Lato, Inter } from "next/font/google";
 import "./globals.css";
-import {ThemeProvider} from "@/components/theme-provider";
-import {Toaster} from "@/components/ui/toaster";
-import {SpeedInsights} from "@vercel/speed-insights/next";
-import {Analytics} from "@vercel/analytics/react";
-import {headers} from "next/headers";
-import {createClient} from "@/utils/supabase/server";
-import {BarbershopProvider} from "@/contexts/BarbershopContext";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
+import { headers } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
+import { BarbershopProvider } from "@/contexts/BarbershopContext";
 import JsonLd from "@/components/JsonLd";
 
 const inter = Inter({
@@ -35,7 +35,8 @@ const filmfiction = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://fadely.app"),
   title: {
-    default: "Fadely - #1 Barbershop Management System | Book & Manage Appointments",
+    default:
+      "Fadely - #1 Barbershop Management System | Book & Manage Appointments",
     template: "%s | Fadely Barbershop Management",
   },
   description:
@@ -53,7 +54,7 @@ export const metadata: Metadata = {
     "barbershop booking system",
     "barbershop appointment app",
   ],
-  authors: [{name: "Fadely"}],
+  authors: [{ name: "Fadely" }],
   creator: "Fadely",
   publisher: "Fadely",
   applicationName: "Fadely",
@@ -74,7 +75,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://fadely.app",
-    title: "Fadely - #1 Barbershop Management System | Book & Manage Appointments",
+    title:
+      "Fadely - #1 Barbershop Management System | Book & Manage Appointments",
     description:
       "Fadely is the leading barbershop management system. Get your own branded mobile app, online booking system, and complete barbershop management solution. Perfect for modern barbershops.",
     siteName: "Fadely",
@@ -89,7 +91,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Fadely - #1 Barbershop Management System | Book & Manage Appointments",
+    title:
+      "Fadely - #1 Barbershop Management System | Book & Manage Appointments",
     description:
       "Fadely is the leading barbershop management system. Get your own branded mobile app, online booking system, and complete barbershop management solution.",
     images: ["/og-image.png"],
@@ -114,15 +117,23 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({children}: {children: React.ReactNode}) {
-  const headersList = headers();
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const headersList = await headers();
   const barbershopId = headersList.get("x-barbershop-id");
 
-  const supabase = createClient();
+  const supabase = await createClient();
 
   let barbershop = null;
   if (barbershopId) {
-    const {data} = await supabase.from("barbershops").select("*").eq("id", barbershopId).single();
+    const { data } = await supabase
+      .from("barbershops")
+      .select("*")
+      .eq("id", barbershopId)
+      .single();
     barbershop = data;
   }
 
@@ -131,9 +142,17 @@ export default async function RootLayout({children}: {children: React.ReactNode}
       <head>
         <JsonLd />
       </head>
-      <body className={`${inter.variable} ${filmfiction.variable} ${montserrat.variable} ${lato.variable} font-inter`}>
+      <body
+        className={`${inter.variable} ${filmfiction.variable} ${montserrat.variable} ${lato.variable} font-inter`}
+      >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-          {barbershop ? <BarbershopProvider barbershop={barbershop}>{children}</BarbershopProvider> : children}
+          {barbershop ? (
+            <BarbershopProvider barbershop={barbershop}>
+              {children}
+            </BarbershopProvider>
+          ) : (
+            children
+          )}
           <Toaster />
           <SpeedInsights />
           <Analytics />

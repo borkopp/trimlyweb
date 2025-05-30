@@ -1,29 +1,65 @@
 "use client";
-import {useState, useEffect, useCallback} from "react";
-import {Plus, X, MoreVertical, Trash, User, Scissors} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {Badge} from "@/components/ui/badge";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {Database} from "@/database.types";
-import {addServiceToBarber, removeServiceFromBarber, getNonBarberProfiles, assignBarberRole, deleteBarber} from "@/app/actions/dashboard-actions";
-import {toast} from "@/components/ui/use-toast";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
-import {createClient} from "@/utils/supabase/client";
-import {EmptyState} from "@/components/ui/empty-state";
+import { useState, useEffect, useCallback } from "react";
+import { Plus, X, MoreVertical, Trash, User, Scissors } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Database } from "@/database.types";
+import {
+  addServiceToBarber,
+  removeServiceFromBarber,
+  getNonBarberProfiles,
+  assignBarberRole,
+  deleteBarber,
+} from "@/app/actions/dashboard-actions";
+import { toast } from "@/components/ui/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { createClient } from "@/utils/supabase/client";
+import { EmptyState } from "@/components/ui/empty-state";
 
-type Barber = Database["public"]["Tables"]["barbers"]["Row"] & {services: Service[]};
+type Barber = Database["public"]["Tables"]["barbers"]["Row"] & {
+  services: Service[];
+};
 type Service = Database["public"]["Tables"]["services"]["Row"];
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
 async function getImageUrl(path: string) {
   const supabase = createClient();
-  const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
+  const { data } = await supabase.storage
+    .from("barber-images")
+    .getPublicUrl(path);
   return data?.publicUrl || null;
 }
 
@@ -39,7 +75,9 @@ export default function BarbersPageClient({
   const [barbers, setBarbers] = useState<Barber[]>(initialBarbers);
   const [services, setServices] = useState<Service[]>(initialServices);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedServices, setSelectedServices] = useState<Record<number, string | null>>({});
+  const [selectedServices, setSelectedServices] = useState<
+    Record<number, string | null>
+  >({});
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [filteredProfiles, setFilteredProfiles] = useState<Profile[]>([]);
   const [profileSearchTerm, setProfileSearchTerm] = useState("");
@@ -48,12 +86,20 @@ export default function BarbersPageClient({
   const [isAddBarberDialogOpen, setIsAddBarberDialogOpen] = useState(false);
   const [isAddingBarber, setIsAddingBarber] = useState(false);
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(true);
-  const [barberAvatars, setBarberAvatars] = useState<Record<number, string | null>>({});
-  const [addingServices, setAddingServices] = useState<Record<number, boolean>>({});
-  const [isRemovingService, setIsRemovingService] = useState<Record<number, boolean>>({});
+  const [barberAvatars, setBarberAvatars] = useState<
+    Record<number, string | null>
+  >({});
+  const [addingServices, setAddingServices] = useState<Record<number, boolean>>(
+    {}
+  );
+  const [isRemovingService, setIsRemovingService] = useState<
+    Record<number, boolean>
+  >({});
 
   const filteredBarbers = barbers.filter(
-    (barber) => barber.name.toLowerCase().includes(searchTerm.toLowerCase()) || barber.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    (barber) =>
+      barber.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      barber.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const refreshNonBarberProfiles = useCallback(async () => {
@@ -96,7 +142,9 @@ export default function BarbersPageClient({
   useEffect(() => {
     const filtered = profiles.filter(
       (profile) =>
-        profile.full_name?.toLowerCase().includes(profileSearchTerm.toLowerCase()) ||
+        profile.full_name
+          ?.toLowerCase()
+          .includes(profileSearchTerm.toLowerCase()) ||
         profile.email?.toLowerCase().includes(profileSearchTerm.toLowerCase())
     );
     setFilteredProfiles(filtered);
@@ -126,8 +174,12 @@ export default function BarbersPageClient({
       setIsAddBarberDialogOpen(false);
 
       // Update the profiles list
-      setProfiles((prevProfiles) => prevProfiles.filter((profile) => profile.id !== selectedProfile.id));
-      setFilteredProfiles((prevFiltered) => prevFiltered.filter((profile) => profile.id !== selectedProfile.id));
+      setProfiles((prevProfiles) =>
+        prevProfiles.filter((profile) => profile.id !== selectedProfile.id)
+      );
+      setFilteredProfiles((prevFiltered) =>
+        prevFiltered.filter((profile) => profile.id !== selectedProfile.id)
+      );
 
       setSelectedProfile(null);
       setSelectedServiceIds([]);
@@ -150,7 +202,7 @@ export default function BarbersPageClient({
   };
 
   const handleRemoveService = async (barberId: number, serviceId: number) => {
-    setIsRemovingService((prev) => ({...prev, [barberId]: true}));
+    setIsRemovingService((prev) => ({ ...prev, [barberId]: true }));
     try {
       await removeServiceFromBarber(barberId, serviceId);
       const updatedBarbers = await refreshBarbers();
@@ -167,7 +219,7 @@ export default function BarbersPageClient({
         variant: "destructive",
       });
     } finally {
-      setIsRemovingService((prev) => ({...prev, [barberId]: false}));
+      setIsRemovingService((prev) => ({ ...prev, [barberId]: false }));
     }
   };
 
@@ -176,13 +228,13 @@ export default function BarbersPageClient({
     if (!selectedService) return;
 
     // Set the adding state for this specific barber
-    setAddingServices((prev) => ({...prev, [barberId]: true}));
+    setAddingServices((prev) => ({ ...prev, [barberId]: true }));
 
     try {
       await addServiceToBarber(barberId, parseInt(selectedService));
       const updatedBarbers = await refreshBarbers();
       setBarbers(updatedBarbers);
-      setSelectedServices((prev) => ({...prev, [barberId]: null}));
+      setSelectedServices((prev) => ({ ...prev, [barberId]: null }));
       toast({
         title: "Service added",
         description: `Service has been added to the barber's services.`,
@@ -196,7 +248,7 @@ export default function BarbersPageClient({
       });
     } finally {
       // Reset the adding state for this specific barber
-      setAddingServices((prev) => ({...prev, [barberId]: false}));
+      setAddingServices((prev) => ({ ...prev, [barberId]: false }));
     }
   };
 
@@ -232,10 +284,15 @@ export default function BarbersPageClient({
       <div className="flex items-center justify-between py-10">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold tracking-tight">Barbers</h1>
-          <p className="text-muted-foreground">Manage and view all your barbers in one place.</p>
+          <p className="text-muted-foreground">
+            Manage and view all your barbers in one place.
+          </p>
         </div>
         <div>
-          <Dialog open={isAddBarberDialogOpen} onOpenChange={setIsAddBarberDialogOpen}>
+          <Dialog
+            open={isAddBarberDialogOpen}
+            onOpenChange={setIsAddBarberDialogOpen}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="mr-2 h-4 w-4" />
@@ -244,11 +301,16 @@ export default function BarbersPageClient({
             </DialogTrigger>
           </Dialog>
         </div>
-        <Dialog open={isAddBarberDialogOpen} onOpenChange={setIsAddBarberDialogOpen}>
+        <Dialog
+          open={isAddBarberDialogOpen}
+          onOpenChange={setIsAddBarberDialogOpen}
+        >
           <DialogContent className="max-w-3xl">
             <DialogHeader>
               <DialogTitle>Add New Barber</DialogTitle>
-              <DialogDescription>Assign the barber role to an existing user.</DialogDescription>
+              <DialogDescription>
+                Assign the barber role to an existing user.
+              </DialogDescription>
             </DialogHeader>
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-4">
@@ -269,13 +331,22 @@ export default function BarbersPageClient({
                   filteredProfiles.map((profile) => (
                     <div
                       key={profile.id}
-                      className={`flex items-center justify-between p-2 cursor-pointer ${selectedProfile?.id === profile.id ? "bg-secondary" : ""}`}
-                      onClick={() => setSelectedProfile(profile)}>
+                      className={`flex items-center justify-between p-2 cursor-pointer ${
+                        selectedProfile?.id === profile.id ? "bg-secondary" : ""
+                      }`}
+                      onClick={() => setSelectedProfile(profile)}
+                    >
                       <div>
-                        <p className="font-medium">{profile.full_name || "No Name"}</p>
-                        <p className="text-sm text-muted-foreground">{profile.email}</p>
+                        <p className="font-medium">
+                          {profile.full_name || "No Name"}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {profile.email}
+                        </p>
                       </div>
-                      {selectedProfile?.id === profile.id && <Badge variant="outline">Selected</Badge>}
+                      {selectedProfile?.id === profile.id && (
+                        <Badge variant="outline">Selected</Badge>
+                      )}
                     </div>
                   ))
                 )}
@@ -284,13 +355,23 @@ export default function BarbersPageClient({
                 <Label htmlFor="services" className="text-right">
                   Services
                 </Label>
-                <Select onValueChange={(value) => setSelectedServiceIds([...selectedServiceIds, parseInt(value)])}>
+                <Select
+                  onValueChange={(value) =>
+                    setSelectedServiceIds([
+                      ...selectedServiceIds,
+                      parseInt(value),
+                    ])
+                  }
+                >
                   <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Select services" />
                   </SelectTrigger>
                   <SelectContent>
                     {services.map((service) => (
-                      <SelectItem key={service.id} value={service.id.toString()}>
+                      <SelectItem
+                        key={service.id}
+                        value={service.id.toString()}
+                      >
                         {service.name}
                       </SelectItem>
                     ))}
@@ -301,13 +382,22 @@ export default function BarbersPageClient({
                 {selectedServiceIds.map((serviceId) => {
                   const service = services.find((s) => s.id === serviceId);
                   return (
-                    <Badge key={serviceId} variant="secondary" className="flex items-center gap-1">
+                    <Badge
+                      key={serviceId}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
                       {service?.name}
                       <Button
                         variant="ghost"
                         size="icon"
                         className="h-4 w-4 rounded-full"
-                        onClick={() => setSelectedServiceIds(selectedServiceIds.filter((id) => id !== serviceId))}>
+                        onClick={() =>
+                          setSelectedServiceIds(
+                            selectedServiceIds.filter((id) => id !== serviceId)
+                          )
+                        }
+                      >
                         <X className="h-3 w-3" />
                       </Button>
                     </Badge>
@@ -316,7 +406,10 @@ export default function BarbersPageClient({
               </div>
             </div>
             <DialogFooter>
-              <Button onClick={handleAddBarber} disabled={!selectedProfile || isAddingBarber}>
+              <Button
+                onClick={handleAddBarber}
+                disabled={!selectedProfile || isAddingBarber}
+              >
                 <span className="flex items-center justify-center">
                   {isAddingBarber ? (
                     <>
@@ -340,7 +433,10 @@ export default function BarbersPageClient({
                 <div className="flex items-center space-x-4">
                   <Avatar className="w-12 h-12">
                     {barberAvatars[barber.id] ? (
-                      <AvatarImage src={barberAvatars[barber.id] || undefined} alt={barber.name || ""} />
+                      <AvatarImage
+                        src={barberAvatars[barber.id] || undefined}
+                        alt={barber.name || ""}
+                      />
                     ) : (
                       <AvatarFallback>
                         <User className="h-6 w-6" />
@@ -360,7 +456,10 @@ export default function BarbersPageClient({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => handleDeleteBarber(barber)} className="text-red-600">
+                    <DropdownMenuItem
+                      onClick={() => handleDeleteBarber(barber)}
+                      className="text-red-600"
+                    >
                       <Trash className="mr-2 h-4 w-4" />
                       Remove Barber
                     </DropdownMenuItem>
@@ -373,14 +472,21 @@ export default function BarbersPageClient({
               <ScrollArea className="h-[100px] w-full rounded-md border p-2 mt-2">
                 <div className="flex flex-wrap gap-2">
                   {barber.services.map((service) => (
-                    <Badge key={service.id} variant="secondary" className="flex items-center gap-1">
+                    <Badge
+                      key={service.id}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
                       {service.name}
                       <Button
                         variant="ghost"
                         size="icon"
                         disabled={isRemovingService[barber.id]}
                         className="h-4 w-4 rounded-full"
-                        onClick={() => handleRemoveService(barber.id, service.id)}>
+                        onClick={() =>
+                          handleRemoveService(barber.id, service.id)
+                        }
+                      >
                         <X className="h-3 w-3" />
                       </Button>
                     </Badge>
@@ -392,21 +498,38 @@ export default function BarbersPageClient({
               <div className="flex w-full space-x-2">
                 <Select
                   value={selectedServices[barber.id] || ""}
-                  onValueChange={(value) => setSelectedServices((prev) => ({...prev, [barber.id]: value}))}>
+                  onValueChange={(value) =>
+                    setSelectedServices((prev) => ({
+                      ...prev,
+                      [barber.id]: value,
+                    }))
+                  }
+                >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a service to add" />
                   </SelectTrigger>
                   <SelectContent>
                     {services
-                      .filter((service) => !barber.services.some((s) => s.id === service.id))
+                      .filter(
+                        (service) =>
+                          !barber.services.some((s) => s.id === service.id)
+                      )
                       .map((service) => (
-                        <SelectItem key={service.id} value={service.id.toString()}>
+                        <SelectItem
+                          key={service.id}
+                          value={service.id.toString()}
+                        >
                           {service.name}
                         </SelectItem>
                       ))}
                   </SelectContent>
                 </Select>
-                <Button onClick={() => handleAddService(barber.id)} disabled={!selectedServices[barber.id] || addingServices[barber.id]}>
+                <Button
+                  onClick={() => handleAddService(barber.id)}
+                  disabled={
+                    !selectedServices[barber.id] || addingServices[barber.id]
+                  }
+                >
                   {addingServices[barber.id] ? (
                     <div className="flex items-center justify-center">
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white self-center"></div>
@@ -428,7 +551,9 @@ export default function BarbersPageClient({
             icon={Scissors}
             title="No barbers found"
             description={
-              searchTerm ? `No barbers match your search "${searchTerm}"` : "Get started by adding your first barber. Your barbers will appear here."
+              searchTerm
+                ? `No barbers match your search "${searchTerm}"`
+                : "Get started by adding your first barber. Your barbers will appear here."
             }
           />
         </Card>

@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const supabase = createClient();
+    const supabase = await createClient();
     
     // Get barbershop_id from headers or from barber record
     let barbershopId = parseInt(request.headers.get('x-barbershop-id') || '0', 10);

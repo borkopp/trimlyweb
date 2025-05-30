@@ -7,6 +7,6 @@ import { headers } from 'next/headers';
  * This can be safely called from client components
  */
 export async function getCurrentBarbershopId(): Promise<string> {
-  const headersList = headers();
+  const headersList = await headers();
   return headersList.get('x-barbershop-id') || '1';
 } 

@@ -7,7 +7,8 @@ import DashboardContent from "@/app/(dashboard)/dashboard/components/dashboard-c
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default function DashboardPage({searchParams}: {searchParams?: {view?: string}}) {
+export default async function DashboardPage(props: {searchParams?: Promise<{view?: string}>}) {
+  const searchParams = await props.searchParams;
   return (
     <AppointmentsProvider>
       <Suspense fallback={<DashboardSkeleton />}>

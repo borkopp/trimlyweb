@@ -5,8 +5,8 @@ import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 
 export async function login(formData: FormData) {
-  const supabase = createClient();
-  const headersList = headers();
+  const supabase = await createClient();
+  const headersList = await headers();
   const barbershopId = headersList.get("x-barbershop-id");
 
   const data = {
@@ -40,7 +40,7 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const data = {
     email: formData.get("email") as string,
@@ -69,7 +69,7 @@ export async function signup(formData: FormData) {
 }
 
 export async function signOut() {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
   return { success: true };

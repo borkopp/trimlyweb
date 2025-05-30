@@ -7,7 +7,7 @@ import { revalidatePath } from 'next/cache'
 type Service = Database["public"]["Tables"]["services"]["Row"];
 
 export async function assignBarberRole(userId: string, serviceIds: number[]) {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const { data, error } = await supabase.rpc('assign_barber_role', { user_id: userId, service_ids: serviceIds })
 
@@ -20,7 +20,7 @@ export async function assignBarberRole(userId: string, serviceIds: number[]) {
 }
 
 export async function searchUsers(query: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   try {
     // Fetch all barber user IDs
@@ -54,7 +54,7 @@ export async function searchUsers(query: string) {
 }
 
 export const getServices = async (): Promise<Service[]> => {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('services')

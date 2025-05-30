@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
   console.log(`Fetching available slots for barber ${barberId} on ${date} for services: ${serviceIds.join(',')}`);
   
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
     
     const parsedBarberId = parseInt(barberId, 10);
     if (isNaN(parsedBarberId)) {

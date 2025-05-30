@@ -5,7 +5,7 @@ import {headers} from "next/headers";
 import {getServices} from "@/app/actions/dashboard-actions";
 
 export default async function Page() {
-  const headersList = headers();
+  const headersList = await headers();
   const barbershopId = headersList.get("x-barbershop-id");
 
   if (!barbershopId) {

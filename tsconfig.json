@@ -1,7 +1,11 @@
 //eslint-disable-next-line no-undef
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,10 +23,22 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "@/calendar/*": ["./app/(dashboard)/dashboard/calendar/*"]
-    }
+      "@/*": [
+        "./*"
+      ],
+      "@/calendar/*": [
+        "./app/(dashboard)/dashboard/calendar/*"
+      ]
+    },
+    "target": "ES2017"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

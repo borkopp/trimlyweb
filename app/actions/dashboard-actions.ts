@@ -11,12 +11,12 @@ type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 type BarbershopSettings = Database["public"]["Tables"]["barbershops"]["Row"];
 
 async function getBarbershopId(): Promise<string | null> {
-  const headersList = headers();
+  const headersList = await headers();
   return headersList.get("x-barbershop-id");
 }
 
 export async function getServices(): Promise<Service[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   const { data, error } = await supabase
@@ -31,7 +31,7 @@ export async function getServices(): Promise<Service[]> {
 }
 
 export async function addService(service: Omit<Service, 'id'>): Promise<Service> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   try {
@@ -53,7 +53,7 @@ export async function addService(service: Omit<Service, 'id'>): Promise<Service>
 }
 
 export async function updateService(service: Service): Promise<Service> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   const { data, error } = await supabase
@@ -72,7 +72,7 @@ export async function updateService(service: Service): Promise<Service> {
 }
 
 export async function deleteService(id: number): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   const { error } = await supabase
@@ -88,7 +88,7 @@ export async function deleteService(id: number): Promise<void> {
 }
 
 export async function getBarbers(): Promise<(Barber & { services: Service[] })[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   const { data: barbers, error: barbersError } = await supabase
@@ -116,7 +116,7 @@ export async function getBarbers(): Promise<(Barber & { services: Service[] })[]
 }
 
 export async function addBarber(barber: Omit<Barber, 'id'>): Promise<Barber> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   try {
@@ -138,7 +138,7 @@ export async function addBarber(barber: Omit<Barber, 'id'>): Promise<Barber> {
 }
 
 export async function updateBarber(barber: Barber): Promise<Barber> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   const { data, error } = await supabase
@@ -157,7 +157,7 @@ export async function updateBarber(barber: Barber): Promise<Barber> {
 }
 
 export async function deleteBarber(barberId: number): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   // First, get the user_id associated with this barber
@@ -194,7 +194,7 @@ export async function deleteBarber(barberId: number): Promise<void> {
 }
 
 export async function addServiceToBarber(barberId: number, serviceId: number): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   // Verify both barber and service belong to this barbershop
@@ -226,7 +226,7 @@ export async function addServiceToBarber(barberId: number, serviceId: number): P
 }
 
 export async function removeServiceFromBarber(barberId: number, serviceId: number): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   // Verify both barber and service belong to this barbershop
@@ -259,7 +259,7 @@ export async function removeServiceFromBarber(barberId: number, serviceId: numbe
 }
 
 export async function getNonBarberProfiles(): Promise<Profile[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   const { data, error } = await supabase
@@ -275,7 +275,7 @@ export async function getNonBarberProfiles(): Promise<Profile[]> {
 }
 
 export async function assignBarberRole(userId: string, serviceIds: number[] = []): Promise<void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   // First, get the user's profile data
@@ -305,7 +305,7 @@ export async function assignBarberRole(userId: string, serviceIds: number[] = []
 }
 
 export async function getBarbershopSettings(): Promise<BarbershopSettings> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barbershopId = await getBarbershopId();
 
   const { data, error } = await supabase
@@ -321,7 +321,7 @@ export async function getBarbershopSettings(): Promise<BarbershopSettings> {
 }
 
 export async function getUser(): Promise<Profile | null> {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError) throw userError;

@@ -21,10 +21,10 @@ type AvailableSlot = {
  * Get all active barbers for a barbershop
  */
 export async function getBarbers() {
-  const supabase = createClient();
-  const headersList = headers();
-  const barbershopId = headersList.get('x-barbershop-id') || '1'; // Fallback to default barbershop ID if header is missing
-  
+  const supabase = await createClient();
+  const headersList = await headers();
+  const barbershopId = headersList.get("x-barbershop-id") || "1"; // Fallback to default barbershop ID if header is missing
+
   try {
     const { data, error } = await supabase
       .from('barbers')
@@ -39,7 +39,7 @@ export async function getBarbers() {
     
     if (error) {
       throw error;
-    }
+      }
     
     return data || [];
   } catch (error) {
@@ -52,11 +52,11 @@ export async function getBarbers() {
  * Get services for a specific barber
  */
 export async function getBarberServices(barberId: number): Promise<Service[]> {
-  const supabase = createClient();
-  
+  const supabase = await createClient();
+
   // Get service IDs for this barber
   const { data: serviceLinks, error: linkError } = await supabase
-    .from('barber_services')
+    .from("barber_services")
     .select('service_id')
     .eq('barber_id', barberId);
   
@@ -93,14 +93,14 @@ export async function getBarberAvailableDates(
   barberId: number,
   daysAhead: number = 30
 ): Promise<AvailableDate[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   const { data, error } = await supabase
-    .rpc('get_barber_available_dates', {
+    .rpc("get_barber_available_dates", {
       p_barber_id: barberId,
-      p_days_ahead: daysAhead
+      p_days_ahead: daysAhead,
     });
-  
+
   if (error) {
     console.error('Error fetching available dates:', error);
     return [];
@@ -117,7 +117,7 @@ export async function getBarberAvailableSlots(
   date: string,
   serviceIds: number[] = []
 ): Promise<AvailableSlot[]> {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   const { data, error } = await supabase
     .rpc('get_barber_available_slots', {
@@ -147,7 +147,7 @@ export async function createAppointment(
   isGuest: boolean = false,
   temporaryUserId: number | null = null
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   // For debugging purposes
   if (typeof window !== 'undefined') {
@@ -197,7 +197,7 @@ export async function checkTimeSlotAvailability(
   date: string,
   time: string
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   
   const { data, error } = await supabase
     .rpc('book_appointment_v2', {
@@ -223,7 +223,7 @@ export async function checkTimeSlotAvailability(
 export async function calculateServicesDuration(serviceIds: number[]): Promise<number> {
   if (!serviceIds.length) return 30; // Default duration
   
-  const supabase = createClient();
+  const supabase = await createClient();
   
   const { data, error } = await supabase
     .from('services')
@@ -245,7 +245,7 @@ export async function getBarberServiceImages(
   barbers: Barber[],
   services?: Service[]
 ) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const barberAvatars: Record<number, string> = {};
   const serviceImages: Record<number, string> = {};
   
