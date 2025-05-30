@@ -138,11 +138,12 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <JsonLd />
       </head>
       <body
+        suppressHydrationWarning
         className={`${inter.variable} ${filmfiction.variable} ${montserrat.variable} ${lato.variable} font-inter`}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
