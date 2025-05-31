@@ -1,22 +1,38 @@
 "use client";
 
-import {useState, useMemo, useEffect} from "react";
-import {Input} from "@/components/ui/input";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
-import {Mail, Search, User} from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Mail, Search, User, Phone } from "lucide-react";
 import Link from "next/link";
-import {formatDate} from "@/utils/dateUtils";
-import {Database} from "@/database.types";
-import {createClient} from "@/utils/supabase/client";
+import { formatDate } from "@/utils/dateUtils";
+import { Database } from "@/database.types";
+import { createClient } from "@/utils/supabase/client";
 
 async function getImageUrl(path: string) {
   if (!path) return null;
   const supabase = createClient();
-  const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
+  const { data } = await supabase.storage
+    .from("barber-images")
+    .getPublicUrl(path);
   return data?.publicUrl || null;
 }
 
@@ -30,7 +46,9 @@ interface ClientsPageClientProps {
   initialClients: Profile[];
 }
 
-export default function ClientsPageClient({initialClients}: ClientsPageClientProps) {
+export default function ClientsPageClient({
+  initialClients,
+}: ClientsPageClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [avatarUrls, setAvatarUrls] = useState<Record<string, string>>({});
 
@@ -55,7 +73,10 @@ export default function ClientsPageClient({initialClients}: ClientsPageClientPro
   const filteredClients = useMemo(() => {
     const filtered = initialClients.filter((client) => {
       const searchLower = searchQuery.toLowerCase();
-      return client.full_name?.toLowerCase().includes(searchLower) || client.email?.toLowerCase().includes(searchLower);
+      return (
+        client.full_name?.toLowerCase().includes(searchLower) ||
+        client.email?.toLowerCase().includes(searchLower)
+      );
     });
 
     return filtered.sort((a, b) => {
@@ -70,12 +91,19 @@ export default function ClientsPageClient({initialClients}: ClientsPageClientPro
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-bold tracking-tight">Clients</h1>
-            <p className="text-muted-foreground">Manage and view all your clients in one place.</p>
+            <p className="text-muted-foreground">
+              Manage and view all your clients in one place.
+            </p>
           </div>
           <div className="flex items-center gap-4">
             <div className="relative w-64">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search clients..." className="pl-8" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+              <Input
+                placeholder="Search clients..."
+                className="pl-8"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
           </div>
         </div>
@@ -96,23 +124,39 @@ export default function ClientsPageClient({initialClients}: ClientsPageClientPro
           <TableBody>
             {filteredClients.map((client) => {
               const completedAppointments = client.appointments.filter(
-                (apt) => !apt.is_cancelled && new Date(`${apt.date}T${apt.time}`) < new Date()
+                (apt) =>
+                  !apt.is_cancelled &&
+                  new Date(`${apt.date}T${apt.time}`) < new Date()
               ).length;
 
               const lastAppointment = client.appointments
                 .filter((apt) => !apt.is_cancelled)
-                .sort((a, b) => new Date(`${b.date}T${b.time}`).getTime() - new Date(`${a.date}T${a.time}`).getTime())[0];
+                .sort(
+                  (a, b) =>
+                    new Date(`${b.date}T${b.time}`).getTime() -
+                    new Date(`${a.date}T${a.time}`).getTime()
+                )[0];
 
               const nextAppointment = client.appointments
-                .filter((apt) => !apt.is_cancelled && new Date(`${apt.date}T${apt.time}`) > new Date())
-                .sort((a, b) => new Date(`${a.date}T${a.time}`).getTime() - new Date(`${b.date}T${b.time}`).getTime())[0];
+                .filter(
+                  (apt) =>
+                    !apt.is_cancelled &&
+                    new Date(`${apt.date}T${apt.time}`) > new Date()
+                )
+                .sort(
+                  (a, b) =>
+                    new Date(`${a.date}T${a.time}`).getTime() -
+                    new Date(`${b.date}T${b.time}`).getTime()
+                )[0];
 
               return (
                 <TableRow key={client.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={client.id ? avatarUrls[client.id] : ""} />
+                        <AvatarImage
+                          src={client.id ? avatarUrls[client.id] : ""}
+                        />
                         <AvatarFallback>
                           <User className="h-4 w-4" />
                         </AvatarFallback>
@@ -122,12 +166,32 @@ export default function ClientsPageClient({initialClients}: ClientsPageClientPro
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1 text-muted-foreground">
-                      <Mail className="h-3 w-3" />
-                      {client.email}
+                      {client.email ? (
+                        <>
+                          <Mail className="h-3 w-3" />
+                          {client.email}
+                        </>
+                      ) : client.phone ? (
+                        <>
+                          <Phone className="h-3 w-3" />
+                          {client.phone}
+                        </>
+                      ) : (
+                        <>
+                          <Mail className="h-3 w-3" />
+                          <span className="text-muted-foreground">
+                            No contact info
+                          </span>
+                        </>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>{completedAppointments}</TableCell>
-                  <TableCell>{lastAppointment ? formatDate(lastAppointment.date) : "No visits yet"}</TableCell>
+                  <TableCell>
+                    {lastAppointment
+                      ? formatDate(lastAppointment.date)
+                      : "No visits yet"}
+                  </TableCell>
                   <TableCell>
                     {nextAppointment ? (
                       <Badge>Upcoming Visit</Badge>
@@ -139,7 +203,9 @@ export default function ClientsPageClient({initialClients}: ClientsPageClientPro
                   </TableCell>
                   <TableCell className="text-right">
                     <Button asChild variant="ghost" size="sm">
-                      <Link href={`/dashboard/clients/${client.id}`}>View Profile</Link>
+                      <Link href={`/dashboard/clients/${client.id}`}>
+                        View Profile
+                      </Link>
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -155,7 +221,9 @@ export default function ClientsPageClient({initialClients}: ClientsPageClientPro
             </div>
             <h2 className="mt-3 font-semibold">No clients found</h2>
             <p className="text-sm text-muted-foreground">
-              {searchQuery ? `No clients match your search "${searchQuery}"` : "You haven't added any clients yet."}
+              {searchQuery
+                ? `No clients match your search "${searchQuery}"`
+                : "You haven't added any clients yet."}
             </p>
           </div>
         )}

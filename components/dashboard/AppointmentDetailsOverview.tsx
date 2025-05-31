@@ -105,6 +105,15 @@ export function AppointmentDetailsOverview({
     selectedAppointment.user_id === loggedInUserId &&
     !!selectedAppointment.name;
 
+  // Check if appointment is in the past (completed)
+  const isAppointmentCompleted = () => {
+    const appointmentDateTime = new Date(
+      `${selectedAppointment.date}T${selectedAppointment.time}`
+    );
+    const now = new Date();
+    return appointmentDateTime < now;
+  };
+
   const totalDuration = services.reduce(
     (total, service) => total + (service.time || 0),
     0
@@ -155,33 +164,37 @@ export function AppointmentDetailsOverview({
           </CardDescription>
         </div>
         <div className="ml-auto flex items-center gap-1">
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 gap-1"
-            onClick={() => setIsRescheduleDialogOpen(true)}
-          >
-            <Clock className="h-3.5 w-3.5" />
-            <span className="lg:sr-only  xl:not-sr-only xl:whitespace-nowrap">
-              Reschedule
-            </span>
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size="icon" variant="outline" className="h-8 w-8">
-                <MoreVertical className="h-3.5 w-3.5" />
-                <span className="sr-only">More</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                className="text-red-500"
-                onClick={() => setIsDeleteDialogOpen(true)}
+          {!isAppointmentCompleted() && (
+            <>
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 gap-1"
+                onClick={() => setIsRescheduleDialogOpen(true)}
               >
-                Cancel Appointment
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <Clock className="h-3.5 w-3.5" />
+                <span className="lg:sr-only  xl:not-sr-only xl:whitespace-nowrap">
+                  Reschedule
+                </span>
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="icon" variant="outline" className="h-8 w-8">
+                    <MoreVertical className="h-3.5 w-3.5" />
+                    <span className="sr-only">More</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    className="text-red-500"
+                    onClick={() => setIsDeleteDialogOpen(true)}
+                  >
+                    Cancel Appointment
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
         </div>
       </CardHeader>
       <CardContent className="p-6 text-sm">
@@ -340,10 +353,6 @@ export function AppointmentDetailsOverview({
           open={isRescheduleDialogOpen}
           onOpenChange={setIsRescheduleDialogOpen}
           appointment={selectedAppointment}
-          onReschedule={() => {
-            // Refresh the appointment list
-            window.location.reload();
-          }}
         />
       )}
     </Card>

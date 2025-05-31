@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Clock } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
-import { Button } from '@/components/ui/button';
+import { useState, useTransition } from "react";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon, Clock } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -12,39 +12,44 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
-import { getBarberAvailability, rescheduleAppointment } from '@/app/actions/appointment-actions';
-import { toast } from '@/components/ui/use-toast';
-import { Appointment } from '@/types/appointments';
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getBarberAvailability,
+  rescheduleAppointment,
+} from "@/app/actions/appointment-actions";
+import { toast } from "@/components/ui/use-toast";
+import { Appointment } from "@/types/appointments";
 
 interface RescheduleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   appointment: Appointment;
-  onReschedule: () => void;
 }
 
 export function RescheduleDialog({
   open,
   onOpenChange,
   appointment,
-  onReschedule,
 }: RescheduleDialogProps) {
   const [date, setDate] = useState<Date>();
-  const [time, setTime] = useState<string>('');
+  const [time, setTime] = useState<string>("");
   const [isPending, startTransition] = useTransition();
 
   // Get available slots for the selected date
   const { data: availableSlots, isLoading } = useQuery({
-    queryKey: ['barber-availability', appointment.barber_id, date?.toISOString()],
+    queryKey: [
+      "barber-availability",
+      appointment.barber_id,
+      date?.toISOString(),
+    ],
     queryFn: () =>
       getBarberAvailability(
         appointment.barber_id,
-        date ? format(date, 'yyyy-MM-dd') : '',
+        date ? format(date, "yyyy-MM-dd") : ""
       ),
     enabled: !!date,
   });
@@ -53,24 +58,39 @@ export function RescheduleDialog({
     if (!date || !time) return;
 
     startTransition(async () => {
-      const result = await rescheduleAppointment(
-        appointment.id.toString(), 
-        format(date, 'yyyy-MM-dd'),
-        time,
-      );
+      try {
+        const result = await rescheduleAppointment(
+          appointment.id.toString(),
+          format(date, "yyyy-MM-dd"),
+          time
+        );
 
-      if (result.success) {
+        if (result.success) {
+          toast({
+            title: "Appointment Rescheduled",
+            description: "The appointment has been successfully rescheduled.",
+          });
+          onOpenChange(false);
+          // Reset form state
+          setDate(undefined);
+          setTime("");
+        } else {
+          console.error("Reschedule failed:", result.error);
+          toast({
+            title: "Error",
+            description: result.error || "Failed to reschedule appointment",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error("Reschedule error:", error);
         toast({
-          title: 'Appointment Rescheduled',
-          description: 'The appointment has been successfully rescheduled.',
-        });
-        onReschedule();
-        onOpenChange(false);
-      } else {
-        toast({
-          title: 'Error',
-          description: result.error,
-          variant: 'destructive',
+          title: "Error",
+          description:
+            error instanceof Error
+              ? error.message
+              : "An unexpected error occurred",
+          variant: "destructive",
         });
       }
     });
@@ -125,11 +145,12 @@ export function RescheduleDialog({
                       {availableSlots.map((slot) => (
                         <Button
                           key={slot.slot_time}
-                          variant={time === slot.slot_time ? 'secondary' : 'outline'}
+                          variant={
+                            time === slot.slot_time ? "secondary" : "outline"
+                          }
                           className={cn(
-                            'justify-center h-9 px-3',
-                            time === slot.slot_time &&
-                              'bg-muted hover:bg-muted',
+                            "justify-center h-9 px-3",
+                            time === slot.slot_time && "bg-muted hover:bg-muted"
                           )}
                           onClick={() => setTime(slot.slot_time)}
                         >
@@ -151,11 +172,11 @@ export function RescheduleDialog({
           >
             {isPending ? (
               <div className="flex items-center gap-2">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white self-center"/>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white self-center" />
                 Rescheduling...
               </div>
             ) : (
-              'Reschedule'
+              "Reschedule"
             )}
           </Button>
         </DialogFooter>

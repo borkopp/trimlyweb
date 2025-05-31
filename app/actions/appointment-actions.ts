@@ -146,27 +146,36 @@ export async function rescheduleAppointment(
   const supabase = await createClient();
 
   try {
+    // Convert appointmentId to integer for database query
+    const appointmentIdInt = parseInt(appointmentId);
+    
     const { data: appointment, error: appointmentError } = await supabase
       .from('appointments')
       .select('*')
-      .eq('id', appointmentId)
+      .eq('id', appointmentIdInt)
       .single();
 
     if (appointmentError) throw appointmentError;
 
-    // Use book_appointment_v2 function to check availability
-    const { data: bookingCheck, error: bookingError } = await supabase
-      .rpc('book_appointment_v2', {
-        p_user_id: appointment.user_id,
+    // Use the specialized reschedule availability check function
+    const { data: availabilityCheck, error: availabilityError } = await supabase
+      .rpc('check_reschedule_availability', {
+        p_appointment_id: appointmentIdInt,
         p_barber_id: appointment.barber_id,
-        p_service_ids: appointment.service_ids,
         p_date: date,
         p_time: time,
-        p_is_guest: appointment.is_guest || false,
-        p_check_only: true
+        p_service_ids: appointment.service_ids
       });
 
-    if (bookingError) throw bookingError;
+    if (availabilityError) {
+      console.error('Availability check error:', availabilityError);
+      throw new Error(availabilityError.message || 'Time slot availability check failed');
+    }
+
+    // Check if the availability check was successful
+    if (!availabilityCheck?.success) {
+      throw new Error(availabilityCheck?.message || 'Time slot is not available');
+    }
 
     // If the slot is available, update the appointment
     const { error: updateError } = await supabase
@@ -174,11 +183,14 @@ export async function rescheduleAppointment(
       .update({
         date,
         time: time,
-        end_time: bookingCheck.end_time
+        end_time: availabilityCheck.end_time
       })
-      .eq('id', appointmentId);
+      .eq('id', appointmentIdInt);
 
-    if (updateError) throw updateError;
+    if (updateError) {
+      console.error('Update error:', updateError);
+      throw updateError;
+    }
 
     // Comprehensive revalidation of all appointment-related paths
     revalidatePath('/dashboard', 'layout');
@@ -191,7 +203,8 @@ export async function rescheduleAppointment(
     return { success: true };
   } catch (error) {
     console.error('Error rescheduling appointment:', error);
-    return { success: false, error: 'Failed to reschedule appointment' };
+    const errorMessage = error instanceof Error ? error.message : 'Failed to reschedule appointment';
+    return { success: false, error: errorMessage };
   }
 }
 
