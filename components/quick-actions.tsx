@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarPlus, Search } from "lucide-react";
+import { CalendarPlus, Search, User } from "lucide-react";
 import { useEffect, useRef } from "react";
 import {
   SidebarGroup,
@@ -48,6 +48,12 @@ export function QuickActions({
     };
   }, []);
 
+  // Handle Fadelens (spotlight command) trigger
+  const handleFadelens = () => {
+    const event = new CustomEvent("open-spotlight-command");
+    window.dispatchEvent(event);
+  };
+
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
@@ -70,11 +76,21 @@ export function QuickActions({
               ref={searchDialogRef}
               className="hover:bg-secondary"
             >
-              <Search className="h-4 w-4" />
+              <User className="h-4 w-4" />
               <span>Search Client</span>
               <CommandShortcut>⌘⇧F</CommandShortcut>
             </SidebarMenuButton>
           </SearchClientDialog>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            onClick={handleFadelens}
+            className="hover:bg-secondary"
+          >
+            <Search className="h-4 w-4" />
+            <span>Fadelens</span>
+            <CommandShortcut>⌘J</CommandShortcut>
+          </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>

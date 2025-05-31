@@ -57,6 +57,11 @@ export function SpotlightCommand({
     window.dispatchEvent(event);
   };
 
+  const triggerFadelens = () => {
+    const event = new CustomEvent("command-fadelens");
+    window.dispatchEvent(event);
+  };
+
   // Global keyboard shortcut for Cmd+J
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -72,8 +77,18 @@ export function SpotlightCommand({
       }
     };
 
+    // Handle spotlight command opening from Quick Actions
+    const handleOpenSpotlight = () => {
+      setOpen(true);
+    };
+
     document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
+    window.addEventListener("open-spotlight-command", handleOpenSpotlight);
+
+    return () => {
+      document.removeEventListener("keydown", down);
+      window.removeEventListener("open-spotlight-command", handleOpenSpotlight);
+    };
   }, [theme, setTheme, open]);
 
   const navigateAndClose = (path: string) => {
@@ -89,7 +104,7 @@ export function SpotlightCommand({
   return (
     <>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
+        <CommandInput placeholder="Search with Fadelens..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">

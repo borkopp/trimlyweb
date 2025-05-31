@@ -7,19 +7,14 @@ import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { Database } from "@/database.types";
 import { QuickActions } from "@/components/quick-actions";
-import { CommandShortcut } from "./ui/command";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
-// Move the static data outside the component
 const navMainItems = [
   {
     title: "Dashboard",
@@ -107,19 +102,13 @@ export function AppSidebar({ user, ...props }: AppSidebarProps) {
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="bg-white dark:bg-[#18181B]">
+      <SidebarHeader className="bg-muted/50 dark:bg-[#18181B]">
         <NavUser user={userData} />
       </SidebarHeader>
-      <SidebarContent className="bg-white dark:bg-[#18181B]">
+      <SidebarContent className="bg-muted/50 dark:bg-[#18181B]">
         <NavMain items={navMainItems} />
         <QuickActions userId={user.id} />
       </SidebarContent>
-      <SidebarFooter className="bg-backgroundMuted">
-        <SidebarMenuButton>
-          <span className="text-muted-foreground font-inter">Fadelens</span>
-          <CommandShortcut>⌘J</CommandShortcut>
-        </SidebarMenuButton>
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

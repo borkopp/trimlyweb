@@ -23,10 +23,15 @@ export function DateNavigator({ view, events }: IProps) {
   const month = formatDate(selectedDate, "MMMM");
   const year = selectedDate.getFullYear();
 
-  const eventCount = useMemo(() => getEventsCount(events, selectedDate, view), [events, selectedDate, view]);
+  const eventCount = useMemo(
+    () => getEventsCount(events, selectedDate, view),
+    [events, selectedDate, view]
+  );
 
-  const handlePrevious = () => setSelectedDate(navigateDate(selectedDate, view, "previous"));
-  const handleNext = () => setSelectedDate(navigateDate(selectedDate, view, "next"));
+  const handlePrevious = () =>
+    setSelectedDate(navigateDate(selectedDate, view, "previous"));
+  const handleNext = () =>
+    setSelectedDate(navigateDate(selectedDate, view, "next"));
 
   return (
     <div className="space-y-0.5">
@@ -34,17 +39,29 @@ export function DateNavigator({ view, events }: IProps) {
         <span className="text-lg font-semibold">
           {month} {year}
         </span>
-        <Badge>{eventCount} appointments</Badge>
+        <Badge className="bg-primary text-primary-foreground">
+          {eventCount} appointments
+        </Badge>
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="outline" className="size-6 px-0 [&_svg]:size-4" onClick={handlePrevious}>
+        <Button
+          variant="outline"
+          className="size-6 px-0 [&_svg]:size-4"
+          onClick={handlePrevious}
+        >
           <ChevronLeft />
         </Button>
 
-        <p className="text-sm text-t-tertiary">{rangeText(view, selectedDate)}</p>
+        <p className="text-sm text-t-tertiary">
+          {rangeText(view, selectedDate)}
+        </p>
 
-        <Button variant="outline" className="size-6 px-0 [&_svg]:size-4" onClick={handleNext}>
+        <Button
+          variant="outline"
+          className="size-6 px-0 [&_svg]:size-4"
+          onClick={handleNext}
+        >
           <ChevronRight />
         </Button>
       </div>

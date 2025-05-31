@@ -93,7 +93,7 @@ export default function AppointmentRow({ appointment, loggedInUserId }: Props) {
       <TableCell>
         <Badge
           variant={
-            isCancelled ? "destructive" : isConfirmed ? "secondary" : "default"
+            isCancelled ? "destructive" : isConfirmed ? "success" : "default"
           }
         >
           {isCancelled ? "Cancelled" : isConfirmed ? "Completed" : "Upcoming"}

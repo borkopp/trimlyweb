@@ -174,10 +174,6 @@ export function AppointmentDetailsOverview({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setIsRescheduleDialogOpen(true)}>
-                Reschedule
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-red-500"
                 onClick={() => setIsDeleteDialogOpen(true)}

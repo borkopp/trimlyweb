@@ -13,7 +13,7 @@ body {
 
 @layer base {
   :root {
-    --background: 220 25% 97%;
+    --background: 0 0% 100%;
     --background-secondary: 220 25% 95%;
     --background-muted: 220 25% 97%; /* #f5f5f5 */
     --foreground: 240 10% 3.9%;

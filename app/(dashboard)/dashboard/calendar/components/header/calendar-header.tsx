@@ -31,7 +31,7 @@ export function CalendarHeader({ view, events }: IProps) {
             className={`rounded-none border-r ${
               view === "day"
                 ? "bg-primary text-white font-medium"
-                : "bg-backgroundMuted hover:bg-accent"
+                : "bg-backgroundMuted hover:bg-accent text-foreground"
             }`}
             aria-label="View by day"
           >
@@ -45,7 +45,7 @@ export function CalendarHeader({ view, events }: IProps) {
             className={`rounded-none border-r hidden md:flex ${
               view === "week"
                 ? "bg-primary text-white font-medium"
-                : "bg-backgroundMuted hover:bg-accent"
+                : "bg-backgroundMuted hover:bg-accent text-foreground"
             }`}
             aria-label="View by week"
           >
@@ -59,7 +59,7 @@ export function CalendarHeader({ view, events }: IProps) {
             className={`rounded-none ${
               view === "month"
                 ? "bg-primary text-white font-medium"
-                : "bg-backgroundMuted hover:bg-accent"
+                : "bg-backgroundMuted hover:bg-accent text-foreground"
             }`}
             aria-label="View by month"
           >
