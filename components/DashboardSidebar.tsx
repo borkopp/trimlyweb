@@ -1,9 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
-import {Calendar, Home, LineChart, Scissors, Settings, User, User2, Users, Users2} from "lucide-react";
-import {usePathname} from "next/navigation";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Calendar,
+  Home,
+  LineChart,
+  Scissors,
+  Settings,
+  User,
+  User2,
+  Users,
+  Users2,
+} from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
@@ -12,7 +26,8 @@ export function DashboardSidebar() {
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
         <Link
           href="/dashboard"
-          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base">
+          className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
+        >
           <Scissors className="h-4 w-4 text-white transition-all group-hover:scale-110" />
           <span className="sr-only">Barbershop Dashboard</span>
         </Link>
@@ -21,8 +36,11 @@ export function DashboardSidebar() {
             <Link
               href="/dashboard"
               className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                pathname === "/dashboard" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
-              } transition-colors hover:text-foreground md:h-8 md:w-8`}>
+                pathname === "/dashboard"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground"
+              } transition-colors hover:text-foreground md:h-8 md:w-8`}
+            >
               <Home className="h-5 w-5" />
               <span className="sr-only">Dashboard</span>
             </Link>
@@ -34,8 +52,11 @@ export function DashboardSidebar() {
             <Link
               href="/dashboard/clients"
               className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                pathname === "/dashboard/clients" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
-              } transition-colors hover:text-foreground md:h-8 md:w-8`}>
+                pathname === "/dashboard/clients"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground"
+              } transition-colors hover:text-foreground md:h-8 md:w-8`}
+            >
               <Users2 className="h-5 w-5" />
               <span className="sr-only">Clients</span>
             </Link>
@@ -47,8 +68,11 @@ export function DashboardSidebar() {
             <Link
               href="/dashboard/calendar"
               className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                pathname === "/dashboard/calendar" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
-              } transition-colors hover:text-foreground md:h-8 md:w-8`}>
+                pathname === "/dashboard/calendar"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground"
+              } transition-colors hover:text-foreground md:h-8 md:w-8`}
+            >
               <Calendar className="h-5 w-5" />
               <span className="sr-only">Calendar</span>
             </Link>
@@ -60,8 +84,11 @@ export function DashboardSidebar() {
             <Link
               href="/dashboard/barbers"
               className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                pathname === "/dashboard/barbers" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
-              } transition-colors hover:text-foreground md:h-8 md:w-8`}>
+                pathname === "/dashboard/barbers"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground"
+              } transition-colors hover:text-foreground md:h-8 md:w-8`}
+            >
               <User2 className="h-5 w-5" />
               <span className="sr-only">Barbers</span>
             </Link>
@@ -74,8 +101,11 @@ export function DashboardSidebar() {
             <Link
               href="/dashboard/services"
               className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                pathname === "/dashboard/services" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
-              } transition-colors hover:text-foreground md:h-8 md:w-8`}>
+                pathname === "/dashboard/services"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground"
+              } transition-colors hover:text-foreground md:h-8 md:w-8`}
+            >
               <Scissors className="h-5 w-5" />
               <span className="sr-only">Services</span>
             </Link>
@@ -87,8 +117,11 @@ export function DashboardSidebar() {
             <Link
               href="/dashboard/analytics"
               className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                pathname === "/dashboard/analytics" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
-              } transition-colors hover:text-foreground md:h-8 md:w-8`}>
+                pathname === "/dashboard/analytics"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground"
+              } transition-colors hover:text-foreground md:h-8 md:w-8`}
+            >
               <LineChart className="h-5 w-5" />
               <span className="sr-only">Analytics</span>
             </Link>
@@ -102,8 +135,11 @@ export function DashboardSidebar() {
             <Link
               href="/dashboard/settings"
               className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                pathname === "/dashboard/settings" ? "bg-accent text-accent-foreground" : "text-muted-foreground"
-              } transition-colors hover:text-foreground md:h-8 md:w-8`}>
+                pathname === "/dashboard/settings"
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground"
+              } transition-colors hover:text-foreground md:h-8 md:w-8`}
+            >
               <Settings className="h-5 w-5" />
               <span className="sr-only">Settings</span>
             </Link>

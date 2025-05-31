@@ -9,6 +9,8 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { DashboardHeaderWithBreadcrumbs } from "@/components/dashboard/header-with-breadcrumbs";
 import { getUser } from "@/app/actions/dashboard-actions";
+import { CommandPalette } from "@/components/command-palette";
+import { SpotlightCommand } from "@/components/spotlight-command";
 
 export default async function DashboardLayout({
   children,
@@ -47,14 +49,27 @@ export default async function DashboardLayout({
     <QueryClientProvider>
       <SidebarProvider>
         <BarbershopProvider barbershop={barbershop}>
-          <div className="flex min-h-screen w-full">
+          <div suppressHydrationWarning className="flex min-h-screen w-full">
             <TooltipProvider>
               <AppSidebar user={userProfile} />
               <SidebarInset>
-                <DashboardHeaderWithBreadcrumbs />
+                <DashboardHeaderWithBreadcrumbs
+                  user={user}
+                  barbershopId={parseInt(barbershopId)}
+                />
                 {children}
               </SidebarInset>
             </TooltipProvider>
+            {/* Command Palette - Available globally throughout dashboard */}
+            <CommandPalette
+              userId={userProfile?.id}
+              barbershopId={barbershopId}
+            />
+            {/* Spotlight Command - Quick actions with Cmd+J */}
+            <SpotlightCommand
+              userId={userProfile?.id}
+              barbershopId={barbershopId}
+            />
           </div>
         </BarbershopProvider>
       </SidebarProvider>

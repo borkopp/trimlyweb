@@ -37,5 +37,8 @@ Modern Dashboard for barbershop management, where the user can manage appointmen
 
 ## Changelog
 
+- Implemented spotlight-like command palette with Cmd+J toggle featuring dark mode toggle (Cmd+D), quick navigation, and useful dashboard actions using exact shadcn/ui styling
+- Implemented shadcn/ui Command palette with global keyboard shortcuts for Quick Actions (Cmd/Ctrl+B for Book Appointment, Cmd/Ctrl+Shift+F for Search Client) and comprehensive navigation commands throughout dashboard
+- Implemented real-time appointment notification system in dashboard header with Bell icon, unread count badge, and dropdown showing appointments booked via mobile app
 - Created SearchClientDialog component with smooth UX, debounced search, profile pictures/initials fallback, and integrated it into QuickActions for seamless client search throughout the app
 - Replaced calendar dummy data with real barbershop appointments using Supabase realtime for live updates without page refresh

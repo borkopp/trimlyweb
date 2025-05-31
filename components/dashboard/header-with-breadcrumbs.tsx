@@ -6,6 +6,8 @@ import { ModeToggle } from "@/components/theme-toggle";
 import { PanelLeft, PanelRightClose } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
+import { AppointmentNotificationComponent } from "@/components/appointment-notification";
+import type { User } from "@supabase/supabase-js";
 
 const BREADCRUMB_TITLES: Record<string, string> = {
   calendar: "Calendar",
@@ -20,7 +22,15 @@ const BREADCRUMB_TITLES: Record<string, string> = {
   "week-view": "Calendar",
 };
 
-export function DashboardHeaderWithBreadcrumbs() {
+interface DashboardHeaderWithBreadcrumbsProps {
+  user: User;
+  barbershopId: number;
+}
+
+export function DashboardHeaderWithBreadcrumbs({
+  user,
+  barbershopId,
+}: DashboardHeaderWithBreadcrumbsProps) {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
   const { state, toggleSidebar } = useSidebar();
@@ -75,8 +85,11 @@ export function DashboardHeaderWithBreadcrumbs() {
         </Button>
         <DashboardHeader breadcrumbs={processedBreadcrumbs} />
       </div>
-      <div className="flex items-center gap-2 pr-4">
-        <ModeToggle />
+      <div className="flex items-center pr-4 w-">
+        <AppointmentNotificationComponent
+          currentUserId={user.id}
+          barbershopId={barbershopId}
+        />
       </div>
     </div>
   );

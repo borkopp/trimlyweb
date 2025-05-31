@@ -1,12 +1,21 @@
 "use client";
 
 import * as React from "react";
-import {Settings2, Home, Calendar, Users2} from "lucide-react";
-import {NavMain} from "@/components/nav-main";
-import {NavUser} from "@/components/nav-user";
-import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail} from "@/components/ui/sidebar";
-import {Database} from "@/database.types";
-import {QuickActions} from "@/components/quick-actions";
+import { Settings2, Home, Calendar, Users2, LogOut } from "lucide-react";
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+} from "@/components/ui/sidebar";
+import { Database } from "@/database.types";
+import { QuickActions } from "@/components/quick-actions";
+import { CommandShortcut } from "./ui/command";
 
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
@@ -87,7 +96,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: Profile | null;
 }
 
-export function AppSidebar({user, ...props}: AppSidebarProps) {
+export function AppSidebar({ user, ...props }: AppSidebarProps) {
   if (!user) return null;
 
   const userData = {
@@ -105,6 +114,12 @@ export function AppSidebar({user, ...props}: AppSidebarProps) {
         <NavMain items={navMainItems} />
         <QuickActions userId={user.id} />
       </SidebarContent>
+      <SidebarFooter className="bg-backgroundMuted">
+        <SidebarMenuButton>
+          <span className="text-muted-foreground font-inter">Fadelens</span>
+          <CommandShortcut>⌘J</CommandShortcut>
+        </SidebarMenuButton>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

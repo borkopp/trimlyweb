@@ -1,21 +1,47 @@
 "use client";
-import {useCallback, useEffect, useState} from "react";
-import {Trash2, Plus, Pencil, Scissors} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
-import {Textarea} from "@/components/ui/textarea";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {ScrollArea} from "@/components/ui/scroll-area";
+import { useCallback, useEffect, useState } from "react";
+import { Trash2, Plus, Pencil, Scissors } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import Image from "next/image";
-import {Database} from "@/database.types";
-import {createClient} from "@/utils/supabase/client";
-import {toast} from "@/components/ui/use-toast";
-import {addService, deleteService, updateService} from "@/app/actions/dashboard-actions";
-import {useRouter} from "next/navigation";
-import {uploadImage} from "@/lib/uploadImage";
+import { Database } from "@/database.types";
+import { createClient } from "@/utils/supabase/client";
+import { toast } from "@/components/ui/use-toast";
+import {
+  addService,
+  deleteService,
+  updateService,
+} from "@/app/actions/dashboard-actions";
+import { useRouter } from "next/navigation";
+import { uploadImage } from "@/lib/uploadImage";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,18 +52,17 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage} from "@/components/ui/breadcrumb";
-import Link from "next/link";
-import {Skeleton} from "@/components/ui/skeleton";
-import {headers} from "next/headers";
-import {EmptyState} from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 type Service = Database["public"]["Tables"]["services"]["Row"];
 
 async function getImageUrl(path: string) {
   if (!path) return null;
   const supabase = createClient();
-  const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
+  const { data } = await supabase.storage
+    .from("barber-images")
+    .getPublicUrl(path);
   return data?.publicUrl || null;
 }
 
@@ -52,8 +77,12 @@ export default function ServicesPageClient({
 }) {
   const router = useRouter();
   const [services, setServices] = useState<Service[]>(initialServices);
-  const [serviceImages, setServiceImages] = useState<Record<string, string | null>>({});
-  const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>({});
+  const [serviceImages, setServiceImages] = useState<
+    Record<string, string | null>
+  >({});
+  const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>(
+    {}
+  );
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [newService, setNewService] = useState<Omit<Service, "id">>({
     name: "",
@@ -92,15 +121,18 @@ export default function ServicesPageClient({
   }, [fetchImageUrls]);
 
   //handle image upload to supabase storage bucket "barber-images"
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, isEditing: boolean) => {
+  const handleImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    isEditing: boolean
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       try {
         const imagePath = await uploadImage(file);
         if (isEditing && editingService) {
-          setEditingService({...editingService, image: imagePath});
+          setEditingService({ ...editingService, image: imagePath });
         } else {
-          setNewService({...newService, image: imagePath});
+          setNewService({ ...newService, image: imagePath });
         }
       } catch (error) {
         console.error("Error uploading image:", error);
@@ -116,7 +148,8 @@ export default function ServicesPageClient({
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!newService.name.trim()) newErrors.name = "Name is required";
-    if (!newService.description?.trim()) newErrors.description = "Description is required";
+    if (!newService.description?.trim())
+      newErrors.description = "Description is required";
     if (!newService.time) newErrors.time = "Duration is required";
     if (!newService.price) newErrors.price = "Price is required";
     setErrors(newErrors);
@@ -137,7 +170,10 @@ export default function ServicesPageClient({
     }
 
     try {
-      const addedService = await addService({...newService, barbershop_id: barbershopId});
+      const addedService = await addService({
+        ...newService,
+        barbershop_id: barbershopId,
+      });
       setServices([...services, addedService]);
       setNewService({
         name: "",
@@ -169,7 +205,7 @@ export default function ServicesPageClient({
     setIsEditingService(true);
     try {
       if (editingService) {
-        await updateService({...editingService, barbershop_id: barbershopId});
+        await updateService({ ...editingService, barbershop_id: barbershopId });
         const updatedServices = await refreshServices();
         setServices(updatedServices);
         toast({
@@ -201,7 +237,9 @@ export default function ServicesPageClient({
     if (serviceToDelete) {
       try {
         await deleteService(serviceToDelete.id);
-        setServices(services.filter((service) => service.id !== serviceToDelete.id));
+        setServices(
+          services.filter((service) => service.id !== serviceToDelete.id)
+        );
         toast({
           title: "Service removed",
           description: `${serviceToDelete.name} has been removed.`,
@@ -225,7 +263,9 @@ export default function ServicesPageClient({
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-bold tracking-tight">Services</h1>
-            <p className="text-muted-foreground">Manage and view all your services in one place.</p>
+            <p className="text-muted-foreground">
+              Manage and view all your services in one place.
+            </p>
           </div>
           <div>
             <Dialog open={openAddDialog} onOpenChange={setOpenAddDialog}>
@@ -238,7 +278,9 @@ export default function ServicesPageClient({
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Add New Service</DialogTitle>
-                  <DialogDescription>Add a new service to your barbershop.</DialogDescription>
+                  <DialogDescription>
+                    Add a new service to your barbershop.
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                   <div className="grid grid-cols-4 items-center gap-4">
@@ -249,10 +291,16 @@ export default function ServicesPageClient({
                       <Input
                         id="name"
                         value={newService.name}
-                        onChange={(e) => setNewService({...newService, name: e.target.value})}
+                        onChange={(e) =>
+                          setNewService({ ...newService, name: e.target.value })
+                        }
                         className={errors.name ? "border-red-500" : ""}
                       />
-                      {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                      {errors.name && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.name}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
@@ -263,10 +311,19 @@ export default function ServicesPageClient({
                       <Textarea
                         id="description"
                         value={newService.description || ""}
-                        onChange={(e) => setNewService({...newService, description: e.target.value})}
+                        onChange={(e) =>
+                          setNewService({
+                            ...newService,
+                            description: e.target.value,
+                          })
+                        }
                         className={errors.description ? "border-red-500" : ""}
                       />
-                      {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
+                      {errors.description && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.description}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
@@ -278,10 +335,19 @@ export default function ServicesPageClient({
                         id="duration"
                         type="number"
                         value={newService.time}
-                        onChange={(e) => setNewService({...newService, time: parseInt(e.target.value)})}
+                        onChange={(e) =>
+                          setNewService({
+                            ...newService,
+                            time: parseInt(e.target.value),
+                          })
+                        }
                         className={errors.time ? "border-red-500" : ""}
                       />
-                      {errors.time && <p className="text-red-500 text-sm mt-1">{errors.time}</p>}
+                      {errors.time && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.time}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
@@ -293,21 +359,41 @@ export default function ServicesPageClient({
                         id="price"
                         type="number"
                         value={newService.price}
-                        onChange={(e) => setNewService({...newService, price: parseFloat(e.target.value)})}
+                        onChange={(e) =>
+                          setNewService({
+                            ...newService,
+                            price: parseFloat(e.target.value),
+                          })
+                        }
                         className={errors.price ? "border-red-500" : ""}
                       />
-                      {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
+                      {errors.price && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.price}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="image" className="text-right">
                       Image
                     </Label>
-                    <Input id="image" type="file" onChange={(e) => handleImageUpload(e, false)} className="col-span-3" />
+                    <Input
+                      id="image"
+                      type="file"
+                      onChange={(e) => handleImageUpload(e, false)}
+                      className="col-span-3"
+                    />
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button disabled={isAddingService} className={isAddingService ? "opacity-50 cursor-not-allowed" : ""} onClick={handleAddService}>
+                  <Button
+                    disabled={isAddingService}
+                    className={
+                      isAddingService ? "opacity-50 cursor-not-allowed" : ""
+                    }
+                    onClick={handleAddService}
+                  >
                     {isAddingService ? (
                       <div className="flex items-center justify-center">
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white self-center"></div>
@@ -341,7 +427,8 @@ export default function ServicesPageClient({
                 {services.map((service) => (
                   <TableRow key={service.id}>
                     <TableCell>
-                      {loadingImages[service.id] || !serviceImages[service.id] ? (
+                      {loadingImages[service.id] ||
+                      !serviceImages[service.id] ? (
                         <Skeleton className="w-12 h-12 rounded-md" />
                       ) : (
                         <Image
@@ -359,7 +446,10 @@ export default function ServicesPageClient({
                     <TableCell>€ {service.price}</TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
+                        <Dialog
+                          open={openEditDialog}
+                          onOpenChange={setOpenEditDialog}
+                        >
                           <DialogTrigger asChild>
                             <Button
                               variant="outline"
@@ -367,74 +457,135 @@ export default function ServicesPageClient({
                               onClick={() => {
                                 setEditingService(service);
                                 setOpenEditDialog(true);
-                              }}>
+                              }}
+                            >
                               <Pencil className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>
                           <DialogContent>
                             <DialogHeader>
                               <DialogTitle>Edit Service</DialogTitle>
-                              <DialogDescription>Make changes to the service here.</DialogDescription>
+                              <DialogDescription>
+                                Make changes to the service here.
+                              </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
                               <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="edit-name" className="text-right">
+                                <Label
+                                  htmlFor="edit-name"
+                                  className="text-right"
+                                >
                                   Name
                                 </Label>
                                 <Input
                                   id="edit-name"
                                   value={editingService?.name}
-                                  onChange={(e) => setEditingService((prev) => (prev ? {...prev, name: e.target.value} : null))}
+                                  onChange={(e) =>
+                                    setEditingService((prev) =>
+                                      prev
+                                        ? { ...prev, name: e.target.value }
+                                        : null
+                                    )
+                                  }
                                   className="col-span-3"
                                 />
                               </div>
                               <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="edit-description" className="text-right">
+                                <Label
+                                  htmlFor="edit-description"
+                                  className="text-right"
+                                >
                                   Description
                                 </Label>
                                 <Textarea
                                   id="edit-description"
                                   value={editingService?.description || ""}
-                                  onChange={(e) => setEditingService((prev) => (prev ? {...prev, description: e.target.value} : null))}
+                                  onChange={(e) =>
+                                    setEditingService((prev) =>
+                                      prev
+                                        ? {
+                                            ...prev,
+                                            description: e.target.value,
+                                          }
+                                        : null
+                                    )
+                                  }
                                   className="col-span-3"
                                 />
                               </div>
                               <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="edit-duration" className="text-right">
+                                <Label
+                                  htmlFor="edit-duration"
+                                  className="text-right"
+                                >
                                   Duration (min)
                                 </Label>
                                 <Input
                                   id="edit-duration"
                                   type="number"
                                   value={editingService?.time}
-                                  onChange={(e) => setEditingService((prev) => (prev ? {...prev, time: parseInt(e.target.value)} : null))}
+                                  onChange={(e) =>
+                                    setEditingService((prev) =>
+                                      prev
+                                        ? {
+                                            ...prev,
+                                            time: parseInt(e.target.value),
+                                          }
+                                        : null
+                                    )
+                                  }
                                   className="col-span-3"
                                 />
                               </div>
                               <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="edit-price" className="text-right">
+                                <Label
+                                  htmlFor="edit-price"
+                                  className="text-right"
+                                >
                                   Price ($)
                                 </Label>
                                 <Input
                                   id="edit-price"
                                   type="number"
                                   value={editingService?.price}
-                                  onChange={(e) => setEditingService((prev) => (prev ? {...prev, price: parseFloat(e.target.value)} : null))}
+                                  onChange={(e) =>
+                                    setEditingService((prev) =>
+                                      prev
+                                        ? {
+                                            ...prev,
+                                            price: parseFloat(e.target.value),
+                                          }
+                                        : null
+                                    )
+                                  }
                                   className="col-span-3"
                                 />
                               </div>
                               <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="edit-image" className="text-right">
+                                <Label
+                                  htmlFor="edit-image"
+                                  className="text-right"
+                                >
                                   Image
                                 </Label>
-                                <Input id="edit-image" type="file" onChange={(e) => handleImageUpload(e, true)} className="col-span-3" />
+                                <Input
+                                  id="edit-image"
+                                  type="file"
+                                  onChange={(e) => handleImageUpload(e, true)}
+                                  className="col-span-3"
+                                />
                               </div>
                             </div>
                             <DialogFooter>
                               <Button
                                 disabled={isEditingService}
-                                className={isEditingService ? "opacity-50 cursor-not-allowed" : ""}
-                                onClick={handleEditService}>
+                                className={
+                                  isEditingService
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : ""
+                                }
+                                onClick={handleEditService}
+                              >
                                 {isEditingService ? (
                                   <div className="flex items-center justify-center">
                                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white self-center"></div>
@@ -447,7 +598,11 @@ export default function ServicesPageClient({
                             </DialogFooter>
                           </DialogContent>
                         </Dialog>
-                        <Button variant="destructive" size="icon" onClick={() => handleRemoveService(service)}>
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          onClick={() => handleRemoveService(service)}
+                        >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -472,11 +627,17 @@ export default function ServicesPageClient({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>This action cannot be undone. This will permanently delete the service.</AlertDialogDescription>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              service.
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive hover:bg-destructive/70" onClick={confirmDelete}>
+            <AlertDialogAction
+              className="bg-destructive hover:bg-destructive/70"
+              onClick={confirmDelete}
+            >
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -1,24 +1,47 @@
 "use client";
 
-import {useState, useEffect} from "react";
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {Badge} from "@/components/ui/badge";
-import {Button} from "@/components/ui/button";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator} from "@/components/ui/breadcrumb";
-import {Calendar, Clock, Mail, Phone, Scissors, User} from "lucide-react";
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Calendar, Clock, Mail, Phone, Scissors, User } from "lucide-react";
 import Link from "next/link";
-import {formatDate, formatTime} from "@/utils/dateUtils";
-import {Database} from "@/database.types";
-import {createClient} from "@/utils/supabase/client";
+import { formatDate, formatTime } from "@/utils/dateUtils";
+import { Database } from "@/database.types";
+import { createClient } from "@/utils/supabase/client";
 
 async function getImageUrl(path: string) {
   if (!path) return null;
   const supabase = createClient();
-  const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
+  const { data } = await supabase.storage
+    .from("barber-images")
+    .getPublicUrl(path);
   return data?.publicUrl || null;
 }
 
@@ -37,10 +60,15 @@ interface ClientProfilePageProps {
   appointments: Appointment[];
 }
 
-export default function ClientProfilePage({profile, appointments}: ClientProfilePageProps) {
+export default function ClientProfilePage({
+  profile,
+  appointments,
+}: ClientProfilePageProps) {
   const [activeTab, setActiveTab] = useState("overview");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [barberAvatars, setBarberAvatars] = useState<Record<number, string>>({});
+  const [barberAvatars, setBarberAvatars] = useState<Record<number, string>>(
+    {}
+  );
 
   useEffect(() => {
     async function loadAvatarUrls() {
@@ -69,19 +97,35 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
 
   // Calculate statistics
   const totalAppointments = appointments.length;
-  const completedAppointments = appointments.filter((apt) => !apt.is_cancelled && new Date(`${apt.date}T${apt.time}`) < new Date()).length;
-  const cancelledAppointments = appointments.filter((apt) => apt.is_cancelled).length;
-  const upcomingAppointments = appointments.filter((apt) => !apt.is_cancelled && new Date(`${apt.date}T${apt.time}`) > new Date()).length;
+  const completedAppointments = appointments.filter(
+    (apt) =>
+      !apt.is_cancelled && new Date(`${apt.date}T${apt.time}`) < new Date()
+  ).length;
+  const cancelledAppointments = appointments.filter(
+    (apt) => apt.is_cancelled
+  ).length;
+  const upcomingAppointments = appointments.filter(
+    (apt) =>
+      !apt.is_cancelled && new Date(`${apt.date}T${apt.time}`) > new Date()
+  ).length;
 
   // Calculate total spent
   const totalSpent = appointments
-    .filter((apt) => !apt.is_cancelled && new Date(`${apt.date}T${apt.time}`) < new Date())
+    .filter(
+      (apt) =>
+        !apt.is_cancelled && new Date(`${apt.date}T${apt.time}`) < new Date()
+    )
     .reduce((total, apt) => {
-      return total + apt.services.reduce((sum, service) => sum + service.price, 0);
+      return (
+        total + apt.services.reduce((sum, service) => sum + service.price, 0)
+      );
     }, 0);
 
   // Get next appointment
-  const nextAppointment = appointments.find((apt) => !apt.is_cancelled && new Date(`${apt.date}T${apt.time}`) > new Date());
+  const nextAppointment = appointments.find(
+    (apt) =>
+      !apt.is_cancelled && new Date(`${apt.date}T${apt.time}`) > new Date()
+  );
 
   return (
     <div className="container mx-auto py-10">
@@ -103,7 +147,9 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
                   <span>{profile.email}</span>
                 </div>
                 <div className="flex gap-2 mt-2">
-                  <Badge variant="outline">Client since - {formatDate(profile.updated_at || "")}</Badge>
+                  <Badge variant="outline">
+                    Client since - {formatDate(profile.updated_at || "")}
+                  </Badge>
                 </div>
               </div>
             </div>
@@ -114,12 +160,16 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Appointments</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Appointments
+              </CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalAppointments}</div>
-              <p className="text-xs text-muted-foreground">All time appointments</p>
+              <p className="text-xs text-muted-foreground">
+                All time appointments
+              </p>
             </CardContent>
           </Card>
           <Card>
@@ -143,7 +193,8 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground">
+                className="h-4 w-4 text-muted-foreground"
+              >
                 <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
             </CardHeader>
@@ -154,19 +205,27 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Next Appointment</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Next Appointment
+              </CardTitle>
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               {nextAppointment ? (
                 <>
-                  <div className="text-2xl font-bold">{formatDate(nextAppointment.date)}</div>
-                  <p className="text-xs text-muted-foreground">{formatTime(nextAppointment.time)}</p>
+                  <div className="text-2xl font-bold">
+                    {formatDate(nextAppointment.date)}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {formatTime(nextAppointment.time)}
+                  </p>
                 </>
               ) : (
                 <>
                   <div className="text-2xl font-bold">-</div>
-                  <p className="text-xs text-muted-foreground">No upcoming appointments</p>
+                  <p className="text-xs text-muted-foreground">
+                    No upcoming appointments
+                  </p>
                 </>
               )}
             </CardContent>
@@ -177,7 +236,9 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
         <Card>
           <CardHeader>
             <CardTitle>Appointment History</CardTitle>
-            <CardDescription>View all appointments and their details</CardDescription>
+            <CardDescription>
+              View all appointments and their details
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-[400px] w-full rounded-md border">
@@ -195,20 +256,34 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
                   {appointments.map((appointment) => (
                     <TableRow key={appointment.id}>
                       <TableCell>
-                        <div className="font-medium">{formatDate(appointment.date)}</div>
-                        <div className="text-sm text-muted-foreground">{formatTime(appointment.time)}</div>
+                        <div className="font-medium">
+                          {formatDate(appointment.date)}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {formatTime(appointment.time)}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={appointment.barber?.id ? barberAvatars[appointment.barber.id] : ""} />
+                            <AvatarImage
+                              src={
+                                appointment.barber?.id
+                                  ? barberAvatars[appointment.barber.id]
+                                  : ""
+                              }
+                            />
                             <AvatarFallback>
                               <User className="h-4 w-4" />
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium">{appointment.barber.name}</div>
-                            <div className="text-sm text-muted-foreground">{appointment.barber.email}</div>
+                            <div className="font-medium">
+                              {appointment.barber.name}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              {appointment.barber.email}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -224,14 +299,19 @@ export default function ClientProfilePage({profile, appointments}: ClientProfile
                       <TableCell>
                         {appointment.is_cancelled ? (
                           <Badge variant="destructive">Cancelled</Badge>
-                        ) : new Date(`${appointment.date}T${appointment.time}`) < new Date() ? (
+                        ) : new Date(
+                            `${appointment.date}T${appointment.time}`
+                          ) < new Date() ? (
                           <Badge variant="secondary">Completed</Badge>
                         ) : (
                           <Badge>Upcoming</Badge>
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        €{appointment.services.reduce((sum, service) => sum + service.price, 0).toFixed(2)}
+                        €
+                        {appointment.services
+                          .reduce((sum, service) => sum + service.price, 0)
+                          .toFixed(2)}
                       </TableCell>
                     </TableRow>
                   ))}

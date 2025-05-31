@@ -6,73 +6,101 @@ _Last updated: 2025-05-30_
 
 Phase: VALIDATE  
 Status: COMPLETED  
-CurrentItem: Create SearchClientDialog component for QuickActions search functionality
+CurrentItem: Implement spotlight-like command palette with Cmd+J toggle and useful quick actions
 
 ## Plan
 
-### Task: Create Search Client Dialog similar to AppointmentDialog
+### Task: Implement Command Palette with Quick Actions Keyboard Shortcuts
 
-**Objective:** Replace the current navigation-based "Search Client" functionality in QuickActions with a modal dialog that provides smooth UX, client search capabilities, and displays client profiles with pictures or initials fallback.
+**Objective:** Create a command palette using shadcn/ui Command component that makes Quick Actions accessible via keyboard shortcuts and provides a searchable interface for dashboard actions.
 
 **Implementation Steps:**
 
-1. **Create SearchClientDialog component**
+1. **Create CommandPalette component**
 
-   - Create `components/search-client-dialog.tsx`
-   - Base design on AppointmentDialog structure with shadcn components
-   - Include search input with real-time filtering
-   - Display client results in a scrollable list
-   - Show profile pictures or initials fallback
-   - Add loading and error states
-   - Use Dialog, Input, ScrollArea, Avatar, Card components from shadcn
+   - Create `components/command-palette.tsx`
+   - Use CommandDialog from shadcn/ui for modal interface
+   - Implement keyboard shortcut trigger (Cmd/Ctrl + K for opening palette)
+   - Add Quick Actions group with:
+     - Book Appointment (Cmd/Ctrl + B)
+     - Search Client (Cmd/Ctrl + Shift + F)
+   - Add Navigation group for main dashboard sections
+   - Add Settings group for quick access to settings pages
 
-2. **Create client search API endpoint**
+2. **Create command palette context and hook**
 
-   - Create or verify `/api/clients` endpoint exists
-   - Implement search functionality with query parameter
-   - Return client data including: id, name, email, phone, avatar_url
-   - Add proper error handling and validation
+   - Create `hooks/use-command-palette.ts`
+   - Manage command palette open/close state
+   - Provide functions to trigger specific actions
+   - Handle keyboard shortcut registration for individual actions
 
-3. **Create client search hook**
+3. **Update Quick Actions to support command triggering**
 
-   - Create `hooks/use-client-search.ts` for reusable search logic
-   - Implement debounced search to avoid excessive API calls
-   - Use React Query for caching and state management
-   - Handle loading states and error handling
+   - Modify `components/quick-actions.tsx` to register keyboard shortcuts
+   - Add global keyboard event listeners for:
+     - Cmd/Ctrl + B for Book Appointment
+     - Cmd/Ctrl + Shift + F for Search Client
+   - Ensure shortcuts work even when sidebar is collapsed
 
-4. **Update QuickActions component**
+4. **Integrate CommandPalette into dashboard layout**
 
-   - Replace navigation logic with SearchClientDialog
-   - Pass SearchClientDialog as trigger for the Search Client button
-   - Remove router.push logic and handleSearchClient callback
-   - Maintain the same button appearance and behavior
+   - Update `app/(dashboard)/dashboard/layout.tsx`
+   - Add CommandPalette component to the layout
+   - Ensure proper context providers are in place
+   - Position palette to appear above all other content
 
-5. **Implement client selection actions**
-   - Add click handlers for client selection
-   - Provide options like "View Profile", "Book Appointment", "Edit Client"
-   - Navigate to appropriate pages or trigger relevant dialogs
+5. **Add command actions for navigation and utilities**
+
+   - Quick navigation to: Dashboard, Calendar, Clients, Barbers, Services, Analytics, Settings
+   - Quick actions for: New Appointment, Search Client, View Today's Schedule
+   - Settings shortcuts for: General Settings, Opening Hours, Notifications, Payments
+
+6. **Implement spotlight-like command palette**
+
+   - Created `components/spotlight-command.tsx` with shadcn/ui CommandDialog styling
+   - Implemented Cmd/Ctrl + J keyboard shortcut for spotlight toggle
+   - Added useful quick actions organized in logical groups:
+     - Suggestions: Book Appointment, Search Client, Today's Schedule
+     - Quick Actions: Toggle Dark Mode (Cmd+D), Dashboard (Cmd+H), Analytics (Cmd+A)
+     - Navigation: Clients, Barbers, Services
+     - Settings: Profile (Cmd+P), Billing (Cmd+B), Settings (Cmd+S)
+   - Added direct keyboard shortcut for dark mode toggle (Cmd+D)
+   - Integrated with existing Quick Actions via custom events
+   - Used exact styling from shadcn documentation example
+   - Added proper theme integration with next-themes
 
 **Technical Details:**
 
-- Use Supabase profiles table for client data
-- Implement search on name, email, and phone fields
-- Use debounced search (300ms delay) to optimize performance
-- Follow existing patterns from AppointmentDialog for consistency
-- Use the same card-based layout for client results
-- Add keyboard navigation support (arrow keys, enter)
-- Implement proper focus management for accessibility
+- Use CommandDialog with proper keyboard navigation
+- Implement search functionality for filtering commands
+- Add keyboard shortcut display in command items
+- Use lucide-react icons consistent with existing UI
+- Support both mouse and keyboard interaction
+- Add proper focus management and accessibility
+- Store frequently used commands for better UX
+
+**Keyboard Shortcuts:**
+
+- Cmd/Ctrl + K: Open command palette
+- Cmd/Ctrl + B: Book appointment (direct or via palette)
+- Cmd/Ctrl + Shift + F: Search client (direct or via palette)
+- Cmd/Ctrl + H: Go to dashboard
+- Cmd/Ctrl + C: Go to calendar
+- Cmd/Ctrl + G: Go to settings
 
 **Expected File Changes:**
 
-- `components/search-client-dialog.tsx` (new)
-- `hooks/use-client-search.ts` (new)
-- `app/api/clients/route.ts` (new or modify existing)
+- `components/command-palette.tsx` (new)
+- `hooks/use-command-palette.ts` (new)
 - `components/quick-actions.tsx` (modify)
+- `app/(dashboard)/dashboard/layout.tsx` (modify)
 
-**Database Schema Reference:**
+**Dependencies:**
 
-- `profiles` table: id, full_name, email, phone, avatar_url, created_at
-- Search will be performed on full_name, email, and phone fields
+- Existing shadcn/ui Command components
+- React hooks for state management
+- Next.js router for navigation
+- Existing dialog components for appointment/search
 
 ## Rules
 
@@ -141,52 +169,66 @@ Action ▶
 
 ## Log
 
-✅ **Step 1: Created SearchClientDialog component**
+✅ **Step 1: Created command palette hook**
 
-- Created `components/search-client-dialog.tsx`
-- Implemented dialog structure based on AppointmentDialog with shadcn components
-- Added search input with real-time filtering capability
-- Created scrollable client results list with proper layout
-- Implemented profile pictures with initials fallback using Avatar component
-- Added loading and error states with appropriate UI feedback
-- Used Dialog, Input, ScrollArea, Avatar, Card components from shadcn
-- Added client selection functionality with visual feedback
-- Implemented client actions (View Profile, Book Appointment)
+- Created `hooks/use-command-palette.ts` with comprehensive keyboard shortcut management
+- Implemented global keyboard listeners for:
+  - Cmd/Ctrl + K: Open command palette
+  - Cmd/Ctrl + B: Book appointment (direct trigger)
+  - Cmd/Ctrl + Shift + F: Search client (direct trigger)
+  - Cmd/Ctrl + H: Navigate to dashboard
+  - Cmd/Ctrl + C: Navigate to calendar
+  - Cmd/Ctrl + G: Navigate to settings
+- Added state management for palette open/close functionality
+- Used custom events for communicating between command palette and Quick Actions
 
-✅ **Step 2: Created client search hook**
+✅ **Step 2: Created CommandPalette component**
 
-- Created `hooks/use-client-search.ts` with reusable search logic
-- Implemented debounced search with 300ms delay to optimize performance
-- Used React Query for efficient caching and state management
-- Added proper loading states and error handling
-- Configured 5-minute stale time for optimal caching
-- Added retry logic for failed requests
+- Created `components/command-palette.tsx` with shadcn/ui CommandDialog
+- Implemented searchable command interface with grouped commands:
+  - Quick Actions: Book Appointment, Search Client, View Today's Schedule
+  - Navigation: Dashboard, Calendar, Clients, Barbers, Services, Analytics
+  - Settings: General Settings, Opening Hours, Notifications, Payment Settings
+- Added keyboard shortcut indicators for each command
+- Used consistent lucide-react icons matching existing UI
+- Implemented proper command execution with palette auto-close
 
-✅ **Step 3: Created client search API endpoint**
+✅ **Step 3: Updated Quick Actions for command integration**
 
-- Created `app/api/clients/route.ts` with GET endpoint
-- Implemented search functionality using Supabase client
-- Added search across full_name, email, and phone fields using ilike operator
-- Implemented proper error handling and validation
-- Added result limiting (50 clients) for performance
-- Used proper typing with Database types
+- Modified `components/quick-actions.tsx` to support command palette triggers
+- Added event listeners for custom events from command palette
+- Used React refs to programmatically trigger dialog buttons
+- Maintained existing sidebar functionality while adding global accessibility
+- Ensured seamless integration between sidebar and command palette actions
 
-✅ **Step 4: Updated QuickActions component**
+✅ **Step 4: Integrated CommandPalette into dashboard layout**
 
-- Modified `components/quick-actions.tsx` to use SearchClientDialog
-- Replaced navigation logic with dialog trigger pattern
-- Removed router.push logic and handleSearchClient callback
-- Maintained exact same button appearance and hover behavior
-- Preserved sidebar menu structure and styling
-- Used SearchClientDialog as wrapper for SidebarMenuButton
+- Updated `app/(dashboard)/dashboard/layout.tsx` to include CommandPalette
+- Positioned palette outside main content flow for global availability
+- Passed necessary props (userId, barbershopId) to palette component
+- Ensured command palette is available throughout entire dashboard
 
-✅ **Step 5: Implementation completed**
+✅ **Step 5: Implemented comprehensive command system**
 
-- All planned files created and modified according to plan
-- SearchClientDialog provides smooth UX with modern design
-- Follows project patterns and shadcn component usage
-- Includes proper TypeScript typing throughout
-- Implements accessibility features and responsive design
+- Created command-driven interface for all major dashboard functions
+- Added keyboard shortcut support for power users
+- Maintained existing UI interactions while adding new access methods
+- Implemented searchable command discovery for better UX
+- Added proper TypeScript interfaces for command actions
+
+✅ **Step 6: Implemented spotlight-like command palette**
+
+- Created `components/spotlight-command.tsx` with shadcn/ui CommandDialog styling
+- Implemented Cmd/Ctrl + J keyboard shortcut for spotlight toggle
+- Added useful quick actions organized in logical groups:
+  - Suggestions: Book Appointment, Search Client, Today's Schedule
+  - Quick Actions: Toggle Dark Mode (Cmd+D), Dashboard (Cmd+H), Analytics (Cmd+A)
+  - Navigation: Clients, Barbers, Services
+  - Settings: Profile (Cmd+P), Billing (Cmd+B), Settings (Cmd+S)
+- Added direct keyboard shortcut for dark mode toggle (Cmd+D)
+- Integrated with existing Quick Actions via custom events
+- Used exact styling from shadcn documentation example
+- Added proper theme integration with next-themes
 
 ## ArchiveLog
 
