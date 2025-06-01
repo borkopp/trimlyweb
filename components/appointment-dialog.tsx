@@ -7,7 +7,7 @@ import {
   useCallback,
   ReactNode,
 } from "react";
-import { format, isBefore } from "date-fns";
+import { format, isBefore, startOfDay } from "date-fns";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarPlus, Scissors, User, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -612,8 +612,12 @@ export function AppointmentDialog({
                           (d) => d.date_value === dateStr
                         );
 
+                        // Compare only dates, not datetime - this allows today's date
+                        const today = startOfDay(new Date());
+                        const targetDate = startOfDay(date);
+
                         return (
-                          isBefore(date, new Date()) ||
+                          isBefore(targetDate, today) ||
                           !availableDate?.has_availability
                         );
                       }}
