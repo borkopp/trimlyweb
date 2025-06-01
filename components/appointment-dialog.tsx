@@ -1,22 +1,36 @@
 "use client";
 
-import {useState, useEffect, useTransition, useCallback, ReactNode} from "react";
-import {format, isBefore} from "date-fns";
-import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {CalendarPlus, Scissors, User, Loader2} from "lucide-react";
-import {Button} from "@/components/ui/button";
-import {Calendar} from "@/components/ui/calendar";
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {Avatar, AvatarFallback} from "@/components/ui/avatar";
-import {Badge} from "@/components/ui/badge";
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {toast} from "@/components/ui/use-toast";
-import {Database} from "@/database.types";
-import {cn} from "@/lib/utils";
-import {Input} from "@/components/ui/input";
-import {revalidateAppointments} from "@/app/actions/appointment-actions";
-import {useRouter} from "next/navigation";
+import {
+  useState,
+  useEffect,
+  useTransition,
+  useCallback,
+  ReactNode,
+} from "react";
+import { format, isBefore } from "date-fns";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { CalendarPlus, Scissors, User, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "@/components/ui/use-toast";
+import { Database } from "@/database.types";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { revalidateAppointments } from "@/app/actions/appointment-actions";
+import { useRouter } from "next/navigation";
 
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
 type Service = Database["public"]["Tables"]["services"]["Row"];
@@ -35,7 +49,11 @@ interface AppointmentDialogProps {
   children?: ReactNode;
 }
 
-export function AppointmentDialog({userId, barbershopId = "1", children}: AppointmentDialogProps) {
+export function AppointmentDialog({
+  userId,
+  barbershopId = "1",
+  children,
+}: AppointmentDialogProps) {
   // State
   const [open, setOpen] = useState(false);
   const [selectedBarber, setSelectedBarber] = useState<number | null>(null);
@@ -70,7 +88,9 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
     queryKey: ["barbers", barbershopId],
     queryFn: async () => {
       try {
-        const response = await fetch(`/api/barbers?barbershopId=${barbershopId}`);
+        const response = await fetch(
+          `/api/barbers?barbershopId=${barbershopId}`
+        );
         if (!response.ok) {
           throw new Error(`Failed to fetch barbers: ${response.statusText}`);
         }
@@ -96,7 +116,9 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
     queryFn: async () => {
       if (!selectedBarber) return [];
       try {
-        const response = await fetch(`/api/barber-services?barberId=${selectedBarber}`);
+        const response = await fetch(
+          `/api/barber-services?barberId=${selectedBarber}`
+        );
         if (!response.ok) {
           throw new Error(`Failed to fetch services: ${response.statusText}`);
         }
@@ -119,9 +141,13 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
     queryFn: async () => {
       if (!selectedBarber) return [];
       try {
-        const response = await fetch(`/api/barber-available-dates?barberId=${selectedBarber}`);
+        const response = await fetch(
+          `/api/barber-available-dates?barberId=${selectedBarber}`
+        );
         if (!response.ok) {
-          throw new Error(`Failed to fetch available dates: ${response.statusText}`);
+          throw new Error(
+            `Failed to fetch available dates: ${response.statusText}`
+          );
         }
         return (await response.json()) as AvailableDate[];
       } catch (error) {
@@ -133,15 +159,20 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
   });
 
   // Calculate total service duration
-  const {data: serviceDuration = 30, isLoading: isCalculatingDuration} = useQuery({
-    queryKey: ["service-duration", selectedServices],
-    queryFn: () => {
-      if (selectedServices.length === 0) return Promise.resolve(30);
-      // Calculate duration from selected services
-      return Promise.resolve(services.filter((service) => selectedServices.includes(service.id)).reduce((total, service) => total + service.time, 0));
-    },
-    enabled: selectedServices.length > 0 && services.length > 0,
-  });
+  const { data: serviceDuration = 30, isLoading: isCalculatingDuration } =
+    useQuery({
+      queryKey: ["service-duration", selectedServices],
+      queryFn: () => {
+        if (selectedServices.length === 0) return Promise.resolve(30);
+        // Calculate duration from selected services
+        return Promise.resolve(
+          services
+            .filter((service) => selectedServices.includes(service.id))
+            .reduce((total, service) => total + service.time, 0)
+        );
+      },
+      enabled: selectedServices.length > 0 && services.length > 0,
+    });
 
   // Fetch available time slots when date is selected
   const {
@@ -149,7 +180,12 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
     isLoading: isLoadingSlots,
     error: slotsError,
   } = useQuery({
-    queryKey: ["available-slots", selectedBarber, selectedDate?.toISOString(), selectedServices],
+    queryKey: [
+      "available-slots",
+      selectedBarber,
+      selectedDate?.toISOString(),
+      selectedServices,
+    ],
     queryFn: async () => {
       if (!selectedBarber || !selectedDate) return [];
       try {
@@ -158,20 +194,36 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
           return [];
         }
 
-        const serviceIdsParam = selectedServices.length > 0 ? `&serviceIds=${selectedServices.join(",")}` : "";
+        const serviceIdsParam =
+          selectedServices.length > 0
+            ? `&serviceIds=${selectedServices.join(",")}`
+            : "";
 
         console.log(
-          `Fetching time slots with: barberId=${selectedBarber}, date=${format(selectedDate, "yyyy-MM-dd")}, services=${selectedServices.join(",")}`
+          `Fetching time slots with: barberId=${selectedBarber}, date=${format(
+            selectedDate,
+            "yyyy-MM-dd"
+          )}, services=${selectedServices.join(",")}`
         );
 
         const response = await fetch(
-          `/api/barber-available-slots?barberId=${selectedBarber}&date=${format(selectedDate, "yyyy-MM-dd")}${serviceIdsParam}`
+          `/api/barber-available-slots?barberId=${selectedBarber}&date=${format(
+            selectedDate,
+            "yyyy-MM-dd"
+          )}${serviceIdsParam}`
         );
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          console.error("Error response from time slots API:", response.status, errorData);
-          throw new Error(errorData.error || `Failed to fetch available slots: ${response.statusText}`);
+          console.error(
+            "Error response from time slots API:",
+            response.status,
+            errorData
+          );
+          throw new Error(
+            errorData.error ||
+              `Failed to fetch available slots: ${response.statusText}`
+          );
         }
 
         const data = await response.json();
@@ -218,7 +270,12 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
   const handleCreateAppointment = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    if (!selectedBarber || !selectedDate || !selectedTime || selectedServices.length === 0) {
+    if (
+      !selectedBarber ||
+      !selectedDate ||
+      !selectedTime ||
+      selectedServices.length === 0
+    ) {
       toast({
         title: "Incomplete selection",
         description: "Please complete all steps before booking",
@@ -266,7 +323,10 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
         console.error("Error creating appointment:", error);
         toast({
           title: "Error",
-          description: error instanceof Error ? error.message : "Failed to create appointment",
+          description:
+            error instanceof Error
+              ? error.message
+              : "Failed to create appointment",
           variant: "destructive",
         });
       }
@@ -282,16 +342,29 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
         .map((date) => new Date(date.date_value));
 
       prefetchDates.forEach((date) => {
-        const serviceIdsParam = selectedServices.length > 0 ? `&serviceIds=${selectedServices.join(",")}` : "";
+        const serviceIdsParam =
+          selectedServices.length > 0
+            ? `&serviceIds=${selectedServices.join(",")}`
+            : "";
 
         queryClient.prefetchQuery({
-          queryKey: ["available-slots", selectedBarber, date.toISOString(), selectedServices],
+          queryKey: [
+            "available-slots",
+            selectedBarber,
+            date.toISOString(),
+            selectedServices,
+          ],
           queryFn: async () => {
             const response = await fetch(
-              `/api/barber-available-slots?barberId=${selectedBarber}&date=${format(date, "yyyy-MM-dd")}${serviceIdsParam}`
+              `/api/barber-available-slots?barberId=${selectedBarber}&date=${format(
+                date,
+                "yyyy-MM-dd"
+              )}${serviceIdsParam}`
             );
             if (!response.ok) {
-              throw new Error(`Failed to fetch available slots: ${response.statusText}`);
+              throw new Error(
+                `Failed to fetch available slots: ${response.statusText}`
+              );
             }
             return await response.json();
           },
@@ -307,13 +380,21 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
     }
   }, [selectedBarber, selectedServices, prefetchNextDates]);
 
-  const isBookingDisabled = !selectedBarber || !selectedDate || !selectedTime || selectedServices.length === 0 || isPending;
+  const isBookingDisabled =
+    !selectedBarber ||
+    !selectedDate ||
+    !selectedTime ||
+    selectedServices.length === 0 ||
+    isPending;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children || (
-          <Button className="text-white font-medium" onClick={() => setOpen(true)}>
+          <Button
+            className="text-white font-medium"
+            onClick={() => setOpen(true)}
+          >
             <CalendarPlus className="mr-2 h-4 w-4" />
             New Appointment
           </Button>
@@ -323,7 +404,9 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
         <div className="flex flex-col h-full">
           <DialogHeader>
             <DialogTitle>Book an Appointment</DialogTitle>
-            <DialogDescription>Select a barber, services, date and time to book your appointment</DialogDescription>
+            <DialogDescription>
+              Select a barber, services, date and time to book your appointment
+            </DialogDescription>
           </DialogHeader>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 flex-1 overflow-auto py-4">
@@ -341,25 +424,38 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
                       </div>
                     ) : barberError ? (
                       <div className="text-center py-4">
-                        <div className="text-red-500 mb-2">Failed to load barbers</div>
+                        <div className="text-red-500 mb-2">
+                          Failed to load barbers
+                        </div>
                         <p className="text-muted-foreground text-sm mb-2">
-                          {barberError instanceof Error ? barberError.message : "An unknown error occurred"}
+                          {barberError instanceof Error
+                            ? barberError.message
+                            : "An unknown error occurred"}
                         </p>
-                        <Button variant="outline" size="sm" onClick={() => refetchBarbers()} type="button">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => refetchBarbers()}
+                          type="button"
+                        >
                           Retry
                         </Button>
                       </div>
                     ) : barbers.length === 0 ? (
-                      <div className="text-center py-8">No barbers available</div>
+                      <div className="text-center py-8">
+                        No barbers available
+                      </div>
                     ) : (
                       barbers.map((barber: Barber) => (
                         <Card
                           key={barber.id}
                           className={cn(
                             "cursor-pointer transition-all hover:bg-muted",
-                            selectedBarber === barber.id && "border-primary bg-primary/10"
+                            selectedBarber === barber.id &&
+                              "border-primary bg-primary/10"
                           )}
-                          onClick={() => handleBarberSelect(barber.id)}>
+                          onClick={() => handleBarberSelect(barber.id)}
+                        >
                           <CardContent className="p-2 flex items-center space-x-3">
                             <Avatar className="h-10 w-10">
                               <AvatarFallback>
@@ -367,8 +463,14 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
-                              <h3 className="font-medium text-sm">{barber.name}</h3>
-                              {barber.description && <p className="text-xs text-muted-foreground line-clamp-1">{barber.description}</p>}
+                              <h3 className="font-medium text-sm">
+                                {barber.name}
+                              </h3>
+                              {barber.description && (
+                                <p className="text-xs text-muted-foreground line-clamp-1">
+                                  {barber.description}
+                                </p>
+                              )}
                             </div>
                           </CardContent>
                         </Card>
@@ -388,14 +490,18 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
                 <ScrollArea className="h-full w-full pr-3">
                   <div className="space-y-3">
                     {!selectedBarber ? (
-                      <div className="text-center py-8 text-muted-foreground">Please select a barber first</div>
+                      <div className="text-center py-8 text-muted-foreground">
+                        Please select a barber first
+                      </div>
                     ) : isLoadingServices ? (
                       <div className="flex items-center justify-center py-10">
                         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                       </div>
                     ) : servicesError ? (
                       <div className="text-center py-4">
-                        <div className="text-red-500 mb-2">Failed to load services</div>
+                        <div className="text-red-500 mb-2">
+                          Failed to load services
+                        </div>
                         <Button
                           variant="outline"
                           size="sm"
@@ -404,36 +510,49 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
                             queryClient.invalidateQueries({
                               queryKey: ["barber-services", selectedBarber],
                             })
-                          }>
+                          }
+                        >
                           Retry
                         </Button>
                       </div>
                     ) : services.length === 0 ? (
-                      <div className="text-center py-8">No services available for this barber</div>
+                      <div className="text-center py-8">
+                        No services available for this barber
+                      </div>
                     ) : (
                       services.map((service) => (
                         <Card
                           key={service.id}
                           className={cn(
                             "cursor-pointer transition-all hover:bg-muted",
-                            selectedServices.includes(service.id) && "border-primary bg-primary/10"
+                            selectedServices.includes(service.id) &&
+                              "border-primary bg-primary/10"
                           )}
-                          onClick={() => handleServiceToggle(service.id)}>
+                          onClick={() => handleServiceToggle(service.id)}
+                        >
                           <CardContent className="p-2 flex items-center space-x-3">
                             <div className="h-10 w-10 rounded-md overflow-hidden flex items-center justify-center bg-muted">
                               <Scissors className="h-5 w-5" />
                             </div>
                             <div className="flex-1">
                               <div className="flex justify-between items-center">
-                                <h3 className="font-medium text-sm">{service.name}</h3>
+                                <h3 className="font-medium text-sm">
+                                  {service.name}
+                                </h3>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-sm">${service.price}</span>
+                                  <span className="text-sm">
+                                    ${service.price}
+                                  </span>
                                   <Badge variant="outline" className="text-xs">
                                     {service.time} min
                                   </Badge>
                                 </div>
                               </div>
-                              {service.description && <p className="text-xs text-muted-foreground line-clamp-1">{service.description}</p>}
+                              {service.description && (
+                                <p className="text-xs text-muted-foreground line-clamp-1">
+                                  {service.description}
+                                </p>
+                              )}
                             </div>
                           </CardContent>
                         </Card>
@@ -451,23 +570,32 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
               </CardHeader>
               <div className="flex-1 overflow-hidden px-3 pb-3">
                 {!selectedBarber || selectedServices.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">Select barber and at least one service first</div>
+                  <div className="text-center py-8 text-muted-foreground">
+                    Select barber and at least one service first
+                  </div>
                 ) : isLoadingDates ? (
                   <div className="flex items-center justify-center py-10">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                   </div>
                 ) : datesError ? (
                   <div className="text-center py-4">
-                    <div className="text-red-500 mb-2">Failed to load available dates</div>
+                    <div className="text-red-500 mb-2">
+                      Failed to load available dates
+                    </div>
                     <Button
                       variant="outline"
                       size="sm"
                       type="button"
                       onClick={() =>
                         queryClient.invalidateQueries({
-                          queryKey: ["available-dates", selectedBarber, selectedServices],
+                          queryKey: [
+                            "available-dates",
+                            selectedBarber,
+                            selectedServices,
+                          ],
                         })
-                      }>
+                      }
+                    >
                       Retry
                     </Button>
                   </div>
@@ -480,9 +608,14 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
                       disabled={(date) => {
                         // Disable dates that don't have availability
                         const dateStr = format(date, "yyyy-MM-dd");
-                        const availableDate = availableDates.find((d) => d.date_value === dateStr);
+                        const availableDate = availableDates.find(
+                          (d) => d.date_value === dateStr
+                        );
 
-                        return isBefore(date, new Date()) || !availableDate?.has_availability;
+                        return (
+                          isBefore(date, new Date()) ||
+                          !availableDate?.has_availability
+                        );
                       }}
                       initialFocus
                       className="mx-auto"
@@ -499,38 +632,57 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
               </CardHeader>
               <div className="flex-1 overflow-hidden px-3 pb-3">
                 <ScrollArea className="h-full w-full pr-3">
-                  {!selectedBarber || selectedServices.length === 0 || !selectedDate ? (
-                    <div className="text-center py-8 text-muted-foreground">Complete previous selections first</div>
+                  {!selectedBarber ||
+                  selectedServices.length === 0 ||
+                  !selectedDate ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      Complete previous selections first
+                    </div>
                   ) : isLoadingSlots ? (
                     <div className="flex items-center justify-center py-10">
                       <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                     </div>
                   ) : slotsError ? (
                     <div className="text-center py-4">
-                      <div className="text-red-500 mb-2">Failed to load time slots</div>
+                      <div className="text-red-500 mb-2">
+                        Failed to load time slots
+                      </div>
                       <Button
                         variant="outline"
                         size="sm"
                         type="button"
                         onClick={() =>
                           queryClient.invalidateQueries({
-                            queryKey: ["available-slots", selectedBarber, selectedDate?.toISOString(), selectedServices],
+                            queryKey: [
+                              "available-slots",
+                              selectedBarber,
+                              selectedDate?.toISOString(),
+                              selectedServices,
+                            ],
                           })
-                        }>
+                        }
+                      >
                         Retry
                       </Button>
                     </div>
                   ) : availableSlots.length === 0 ? (
-                    <div className="text-center py-8">No available times for this date</div>
+                    <div className="text-center py-8">
+                      No available times for this date
+                    </div>
                   ) : (
                     <div className="flex flex-col space-y-1">
                       {availableSlots.map((slot, index) => (
                         <Button
                           key={index}
                           type="button"
-                          variant={selectedTime === slot.time_slot ? "default" : "outline"}
+                          variant={
+                            selectedTime === slot.time_slot
+                              ? "default"
+                              : "outline"
+                          }
                           onClick={() => handleTimeSelect(slot.time_slot)}
-                          className="w-full justify-start text-left h-10">
+                          className="w-full justify-start text-left h-10"
+                        >
                           {slot.time_slot.substring(0, 5)}
                         </Button>
                       ))}
@@ -554,16 +706,26 @@ export function AppointmentDialog({userId, barbershopId = "1", children}: Appoin
                   />
                 </div>
                 <div className="text-xs text-muted-foreground hidden sm:block">
-                  {selectedBarber && selectedDate && selectedTime && selectedServices.length > 0 ? (
+                  {selectedBarber &&
+                  selectedDate &&
+                  selectedTime &&
+                  selectedServices.length > 0 ? (
                     <p>
-                      {serviceDuration} min, {selectedDate ? format(selectedDate, "PPP") : ""}, {selectedTime}
+                      {serviceDuration} min,{" "}
+                      {selectedDate ? format(selectedDate, "PPP") : ""},{" "}
+                      {selectedTime}
                     </p>
                   ) : (
                     <p>Complete all selections to book</p>
                   )}
                 </div>
               </div>
-              <Button type="button" disabled={isBookingDisabled} onClick={handleCreateAppointment} className="sm:min-w-28 w-full sm:w-auto">
+              <Button
+                type="button"
+                disabled={isBookingDisabled}
+                onClick={handleCreateAppointment}
+                className="sm:min-w-28 w-full sm:w-auto"
+              >
                 {isPending ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
