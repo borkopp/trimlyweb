@@ -9,50 +9,89 @@ import { buttonVariants } from "@/components/ui-calendar/button";
 import { cn } from "@/utils/helpers/cn.helper";
 
 import type { ComponentProps } from "react";
-import type { CustomComponents } from "react-day-picker";
 
 // ================================== //
 
 type TDayPickerProps = ComponentProps<typeof ReactDayPicker>;
 
-function DayPicker({ className, classNames, showOutsideDays = true, ...props }: TDayPickerProps) {
+function DayPicker({
+  className,
+  classNames,
+  showOutsideDays = true,
+  ...props
+}: TDayPickerProps) {
   return (
     <ReactDayPicker
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{
-        months: "flex flex-col select-none sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+        months:
+          "flex flex-col select-none sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
 
-        caption: "flex justify-center pt-1 relative items-center capitalize",
-        caption_label: "text-sm font-medium",
+        month_caption:
+          "flex justify-center pt-1 relative items-center capitalize",
+        caption_label: "text-base",
 
         nav: "space-x-1 flex items-center",
-        nav_button: cn(buttonVariants({ variant: "outline" }), "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100"),
-        nav_button_previous: "absolute left-1",
-        nav_button_next: "absolute right-1",
-        head_row: "flex",
-        head_cell: "w-9 font-medium text-sm capitalize",
-        row: "flex w-full mt-2",
+        button_previous: cn(
+          buttonVariants({ variant: "outline" }),
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute left-1"
+        ),
+        button_next: cn(
+          buttonVariants({ variant: "outline" }),
+          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1"
+        ),
+        weekdays: "flex",
+        weekday: "w-9 font-medium text-sm capitalize",
+        week: "flex w-full mt-2",
 
-        cell: cn(
+        day: cn(
           "size-9 flex items-center justify-center text-t-secondary text-center text-sm p-0 relative focus-within:relative focus-within:z-20",
           "[&:has([aria-selected].day-range-end)]:rounded-r-lg last:[&:has([aria-selected])]:rounded-r-lg first:[&:has([aria-selected])]:rounded-l-lg [&:has([aria-selected])]:bg-bg-secondary"
         ),
-        day: cn(buttonVariants({ variant: "ghost" }), "size-8.5 w-8 h-8 hover:bg-primary-400/15 font-normal aria-selected:opacity-100"),
-        day_selected: "bg-primary-600 text-white hover:bg-primary-700 focus:bg-primary-700",
-        day_today: "text-primary",
-        day_outside: "opacity-50 aria-selected:opacity-40",
-        day_range_middle: "aria-selected:bg-bg-secondary aria-selected:text-t-primary",
-        day_hidden: "invisible",
+        day_button: cn(
+          buttonVariants({ variant: "ghost" }),
+          "size-8.5 w-8 h-8 hover:bg-primary-400/15 font-normal aria-selected:opacity-100"
+        ),
+        selected:
+          "bg-primary-600 text-white hover:bg-primary-700 focus:bg-primary-700",
+        today: "text-primary",
+        outside: "opacity-50 aria-selected:opacity-40",
+        range_middle:
+          "aria-selected:bg-bg-secondary aria-selected:text-t-primary",
+        hidden: "invisible",
         ...classNames,
       }}
-      components={
-        {
-          IconLeft: () => <ChevronLeft className="size-4" />,
-          IconRight: () => <ChevronRight className="size-4" />,
-        } as Partial<CustomComponents>
-      }
+      components={{
+        Chevron: ({
+          orientation,
+          className,
+          size,
+          disabled,
+          ...props
+        }: {
+          orientation?: "left" | "right" | "up" | "down";
+          className?: string;
+          size?: number;
+          disabled?: boolean;
+        }) => {
+          switch (orientation) {
+            case "left":
+              return (
+                <ChevronLeft className={cn("size-4", className)} {...props} />
+              );
+            case "right":
+              return (
+                <ChevronRight className={cn("size-4", className)} {...props} />
+              );
+            default:
+              return (
+                <ChevronLeft className={cn("size-4", className)} {...props} />
+              );
+          }
+        },
+      }}
       locale={enUS}
       {...props}
     />
