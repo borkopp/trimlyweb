@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Montserrat, Lato, Inter } from "next/font/google";
+import { Montserrat, Lato, Inter, Orbitron } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
@@ -14,6 +14,11 @@ import JsonLd from "@/components/JsonLd";
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+});
+
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  variable: "--font-orbitron",
 });
 
 const montserrat = Montserrat({
@@ -36,7 +41,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://fadely.app"),
   title: {
     default:
-      "Fadely - #1 Barbershop Management System | Book & Manage Appointments",
+      "fadely - Barbershop Management System | Book & Manage Appointments",
     template: "%s | Fadely Barbershop Management",
   },
   description:
@@ -75,8 +80,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://fadely.app",
-    title:
-      "Fadely - #1 Barbershop Management System | Book & Manage Appointments",
+    title: "fadely - Barbershop Management System | Book & Manage Appointments",
     description:
       "Fadely is the leading barbershop management system. Get your own branded mobile app, online booking system, and complete barbershop management solution. Perfect for modern barbershops.",
     siteName: "Fadely",
@@ -91,8 +95,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title:
-      "Fadely - #1 Barbershop Management System | Book & Manage Appointments",
+    title: "fadely - Barbershop Management System | Book & Manage Appointments",
     description:
       "Fadely is the leading barbershop management system. Get your own branded mobile app, online booking system, and complete barbershop management solution.",
     images: ["/og-image.png"],
@@ -144,7 +147,7 @@ export default async function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${filmfiction.variable} ${montserrat.variable} ${lato.variable} font-inter`}
+        className={`${inter.variable} ${filmfiction.variable} ${montserrat.variable} ${lato.variable} ${orbitron.variable} font-inter`}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {barbershop ? (

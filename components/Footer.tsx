@@ -131,9 +131,12 @@ const Logo = () => {
   return (
     <Link
       href="/"
-      className="font-normal flex space-x-2 items-center text-2xl  text-primary font-ff px-2 py-1  relative z-20"
+      className="font-normal flex flex-col justify-center  items-center text-2xl gap-4  text-primary font-ff px-2 py-1  relative z-20"
     >
-      fadely
+      <Image src="/fadely-logo.svg" alt="Fadely" width={80} height={80} />
+      <span className="text-4xl font-orbitron font-extrabold tracking-wider ">
+        fadely
+      </span>
     </Link>
   );
 };

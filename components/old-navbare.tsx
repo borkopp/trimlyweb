@@ -10,6 +10,7 @@ import { Menu, X, ArrowRightIcon } from "lucide-react";
 import { CalendarScript } from "./CalendarScript";
 import InteractiveHoverButton from "./ui/interactive-hover-button";
 import { ModeToggle } from "./theme-toggle";
+import Image from "next/image";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -71,13 +72,18 @@ export default function Navbar() {
     >
       <div className="w-full h-full flex items-center justify-between gap-4 transition-all duration-500 ease-in-out relative">
         {/* Logo */}
-        <div className="flex-shrink-0 z-10">
+        <div className="flex-shrink-0 z-10 flex items-center">
           <Link
             href="/"
-            className={`font-ff cursor-pointer text-primary transform transition-all duration-500 ease-in-out inline-block
-text-xl`}
+            className={`cursor-pointer text-primary transform transition-all duration-500 ease-in-out inline-block`}
           >
-            fadely
+            <Image
+              src="/fadely-logo.svg"
+              alt="Fadely"
+              width={100}
+              height={100}
+              className="w-10 h-10"
+            />
           </Link>
         </div>
 
