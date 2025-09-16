@@ -13,5 +13,5 @@ export const formatDateShort = (date: string) => {
 };
 
 export const formatTime = (time: string) => {
-  return dayjs(`2000-01-01 ${time}`).format("h:mm A");
+  return dayjs(`2000-01-01 ${time}`).format("HH:mm");
 };

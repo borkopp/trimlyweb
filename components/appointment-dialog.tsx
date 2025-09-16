@@ -7,7 +7,7 @@ import {
   useCallback,
   ReactNode,
 } from "react";
-import { format, isBefore, startOfDay } from "date-fns";
+import { format, formatDate, isBefore, startOfDay } from "date-fns";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarPlus, Scissors, User, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,8 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { revalidateAppointments } from "@/app/actions/appointment-actions";
 import { useRouter } from "next/navigation";
+import { formatTime } from "@/utils/dateUtils";
+import dayjs from "dayjs";
 
 type Barber = Database["public"]["Tables"]["barbers"]["Row"];
 type Service = Database["public"]["Tables"]["services"]["Row"];
@@ -266,6 +268,13 @@ export function AppointmentDialog({
     setSelectedTime(time);
   };
 
+  // Calculate end time based on start time and service duration
+  const calculateEndTime = (startTime: string, duration: number) => {
+    const start = dayjs(`2000-01-01 ${startTime}`);
+    const end = start.add(duration, 'minutes');
+    return end.format('HH:mm');
+  };
+
   // Handle creating the appointment
   const handleCreateAppointment = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -274,11 +283,12 @@ export function AppointmentDialog({
       !selectedBarber ||
       !selectedDate ||
       !selectedTime ||
-      selectedServices.length === 0
+      selectedServices.length === 0 ||
+      !customerName.trim()
     ) {
       toast({
         title: "Incomplete selection",
-        description: "Please complete all steps before booking",
+        description: "Please complete all steps and enter customer name before booking",
         variant: "destructive",
       });
       return;
@@ -297,7 +307,7 @@ export function AppointmentDialog({
             serviceIds: selectedServices,
             date: format(selectedDate, "yyyy-MM-dd"),
             time: selectedTime,
-            name: customerName || null, // Include the customer name if provided
+            name: customerName.trim(), // Customer name is now required
           }),
         });
 
@@ -386,6 +396,7 @@ export function AppointmentDialog({
     !selectedDate ||
     !selectedTime ||
     selectedServices.length === 0 ||
+    !customerName.trim() ||
     isPending;
 
   return (
@@ -703,24 +714,36 @@ export function AppointmentDialog({
                 <div className="sm:max-w-[200px] w-full">
                   <Input
                     id="customer-name"
-                    placeholder="Customer Name (optional)"
+                    placeholder="Customer Name *"
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     className="h-9"
+                    required
                   />
                 </div>
-                <div className="text-xs text-muted-foreground hidden sm:block">
+                <div className="text-sm text-muted-foreground hidden sm:block">
                   {selectedBarber &&
                   selectedDate &&
                   selectedTime &&
-                  selectedServices.length > 0 ? (
-                    <p>
-                      {serviceDuration} min,{" "}
-                      {selectedDate ? format(selectedDate, "PPP") : ""},{" "}
-                      {selectedTime}
-                    </p>
+                  selectedServices.length > 0 &&
+                  customerName.trim() ? (
+                    <div className="flex gap-2">
+                      {selectedDate && (
+                        <Badge variant="secondary" className="text-sm">
+                          {format(selectedDate, "PPP")}
+                        </Badge>
+                      )}
+                      {selectedTime && (
+                        <Badge variant="secondary" className="text-sm">
+                          {formatTime(selectedTime)} - {calculateEndTime(selectedTime, serviceDuration)}
+                        </Badge>
+                      )}
+                      <Badge variant="secondary" className="text-sm">
+                        {serviceDuration} min
+                      </Badge>
+                    </div>
                   ) : (
-                    <p>Complete all selections to book</p>
+                    <p>Complete all selections and enter customer name to book</p>
                   )}
                 </div>
               </div>

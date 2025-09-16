@@ -73,7 +73,7 @@ export function CommandPalette({ userId, barbershopId }: CommandPaletteProps) {
       label: "View Today's Schedule",
       description: "See appointments for today",
       icon: <Clock className="h-4 w-4" />,
-      action: () => navigateTo("/dashboard/calendar"),
+      action: () => navigateTo("/dashboard/calendar/day-view"),
       group: "Quick Actions",
     },
 
@@ -93,7 +93,7 @@ export function CommandPalette({ userId, barbershopId }: CommandPaletteProps) {
       description: "View appointments calendar",
       shortcut: "⌘C",
       icon: <Calendar className="h-4 w-4" />,
-      action: () => navigateTo("/dashboard/calendar"),
+      action: () => navigateTo("/dashboard/calendar/week-view"),
       group: "Navigation",
     },
     {
