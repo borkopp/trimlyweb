@@ -1,10 +1,5 @@
 import Link from "next/link";
-import { Exo_2 } from "next/font/google";
 
-const exo2 = Exo_2({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-});
 
 export const LogoSVG = (props: React.SVGProps<SVGSVGElement>) => {
   return (
@@ -29,9 +24,9 @@ export const Logo = () => {
     <Link href="/" className="flex items-center gap-2">
       <LogoSVG />
       <span
-        className={`leading-wide text-2xl font-bold tracking-wider uppercase ${exo2.className} dark:text-white`}
+        className={`leading-wide text-2xl font-bold  font-ff text-primary`}
       >
-        Nexic
+        fadely
       </span>
     </Link>
   );

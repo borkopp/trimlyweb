@@ -6,6 +6,7 @@ import LoginForm from "./LoginForm";
 import { login } from "../actions";
 import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
+import { Logo } from "@/components/logo";
 
 export default async function LoginPage() {
   const headersList = await headers();
@@ -34,7 +35,7 @@ export default async function LoginPage() {
         <div className="flex flex-col justify-between items-start h-full relative z-10 p-12">
           <div className="flex flex-col gap-1">
             <Link href={"/"} className="font-ff text-xl text-primary">
-              {barbershop ? "fadely" : ""}
+              <Logo />
             </Link>
             <Link href={"/"} className="font-ff text-3xl">
               {barbershop ? barbershop.name : "fadely"}
@@ -64,12 +65,13 @@ export default async function LoginPage() {
       </div>
 
       <div className="flex items-center justify-center w-full lg:w-2/3 py-12">
-        <div className="mx-auto grid w-[400px] gap-6">
-          <div className="grid gap-2 text-center">
+        <div className="mx-auto grid w-[370px] gap-6">
+          <div className="gap-6 text-center flex flex-col items-center">
+            <Logo />
             <h1 className="text-3xl font-bold">
-              {barbershop ? `Login to ${barbershop.name}` : "Login"}
+              {barbershop ? `${barbershop.name}` : "Login"}
             </h1>
-            <p className="text-balance text-muted-foreground">
+            <p className="text-muted-foreground text-sm w-full">
               {barbershop
                 ? "Enter your credentials to access your barbershop dashboard"
                 : "Enter your email below to login to your account"}
