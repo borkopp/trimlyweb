@@ -24,7 +24,7 @@ export default async function DashboardStats({userId, barbershopId}: {userId: st
             Manage appointments, clients, barbers and services with ease.
           </CardDescription>
         </CardHeader>
-        <CardFooter>
+        <CardFooter className="mt-6">
           <AppointmentDialog userId={userId} barbershopId={barbershopId} />
         </CardFooter>
       </Card>

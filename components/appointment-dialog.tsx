@@ -25,7 +25,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/lib/toast";
 import { Database } from "@/database.types";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -316,6 +316,7 @@ export function AppointmentDialog({
         toast({
           title: "Success",
           description: "Appointment created successfully",
+          variant: "success",
         });
 
         setOpen(false);
@@ -392,7 +393,7 @@ export function AppointmentDialog({
       <DialogTrigger asChild>
         {children || (
           <Button
-            className="text-white font-medium"
+            className="font-medium"
             onClick={() => setOpen(true)}
           >
             <CalendarPlus className="mr-2 h-4 w-4" />
@@ -400,7 +401,7 @@ export function AppointmentDialog({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="w-[90vw] min-h-[50vh] max-w-[1200px] flex flex-col">
+      <DialogContent className="w-[90vw] min-h-[50vh] max-w-[1400px] flex flex-col">
         <div className="flex flex-col h-full">
           <DialogHeader>
             <DialogTitle>Book an Appointment</DialogTitle>
@@ -600,9 +601,10 @@ export function AppointmentDialog({
                     </Button>
                   </div>
                 ) : (
-                  <div className="w-full flex justify-center h-full">
+                  <div className="flex justify-center h-full">
                     <Calendar
                       mode="single"
+                      showOutsideDays={false}
                       selected={selectedDate}
                       onSelect={handleDateSelect}
                       disabled={(date) => {
@@ -621,8 +623,6 @@ export function AppointmentDialog({
                           !availableDate?.has_availability
                         );
                       }}
-                      initialFocus
-                      className="mx-auto"
                     />
                   </div>
                 )}

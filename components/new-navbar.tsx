@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/logo";
+import { Logo } from "@/components/logo-old";
 import { ModeToggle } from "@/components/theme-toggle";
 
 interface NavbarProps {

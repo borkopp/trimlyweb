@@ -34,7 +34,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Image from "next/image";
 import { Database } from "@/database.types";
 import { createClient } from "@/utils/supabase/client";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/lib/toast";
 import {
   addService,
   deleteService,
@@ -186,6 +186,7 @@ export default function ServicesPageClient({
       toast({
         title: "Service added",
         description: `${addedService.name} has been added to your services.`,
+        variant: "success",
       });
       setOpenAddDialog(false); // Close the dialog after adding
     } catch (error) {
@@ -211,6 +212,7 @@ export default function ServicesPageClient({
         toast({
           title: "Service updated",
           description: `${editingService.name} has been updated.`,
+          variant: "success",
         });
         setEditingService(null);
         setOpenEditDialog(false);
@@ -243,6 +245,7 @@ export default function ServicesPageClient({
         toast({
           title: "Service removed",
           description: `${serviceToDelete.name} has been removed.`,
+          variant: "success",
         });
         router.refresh();
       } catch (error) {

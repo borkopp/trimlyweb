@@ -39,7 +39,7 @@ import {
   assignBarberRole,
   deleteBarber,
 } from "@/app/actions/dashboard-actions";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/lib/toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -188,6 +188,7 @@ export default function BarbersPageClient({
       toast({
         title: "Barber added",
         description: `${selectedProfile.full_name} has been assigned the barber role.`,
+        variant: "success",
       });
     } catch (error) {
       console.error("Error adding barber:", error);
@@ -210,6 +211,7 @@ export default function BarbersPageClient({
       toast({
         title: "Service removed",
         description: `Service has been removed from the barber's services.`,
+        variant: "success",
       });
     } catch (error) {
       console.error("Error removing service:", error);
@@ -238,6 +240,7 @@ export default function BarbersPageClient({
       toast({
         title: "Service added",
         description: `Service has been added to the barber's services.`,
+        variant: "success",
       });
     } catch (error) {
       console.error("Error adding service:", error);
@@ -262,6 +265,7 @@ export default function BarbersPageClient({
         toast({
           title: "Barber deleted",
           description: `${barber.name} has been removed from the barbers list.`,
+          variant: "success",
         });
       } catch (error) {
         console.error("Error deleting barber:", error);

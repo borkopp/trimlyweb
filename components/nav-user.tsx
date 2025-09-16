@@ -1,8 +1,8 @@
 "use client";
 
-import {Bell, CreditCard, LogOut, Scissors, Settings2} from "lucide-react";
+import { Bell, CreditCard, LogOut, Scissors, Settings2 } from "lucide-react";
 
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,13 +12,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar} from "@/components/ui/sidebar";
-import {createClient} from "@/utils/supabase/client";
-import React, {useEffect, useState} from "react";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { createClient } from "@/utils/supabase/client";
+import React, { useEffect, useState } from "react";
+import { LogoSVG } from "./logo";
 
 async function getImageUrl(path: string) {
   const supabase = createClient();
-  const {data} = await supabase.storage.from("barber-images").getPublicUrl(path);
+  const { data } = await supabase.storage
+    .from("barber-images")
+    .getPublicUrl(path);
   return data?.publicUrl || null;
 }
 
@@ -32,7 +40,7 @@ export function NavUser({
   };
 }) {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const {isMobile} = useSidebar();
+  const { isMobile } = useSidebar();
 
   useEffect(() => {
     async function fetchAvatar() {
@@ -54,16 +62,16 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-secondary">
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={"/og-image.png"} alt={user.name} />
-                <AvatarFallback className="rounded-lg bg-primary">
-                  <Scissors className="text-white p-0.5" />
-                </AvatarFallback>
-              </Avatar>
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-secondary"
+            >
+              <div className="flex items-center mx-2">
+                <LogoSVG />
+              </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs opacity-70">{user.email}</span>
+                <span className="truncate text-xs opacity-70">
+                  {user.email}
+                </span>
               </div>
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -71,18 +79,19 @@ export function NavUser({
             className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
             side={isMobile ? "bottom" : "right"}
             align="end"
-            sideOffset={4}>
+            sideOffset={4}
+          >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={"/og-image.png"} alt={user.name} />
-                  <AvatarFallback className="rounded-lg bg-primary">
-                    <Scissors className="text-white p-0.5" />
-                  </AvatarFallback>
-                </Avatar>
+                <div className="flex items-center mx-2">
+                  {" "}
+                  <LogoSVG />
+                </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs opacity-70">{user.email}</span>
+                  <span className="truncate text-xs opacity-70">
+                    {user.email}
+                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -91,7 +100,9 @@ export function NavUser({
               <DropdownMenuItem>
                 <Bell size={16} className="mr-2" />
                 Notifications
-                <span className="ml-auto bg-primary/10 px-2 py-0.5 text-xs rounded-full">3</span>
+                <span className="ml-auto bg-primary/10 px-2 py-0.5 text-xs rounded-full">
+                  3
+                </span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

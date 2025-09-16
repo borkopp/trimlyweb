@@ -2,7 +2,7 @@
 import {useState} from "react";
 import Link from "next/link";
 import {useFormStatus} from "react-dom";
-import {useToast} from "@/components/ui/use-toast";
+import {toast} from "@/lib/toast";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Mail} from "lucide-react";
@@ -11,7 +11,6 @@ import {useRouter} from "next/navigation";
 
 export default function LoginForm({login}: {login: (formData: FormData) => Promise<{error?: string; success?: boolean}>}) {
   const [error, setError] = useState<string | null>(null);
-  const {toast} = useToast();
   const router = useRouter();
 
   async function handleSubmit(formData: FormData) {
@@ -29,6 +28,7 @@ export default function LoginForm({login}: {login: (formData: FormData) => Promi
         toast({
           title: "Login successful",
           description: "You have been logged in",
+          variant: "success",
         });
         // Use router.push for client-side navigation
         router.push("/dashboard");

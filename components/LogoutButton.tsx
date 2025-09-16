@@ -2,7 +2,7 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {signOut} from "@/app/(auth)/actions";
-import {toast} from "@/components/ui/use-toast";
+import {toast} from "@/lib/toast";
 import {DropdownMenuItem} from "@/components/ui/dropdown-menu";
 
 export function LogoutButton() {
@@ -17,6 +17,7 @@ export function LogoutButton() {
         toast({
           title: "Logged out successfully",
           description: "You have been logged out of your account.",
+          variant: "success",
         });
         router.push("/");
       }

@@ -62,29 +62,29 @@ const navMainItems = [
       },
     ],
   },
-  {
-    title: "Settings",
-    url: "/dashboard/settings",
-    icon: Settings2,
-    items: [
-      {
-        title: "General",
-        url: "/dashboard/settings?tab=general",
-      },
-      {
-        title: "Opening Hours",
-        url: "/dashboard/settings?tab=hours",
-      },
-      {
-        title: "Notifications",
-        url: "/dashboard/settings?tab=notifications",
-      },
-      {
-        title: "Payments",
-        url: "/dashboard/settings?tab=payments",
-      },
-    ],
-  },
+  // {
+  //   title: "Settings",
+  //   url: "/dashboard/settings",
+  //   icon: Settings2,
+  //   items: [
+  //     {
+  //       title: "General",
+  //       url: "/dashboard/settings?tab=general",
+  //     },
+  //     {
+  //       title: "Opening Hours",
+  //       url: "/dashboard/settings?tab=hours",
+  //     },
+  //     {
+  //       title: "Notifications",
+  //       url: "/dashboard/settings?tab=notifications",
+  //     },
+  //     {
+  //       title: "Payments",
+  //       url: "/dashboard/settings?tab=payments",
+  //     },
+  //   ],
+  // },
 ];
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {

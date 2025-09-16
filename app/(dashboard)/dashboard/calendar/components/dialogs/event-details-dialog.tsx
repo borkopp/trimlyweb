@@ -28,7 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/lib/toast";
 import { cancelAppointmentByBarber } from "@/app/actions/appointment-actions";
 import { RescheduleDialog } from "@/components/dashboard/RescheduleDialog";
 import { formatDate, formatDateShort } from "@/utils/dateUtils";
@@ -178,6 +178,7 @@ export function EventDetailsDialog({ event, children }: IProps) {
         toast({
           title: "Appointment cancelled",
           description: "The appointment has been marked as cancelled.",
+          variant: "success",
         });
         setIsDialogOpen(false);
       });

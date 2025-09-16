@@ -5,7 +5,7 @@ import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Textarea} from "@/components/ui/textarea";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
-import {toast} from "@/components/ui/use-toast";
+import {toast} from "@/lib/toast";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Switch} from "@/components/ui/switch";
 import {Clock, CreditCard, Bell, Store} from "lucide-react";
@@ -51,6 +51,7 @@ export default function SettingsPageClient({initialSettings}: {initialSettings: 
     toast({
       title: "Settings updated",
       description: "Your barbershop settings have been successfully updated.",
+      variant: "success",
     });
 
     setIsUpdating(false);

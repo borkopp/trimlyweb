@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
 import { Database } from "@/database.types";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/lib/toast";
 import {
   Dialog,
   DialogContent,
@@ -132,6 +132,7 @@ export function AppointmentDetailsOverview({
         toast({
           title: "Appointment cancelled",
           description: "The appointment has been marked as cancelled.",
+          variant: "success",
         });
       });
     } catch (error) {

@@ -21,7 +21,7 @@ import {
   getBarberAvailability,
   rescheduleAppointment,
 } from "@/app/actions/appointment-actions";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/lib/toast";
 import { Appointment } from "@/types/appointments";
 
 interface RescheduleDialogProps {
@@ -69,6 +69,7 @@ export function RescheduleDialog({
           toast({
             title: "Appointment Rescheduled",
             description: "The appointment has been successfully rescheduled.",
+            variant: "success",
           });
           onOpenChange(false);
           // Reset form state

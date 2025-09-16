@@ -4,7 +4,7 @@ import {useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Mail, Lock, Eye, EyeOff} from "lucide-react";
-import {useToast} from "@/components/ui/use-toast";
+import {toast} from "@/lib/toast";
 import {useRouter} from "next/navigation";
 
 interface SignupFormProps {
@@ -15,7 +15,6 @@ export default function SignupForm({signup}: SignupFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const {toast} = useToast();
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -36,6 +35,7 @@ export default function SignupForm({signup}: SignupFormProps) {
       toast({
         title: "Success",
         description: result.success,
+        variant: "success",
       });
       // Redirect to login page after successful signup
       router.push("/login");
