@@ -9,6 +9,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { Logo } from "./logo";
 
 export function Footer() {
   const pages = [
@@ -47,7 +48,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto text-sm text-neutral-500  justify-between items-start  md:px-8">
         <div className="flex flex-col items-center justify-center w-full relative">
           <div className="mr-0 md:mr-4  md:flex mb-4">
-            <Logo />
+            <Logo  />
           </div>
 
           <ul className="transition-colors flex sm:flex-row flex-col hover:text-text-neutral-800 text-neutral-600 dark:text-neutral-300 list-none gap-4">
@@ -127,16 +128,3 @@ const GridLineHorizontal = ({
   );
 };
 
-const Logo = () => {
-  return (
-    <Link
-      href="/"
-      className="font-normal flex flex-col justify-center  items-center text-2xl gap-4  text-primary font-ff px-2 py-1  relative z-20"
-    >
-      <Image src="/fadely-logo.svg" alt="Fadely" width={80} height={80} />
-      <span className="text-4xl font-orbitron font-extrabold tracking-wider ">
-        fadely
-      </span>
-    </Link>
-  );
-};

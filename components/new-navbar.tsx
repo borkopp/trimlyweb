@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/logo-old";
+
 import { ModeToggle } from "@/components/theme-toggle";
 
 interface NavbarProps {
@@ -89,7 +89,7 @@ const DesktopNav = ({ navItems, visible }: NavbarProps) => {
         visible && "bg-white/80 dark:bg-neutral-950/80"
       )}
     >
-      <Logo />
+
       <motion.div className="lg:flex flex-row flex-1 absolute inset-0 hidden items-center justify-center space-x-2 lg:space-x-2 text-sm text-zinc-600 font-medium hover:text-zinc-800 transition duration-200">
         {navItems.map((navItem: any, idx: number) => (
           <Link
@@ -180,7 +180,6 @@ const MobileNav = ({ navItems, visible }: NavbarProps) => {
         )}
       >
         <div className="flex flex-row justify-between items-center w-full">
-          <Logo />
           {open ? (
             <IconX
               className="text-black dark:text-white"

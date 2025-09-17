@@ -24,7 +24,7 @@ export const Logo = () => {
     <Link href="/" className="flex items-center gap-2">
       <LogoSVG />
       <span
-        className={`leading-wide text-2xl font-bold  font-ff text-primary`}
+        className={`leading-wide text-2xl font-bold  font-ff text-foreground`}
       >
         fadely
       </span>

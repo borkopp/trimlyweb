@@ -11,6 +11,8 @@ import { CalendarScript } from "./CalendarScript";
 import InteractiveHoverButton from "./ui/interactive-hover-button";
 import { ModeToggle } from "./theme-toggle";
 import Image from "next/image";
+import { Logo, LogoSVG } from "./logo";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -18,7 +20,7 @@ export default function Navbar() {
   const [user, setUser] = React.useState<any>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-
+  const isMobile = useIsMobile();
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
@@ -77,13 +79,7 @@ export default function Navbar() {
             href="/"
             className={`cursor-pointer text-primary transform transition-all duration-500 ease-in-out inline-block`}
           >
-            <Image
-              src="/fadely-logo.svg"
-              alt="Fadely"
-              width={100}
-              height={100}
-              className="w-10 h-10"
-            />
+         {isMobile ? <LogoSVG color="white" /> : <Logo />}
           </Link>
         </div>
 

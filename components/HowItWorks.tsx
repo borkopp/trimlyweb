@@ -49,7 +49,7 @@ export function HowItWorks() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative min-h-[400vh] mt-20">
+    <section ref={sectionRef} className="relative min-h-[400vh] mt-20 hidden md:block">
       <div className="sticky top-0 h-screen flex flex-col items-center">
         <div className="space-y-4 items-center text-center">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-primary">HOW IT WORKS</h3>
