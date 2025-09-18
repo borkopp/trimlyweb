@@ -142,10 +142,6 @@ create_deployment_package() {
     [ -f "components.json" ] && cp components.json "$DEPLOY_DIR/"
     [ -f "middleware.ts" ] && cp middleware.ts "$DEPLOY_DIR/"
     
-    # Copy favicon and other app files
-    [ -f "app/favicon.ico" ] && cp app/favicon.ico "$DEPLOY_DIR/app/"
-    [ -f "app/robots.ts" ] && cp app/robots.ts "$DEPLOY_DIR/app/"
-    [ -f "app/sitemap.ts" ] && cp app/sitemap.ts "$DEPLOY_DIR/app/"
     
     # Copy any other important files
     [ -f "README.md" ] && cp README.md "$DEPLOY_DIR/"
@@ -198,60 +194,16 @@ deploy_to_server() {
     print_success "Files synced to server"
 }
 
-# Setup server environment
-setup_server_environment() {
-    print_status "Setting up server environment..."
+# Restart application
+restart_application() {
+    print_status "Restarting application..."
     
-    # Install Node.js if not present
     ssh $SERVER_USER@$SERVER_HOST "
-        if ! command -v node >/dev/null 2>&1; then
-            echo 'Installing Node.js...'
-            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-            apt-get install -y nodejs
-        fi
-        
-        # Install PM2 if not present
-        if ! command -v pm2 >/dev/null 2>&1; then
-            echo 'Installing PM2...'
-            npm install -g pm2
-        fi
-        
-        # Install dependencies
         cd $SERVER_PATH
-        echo 'Installing production dependencies...'
-        npm install --production
-        
-        # Create PM2 ecosystem file
-        cat > ecosystem.config.js << 'EOF'
-module.exports = {
-  apps: [{
-    name: '$PROJECT_NAME',
-    script: 'npm',
-    args: 'start',
-    cwd: '$SERVER_PATH',
-    instances: 1,
-    autorestart: true,
-    watch: false,
-    max_memory_restart: '1G',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3003
-    }
-  }]
-};
-EOF
-        
-        # Stop existing PM2 process if running
-        pm2 stop $PROJECT_NAME 2>/dev/null || true
-        pm2 delete $PROJECT_NAME 2>/dev/null || true
-        
-        # Start the application
-        pm2 start ecosystem.config.js
-        pm2 save
-        pm2 startup
+        pm2 restart $PROJECT_NAME
     "
     
-    print_success "Server environment setup completed"
+    print_success "Application restarted"
 }
 
 # Nginx setup removed - user will handle Nginx configuration manually
@@ -278,11 +230,10 @@ main() {
     build_application
     deploy_dir=$(create_deployment_package)
     deploy_to_server "$deploy_dir"
-    setup_server_environment
+    restart_application
     
     print_success "Deployment completed successfully!"
-    print_status "Your application is running on port 3003"
-    print_status "Configure your Nginx to proxy to: http://localhost:3003"
+    print_status "Application restarted and running on port 3003"
     print_status "To check application status: ssh $SERVER_USER@$SERVER_HOST 'pm2 status'"
     print_status "To view logs: ssh $SERVER_USER@$SERVER_HOST 'pm2 logs $PROJECT_NAME'"
 }
