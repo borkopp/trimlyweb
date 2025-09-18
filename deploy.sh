@@ -142,6 +142,11 @@ create_deployment_package() {
     [ -f "components.json" ] && cp components.json "$DEPLOY_DIR/"
     [ -f "middleware.ts" ] && cp middleware.ts "$DEPLOY_DIR/"
     
+    # Copy favicon and other app files
+    [ -f "app/favicon.ico" ] && cp app/favicon.ico "$DEPLOY_DIR/app/"
+    [ -f "app/robots.ts" ] && cp app/robots.ts "$DEPLOY_DIR/app/"
+    [ -f "app/sitemap.ts" ] && cp app/sitemap.ts "$DEPLOY_DIR/app/"
+    
     # Copy any other important files
     [ -f "README.md" ] && cp README.md "$DEPLOY_DIR/"
     [ -f ".env.example" ] && cp .env.example "$DEPLOY_DIR/"
