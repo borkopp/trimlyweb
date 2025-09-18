@@ -118,6 +118,11 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://fadely.app",
   },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 };
 
 export default async function RootLayout({

@@ -124,7 +124,7 @@ create_deployment_package() {
     
     # Copy built application
     [ -d ".next" ] && cp -r .next "$DEPLOY_DIR/"
-    [ -d "public" ] && cp -r public "$DEPLOY_DIR/"
+    [ -d "public" ] && cp -r public "$DEPLOY_DIR/" && print_status "Copied public directory (including favicon.ico)"
     [ -d "app" ] && cp -r app "$DEPLOY_DIR/"
     [ -d "components" ] && cp -r components "$DEPLOY_DIR/"
     [ -d "contexts" ] && cp -r contexts "$DEPLOY_DIR/"
@@ -151,6 +151,15 @@ create_deployment_package() {
     if [ ! -d "$DEPLOY_DIR" ] || [ -z "$(ls -A "$DEPLOY_DIR" 2>/dev/null)" ]; then
         print_error "Failed to create deployment package"
         exit 1
+    fi
+    
+    # Verify favicon is in the deployment package (Next.js 15 App Router prefers /app/favicon.ico)
+    if [ -f "$DEPLOY_DIR/app/favicon.ico" ]; then
+        print_success "Favicon found in app directory (recommended for Next.js 15)"
+    elif [ -f "$DEPLOY_DIR/public/favicon.ico" ]; then
+        print_success "Favicon found in public directory"
+    else
+        print_warning "Favicon not found in deployment package"
     fi
     
     print_success "Deployment package created at $DEPLOY_DIR"
@@ -204,6 +213,14 @@ restart_application() {
     "
     
     print_success "Application restarted"
+    
+    # Test favicon accessibility
+    print_status "Testing favicon accessibility..."
+    if curl -s -o /dev/null -w "%{http_code}" "http://$SERVER_HOST:3003/favicon.ico" | grep -q "200"; then
+        print_success "Favicon is accessible at http://$SERVER_HOST:3003/favicon.ico"
+    else
+        print_warning "Favicon may not be accessible - check server configuration"
+    fi
 }
 
 # Nginx setup removed - user will handle Nginx configuration manually
