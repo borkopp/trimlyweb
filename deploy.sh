@@ -141,6 +141,7 @@ create_deployment_package() {
     [ -f "postcss.config.mjs" ] && cp postcss.config.mjs "$DEPLOY_DIR/"
     [ -f "components.json" ] && cp components.json "$DEPLOY_DIR/"
     [ -f "middleware.ts" ] && cp middleware.ts "$DEPLOY_DIR/"
+    [ -f "instrumentation-client.ts" ] && cp instrumentation-client.ts "$DEPLOY_DIR/"
     
     
     # Copy any other important files
