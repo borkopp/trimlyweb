@@ -133,10 +133,9 @@ export default async function RootLayout({
   const headersList = await headers();
   const barbershopId = headersList.get("x-barbershop-id");
 
-  const supabase = await createClient();
-
   let barbershop = null;
   if (barbershopId) {
+    const supabase = await createClient();
     const { data } = await supabase
       .from("barbershops")
       .select("*")
