@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Montserrat, Lato, Inter, Orbitron } from "next/font/google";
 import "./globals.css";
@@ -65,12 +65,6 @@ export const metadata: Metadata = {
   applicationName: "Fadely",
   generator: "Next.js",
   referrer: "origin-when-cross-origin",
-  colorScheme: "dark light",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
   formatDetection: {
     email: false,
     address: false,
@@ -123,6 +117,13 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
     apple: "/favicon.ico",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  colorScheme: "dark light",
 };
 
 export default async function RootLayout({

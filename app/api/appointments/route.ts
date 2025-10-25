@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
           }
           
           // Use both revalidation strategies to ensure reliable updates
-          revalidateTag('appointments'); // Revalidate all requests tagged with 'appointments'
+          revalidateTag('appointments', 'max'); // Revalidate all requests tagged with 'appointments'
           
           // Also revalidate specific paths
           revalidatePath('/dashboard', 'layout');
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
       }
       
       // Use both revalidation strategies to ensure reliable updates
-      revalidateTag('appointments'); // Revalidate all requests tagged with 'appointments'
+      revalidateTag('appointments', 'max'); // Revalidate all requests tagged with 'appointments'
       
       // Also revalidate specific paths
       revalidatePath('/dashboard', 'layout');

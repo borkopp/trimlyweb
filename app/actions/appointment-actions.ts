@@ -284,7 +284,7 @@ export async function getAppointmentDetails(appointmentId: string | number) {
  */
 export async function revalidateAppointments() {
   // Revalidate by tag
-  revalidateTag('appointments');
+  revalidateTag('appointments', 'max');
   
   // Also revalidate specific paths
   revalidatePath('/dashboard', 'layout');

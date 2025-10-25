@@ -11,7 +11,7 @@ const barbershopCache = new Map<string, {
   timestamp: number;
 }>();
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const res = NextResponse.next();
 
   // Get the hostname from the request
@@ -22,7 +22,8 @@ export async function middleware(req: NextRequest) {
   if (req.nextUrl.pathname.startsWith('/_next') || 
       req.nextUrl.pathname.startsWith('/api') ||
       req.nextUrl.pathname.startsWith('/static') ||
-      req.nextUrl.pathname.startsWith('/favicon.ico')) {
+      req.nextUrl.pathname.startsWith('/favicon.ico') ||
+      req.nextUrl.pathname.match(/\.(png|jpg|jpeg|gif|svg|ico|webp|avif)$/i)) {
     return res;
   }
 
