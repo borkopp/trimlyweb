@@ -65,3 +65,23 @@ export async function createClient() {
     }
   );
 }
+
+export async function createCachedClient() {
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get() {
+          return undefined;
+        },
+        set() {
+          // No-op for cached client
+        },
+        remove() {
+          // No-op for cached client
+        },
+      },
+    }
+  );
+}

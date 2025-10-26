@@ -9,6 +9,7 @@ type AppointmentWithDetails =
     services: Database["public"]["Tables"]["services"]["Row"][];
   };
 
+
 export default async function ClientProfile(props: {
   params: Promise<{ id: string }>;
 }) {

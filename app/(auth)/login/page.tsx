@@ -34,9 +34,7 @@ export default async function LoginPage() {
       <div className="hidden h-screen bg-muted w-2/3 lg:block relative overflow-hidden">
         <div className="flex flex-col justify-between items-start h-full relative z-10 p-12">
           <div className="flex flex-col gap-1">
-            <Link href={"/"} className="font-ff text-xl text-primary">
-              <Logo />
-            </Link>
+            <Logo />
             <Link href={"/"} className="font-ff text-3xl">
               {barbershop ? barbershop.name : "fadely"}
             </Link>

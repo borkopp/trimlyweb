@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // cacheComponents: true, // Temporarily disabled due to dynamic data access issues
   images: {
     remotePatterns: [
       { hostname: "rvrxlaqklacvhovaobel.supabase.co" },
