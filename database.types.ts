@@ -7,6 +7,11 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "13.0.4"
+  }
   public: {
     Tables: {
       appointments: {
@@ -23,7 +28,6 @@ export type Database = {
           is_cancelled_by_barber: boolean
           name: string | null
           service_ids: number[]
-          temporary_user_id: number | null
           time: string
           user_id: string
         }
@@ -40,7 +44,6 @@ export type Database = {
           is_cancelled_by_barber?: boolean
           name?: string | null
           service_ids: number[]
-          temporary_user_id?: number | null
           time: string
           user_id: string
         }
@@ -57,7 +60,6 @@ export type Database = {
           is_cancelled_by_barber?: boolean
           name?: string | null
           service_ids?: number[]
-          temporary_user_id?: number | null
           time?: string
           user_id?: string
         }
@@ -74,13 +76,6 @@ export type Database = {
             columns: ["barber_id"]
             isOneToOne: false
             referencedRelation: "barbers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "appointments_temporary_user_id_fkey"
-            columns: ["temporary_user_id"]
-            isOneToOne: false
-            referencedRelation: "temporary_users"
             referencedColumns: ["id"]
           },
           {
@@ -238,7 +233,9 @@ export type Database = {
       barbershops: {
         Row: {
           closing_time: string | null
+          facebook: string | null
           id: number
+          instagram: string | null
           last_minute_booking_buffer: number
           location: string | null
           max_advance_booking_days: number
@@ -248,10 +245,13 @@ export type Database = {
           service_duration: number
           slot_interval: number
           subdomain: string
+          whatsapp: string | null
         }
         Insert: {
           closing_time?: string | null
+          facebook?: string | null
           id?: number
+          instagram?: string | null
           last_minute_booking_buffer?: number
           location?: string | null
           max_advance_booking_days?: number
@@ -261,10 +261,13 @@ export type Database = {
           service_duration?: number
           slot_interval?: number
           subdomain?: string
+          whatsapp?: string | null
         }
         Update: {
           closing_time?: string | null
+          facebook?: string | null
           id?: number
+          instagram?: string | null
           last_minute_booking_buffer?: number
           location?: string | null
           max_advance_booking_days?: number
@@ -274,6 +277,7 @@ export type Database = {
           service_duration?: number
           slot_interval?: number
           subdomain?: string
+          whatsapp?: string | null
         }
         Relationships: []
       }
@@ -315,6 +319,41 @@ export type Database = {
             columns: ["service_id"]
             isOneToOne: false
             referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_preferences: {
+        Row: {
+          appointment_cancellation: boolean | null
+          created_at: string | null
+          id: string
+          reminder_intervals: string[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          appointment_cancellation?: boolean | null
+          created_at?: string | null
+          id?: string
+          reminder_intervals?: string[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          appointment_cancellation?: boolean | null
+          created_at?: string | null
+          id?: string
+          reminder_intervals?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -499,33 +538,6 @@ export type Database = {
         }
         Relationships: []
       }
-      temporary_users: {
-        Row: {
-          created_at: string
-          expires_at: string
-          id: number
-          name: string
-          phone_number: string
-          verification_code: string
-        }
-        Insert: {
-          created_at?: string
-          expires_at: string
-          id?: number
-          name: string
-          phone_number: string
-          verification_code: string
-        }
-        Update: {
-          created_at?: string
-          expires_at?: string
-          id?: number
-          name?: string
-          phone_number?: string
-          verification_code?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       barber_availability: {
@@ -542,214 +554,232 @@ export type Database = {
     Functions: {
       assign_barber_role: {
         Args: {
-          user_id: string
-          service_ids?: number[]
           p_barbershop_id?: number
+          service_ids?: number[]
+          user_id: string
         }
         Returns: undefined
       }
       available_time_slots: {
-        Args: {
-          p_barber_id: number
-          p_date: string
-          p_duration?: number
-        }
+        Args: { p_barber_id: number; p_date: string; p_duration?: number }
         Returns: {
-          time_slot: string
           is_available: boolean
+          time_slot: string
         }[]
       }
       book_appointment_v2: {
         Args: {
           p_barber_id: number
-          p_user_id: string
-          p_service_ids: number[]
-          p_date: string
-          p_time: string
-          p_name?: string
-          p_is_guest?: boolean
-          p_temporary_user_id?: number
           p_check_only?: boolean
+          p_client_name?: string
+          p_date: string
+          p_service_ids: number[]
+          p_time: string
+          p_user_id: string
         }
         Returns: Json
       }
-      bytea_to_text: {
+      book_appointment_v2_text: {
         Args: {
-          data: string
+          p_barber_id: number
+          p_check_only?: boolean
+          p_client_name?: string
+          p_date: string
+          p_service_ids: number[]
+          p_time: string
+          p_user_id: string
         }
-        Returns: string
+        Returns: Json
+      }
+      bytea_to_text: { Args: { data: string }; Returns: string }
+      check_reschedule_availability: {
+        Args: {
+          p_appointment_id: number
+          p_barber_id: number
+          p_date: string
+          p_service_ids: number[]
+          p_time: string
+        }
+        Returns: Json
       }
       check_time_slot_availability: {
         Args: {
           p_barber_id: number
           p_date: string
-          p_time: string
           p_service_ids: number[]
+          p_time: string
         }
         Returns: boolean
       }
-      cleanup_old_notifications: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      delete_user_account: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      get_barber_available_dates: {
+      cleanup_old_notifications: { Args: never; Returns: undefined }
+      create_tenant_policy: {
         Args: {
-          p_barber_id: number
-          p_days_ahead?: number
+          command: string
+          definition: string
+          policy_name: string
+          table_name: string
         }
+        Returns: undefined
+      }
+      delete_user_account: { Args: never; Returns: undefined }
+      get_barber_available_dates: {
+        Args: { p_barber_id: number; p_days_ahead?: number }
         Returns: {
           date_value: string
           has_availability: boolean
         }[]
       }
       get_barber_available_slots: {
-        Args: {
-          p_barber_id: number
-          p_date: string
-          p_service_ids?: number[]
-        }
+        Args: { p_barber_id: number; p_date: string; p_service_ids?: number[] }
         Returns: {
-          time_slot: string
           end_time: string
           is_available: boolean
+          time_slot: string
         }[]
       }
+      get_current_tenant: { Args: never; Returns: number }
       http: {
-        Args: {
-          request: Database["public"]["CompositeTypes"]["http_request"]
-        }
+        Args: { request: Database["public"]["CompositeTypes"]["http_request"] }
         Returns: Database["public"]["CompositeTypes"]["http_response"]
+        SetofOptions: {
+          from: "http_request"
+          to: "http_response"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       http_delete:
         | {
-            Args: {
-              uri: string
-            }
+            Args: { uri: string }
             Returns: Database["public"]["CompositeTypes"]["http_response"]
+            SetofOptions: {
+              from: "*"
+              to: "http_response"
+              isOneToOne: true
+              isSetofReturn: false
+            }
           }
         | {
-            Args: {
-              uri: string
-              content: string
-              content_type: string
-            }
+            Args: { content: string; content_type: string; uri: string }
             Returns: Database["public"]["CompositeTypes"]["http_response"]
+            SetofOptions: {
+              from: "*"
+              to: "http_response"
+              isOneToOne: true
+              isSetofReturn: false
+            }
           }
       http_get:
         | {
-            Args: {
-              uri: string
-            }
+            Args: { uri: string }
             Returns: Database["public"]["CompositeTypes"]["http_response"]
+            SetofOptions: {
+              from: "*"
+              to: "http_response"
+              isOneToOne: true
+              isSetofReturn: false
+            }
           }
         | {
-            Args: {
-              uri: string
-              data: Json
-            }
+            Args: { data: Json; uri: string }
             Returns: Database["public"]["CompositeTypes"]["http_response"]
+            SetofOptions: {
+              from: "*"
+              to: "http_response"
+              isOneToOne: true
+              isSetofReturn: false
+            }
           }
       http_head: {
-        Args: {
-          uri: string
-        }
+        Args: { uri: string }
         Returns: Database["public"]["CompositeTypes"]["http_response"]
+        SetofOptions: {
+          from: "*"
+          to: "http_response"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       http_header: {
-        Args: {
-          field: string
-          value: string
-        }
+        Args: { field: string; value: string }
         Returns: Database["public"]["CompositeTypes"]["http_header"]
+        SetofOptions: {
+          from: "*"
+          to: "http_header"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       http_list_curlopt: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           curlopt: string
           value: string
         }[]
       }
       http_patch: {
-        Args: {
-          uri: string
-          content: string
-          content_type: string
-        }
+        Args: { content: string; content_type: string; uri: string }
         Returns: Database["public"]["CompositeTypes"]["http_response"]
+        SetofOptions: {
+          from: "*"
+          to: "http_response"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       http_post:
         | {
-            Args: {
-              uri: string
-              content: string
-              content_type: string
-            }
+            Args: { content: string; content_type: string; uri: string }
             Returns: Database["public"]["CompositeTypes"]["http_response"]
+            SetofOptions: {
+              from: "*"
+              to: "http_response"
+              isOneToOne: true
+              isSetofReturn: false
+            }
           }
         | {
-            Args: {
-              uri: string
-              data: Json
-            }
+            Args: { data: Json; uri: string }
             Returns: Database["public"]["CompositeTypes"]["http_response"]
+            SetofOptions: {
+              from: "*"
+              to: "http_response"
+              isOneToOne: true
+              isSetofReturn: false
+            }
           }
       http_put: {
-        Args: {
-          uri: string
-          content: string
-          content_type: string
-        }
+        Args: { content: string; content_type: string; uri: string }
         Returns: Database["public"]["CompositeTypes"]["http_response"]
+        SetofOptions: {
+          from: "*"
+          to: "http_response"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
-      http_reset_curlopt: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      http_reset_curlopt: { Args: never; Returns: boolean }
       http_set_curlopt: {
-        Args: {
-          curlopt: string
-          value: string
-        }
+        Args: { curlopt: string; value: string }
         Returns: boolean
       }
-      process_appointment_reminders: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      remove_barber_role: {
-        Args: {
-          p_user_id: string
-        }
-        Returns: undefined
-      }
-      text_to_bytea: {
-        Args: {
-          data: string
-        }
-        Returns: string
-      }
+      process_appointment_reminders: { Args: never; Returns: undefined }
+      remove_barber_role: { Args: { p_user_id: string }; Returns: undefined }
+      set_tenant_context: { Args: { tenant_id: number }; Returns: undefined }
+      text_to_bytea: { Args: { data: string }; Returns: string }
       urlencode:
+        | { Args: { data: Json }; Returns: string }
         | {
-            Args: {
-              data: Json
-            }
-            Returns: string
+            Args: { string: string }
+            Returns: {
+              error: true
+            } & "Could not choose the best candidate function between: public.urlencode(string => bytea), public.urlencode(string => varchar). Try renaming the parameters or the function itself in the database so function overloading can be resolved"
           }
         | {
-            Args: {
-              string: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              string: string
-            }
-            Returns: string
+            Args: { string: string }
+            Returns: {
+              error: true
+            } & "Could not choose the best candidate function between: public.urlencode(string => bytea), public.urlencode(string => varchar). Try renaming the parameters or the function itself in the database so function overloading can be resolved"
           }
     }
     Enums: {
@@ -761,7 +791,7 @@ export type Database = {
         value: string | null
       }
       http_request: {
-        method: unknown | null
+        method: unknown
         uri: string | null
         headers: Database["public"]["CompositeTypes"]["http_header"][] | null
         content_type: string | null
@@ -777,27 +807,33 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -805,20 +841,24 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -826,20 +866,24 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
-    | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -847,29 +891,43 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
-    | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
-    | { schema: keyof Database },
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof Database
+    schema: keyof DatabaseWithoutInternals
   }
-    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
-> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      image_type: ["gallery", "profile", "service"],
+    },
+  },
+} as const

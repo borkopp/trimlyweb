@@ -135,7 +135,7 @@ Configure wildcard DNS for your domain:
 
 - **Error Logging**: Console errors are logged
 - **Performance**: Vercel Analytics (if enabled)
-- **User Analytics**: PostHog (if configured)
+- **User Analytics**: PostHog (currently disabled)
 
 ## Post-Deployment Checklist
 

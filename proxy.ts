@@ -50,12 +50,21 @@ class TenantCache {
   }
 }
 
+// Clear rate limit cache for development
+function clearRateLimitCache() {
+  if (process.env.NODE_ENV === 'development') {
+    requestCounts.clear();
+    redirectAttempts.clear();
+    console.log('[RATE_LIMIT] Cache cleared for development');
+  }
+}
+
 const tenantCache = new TenantCache();
 
-// Production rate limiting
+// Rate limiting - more lenient for development
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 60000; // 1 minute
-const RATE_LIMIT_MAX_REQUESTS = 100; // Max 100 requests per minute per IP
+const RATE_LIMIT_MAX_REQUESTS = process.env.NODE_ENV === 'development' ? 500 : 100; // More lenient in development
 
 // Track redirect attempts to prevent loops
 const redirectAttempts = new Map<string, { count: number; resetTime: number }>();
@@ -73,10 +82,16 @@ function checkRateLimit(ip: string): boolean {
   }
   
   if (current.count >= RATE_LIMIT_MAX_REQUESTS) {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[RATE_LIMIT] Blocked IP ${ip} - ${current.count}/${RATE_LIMIT_MAX_REQUESTS} requests in window`);
+    }
     return false;
   }
   
   current.count++;
+  if (process.env.NODE_ENV === 'development' && current.count % 50 === 0) {
+    console.log(`[RATE_LIMIT] IP ${ip} - ${current.count}/${RATE_LIMIT_MAX_REQUESTS} requests in window`);
+  }
   return true;
 }
 
@@ -202,13 +217,13 @@ export async function proxy(req: NextRequest) {
   const hostname = req.headers.get('host') || '';
   const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
   
-  // Check rate limit
-  if (!checkRateLimit(ip)) {
+  // Check rate limit (disabled in development for easier testing)
+  if (process.env.NODE_ENV !== 'development' && !checkRateLimit(ip)) {
     return new NextResponse('Too Many Requests', { status: 429 });
   }
   
-  // Check redirect limit to prevent loops
-  if (!checkRedirectLimit(ip, pathname)) {
+  // Check redirect limit to prevent loops (disabled in development)
+  if (process.env.NODE_ENV !== 'development' && !checkRedirectLimit(ip, pathname)) {
     return new NextResponse('Too Many Redirects', { status: 429 });
   }
   
