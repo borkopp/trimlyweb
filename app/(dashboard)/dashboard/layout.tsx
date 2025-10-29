@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { redirect } from "next/navigation";
 import QueryClientProvider from "@/components/providers/QueryClientProvider";
-import { headers } from "next/headers";
+import { tenantContext } from "@/lib/tenant-context";
 import { BarbershopProvider } from "@/contexts/BarbershopContext";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -18,8 +18,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const supabase = await createClient();
-  const headersList = await headers();
-  const barbershopId = headersList.get("x-barbershop-id");
+  const tenant = await tenantContext.getTenantContext();
 
   const {
     data: { user },
@@ -31,18 +30,18 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  if (!barbershopId) {
-    throw new Error("No barbershop ID found");
+  if (tenant.isMainDomain || tenant.id <= 0) {
+    redirect("/login");
   }
 
   const { data: barbershop } = await supabase
     .from("barbershops")
     .select("*")
-    .eq("id", parseInt(barbershopId))
+    .eq("id", tenant.id)
     .single();
 
   if (!barbershop) {
-    throw new Error("Barbershop not found");
+    redirect("/login");
   }
 
   return (
@@ -55,20 +54,18 @@ export default async function DashboardLayout({
               <SidebarInset>
                 <DashboardHeaderWithBreadcrumbs
                   user={user}
-                  barbershopId={parseInt(barbershopId)}
+                  barbershopId={tenant.id}
                 />
                 {children}
               </SidebarInset>
             </TooltipProvider>
-            {/* Command Palette - Available globally throughout dashboard */}
             <CommandPalette
               userId={userProfile?.id}
-              barbershopId={barbershopId}
+              barbershopId={tenant.id.toString()}
             />
-            {/* Spotlight Command - Quick actions with Cmd+J */}
             <SpotlightCommand
               userId={userProfile?.id}
-              barbershopId={barbershopId}
+              barbershopId={tenant.id.toString()}
             />
           </div>
         </BarbershopProvider>

@@ -6,8 +6,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
-import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
+import { tenantContext } from "@/lib/tenant-context";
 import { BarbershopProvider } from "@/contexts/BarbershopContext";
 import JsonLd from "@/components/JsonLd";
 
@@ -131,16 +131,15 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const headersList = await headers();
-  const barbershopId = headersList.get("x-barbershop-id");
+  const tenant = await tenantContext.getTenantContext();
 
   let barbershop = null;
-  if (barbershopId) {
+  if (!tenant.isMainDomain && tenant.id > 0) {
     const supabase = await createClient();
     const { data } = await supabase
       .from("barbershops")
       .select("*")
-      .eq("id", barbershopId)
+      .eq("id", tenant.id)
       .single();
     barbershop = data;
   }

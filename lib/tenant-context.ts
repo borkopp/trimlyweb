@@ -1,11 +1,12 @@
-import { headers } from 'next/headers';
-import { createClient } from '@/utils/supabase/server';
+import { headers } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 
 export interface TenantContext {
   id: number;
   subdomain: string;
   name: string;
   isMainDomain: boolean;
+  notFound?: boolean;
 }
 
 export interface TenantUser {
@@ -20,7 +21,10 @@ export interface TenantUser {
 // Enhanced tenant context with caching
 class TenantContextManager {
   private static instance: TenantContextManager;
-  private cache = new Map<string, { context: TenantContext; expires: number }>();
+  private cache = new Map<
+    string,
+    { context: TenantContext; expires: number }
+  >();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   static getInstance(): TenantContextManager {
@@ -32,92 +36,98 @@ class TenantContextManager {
 
   async getTenantContext(): Promise<TenantContext> {
     const headersList = await headers();
-    const hostname = headersList.get('host') || '';
-    const barbershopId = headersList.get('x-barbershop-id');
-    const subdomain = headersList.get('x-tenant-subdomain');
-    
-    // Check if it's main domain
-    const isMainDomain = ['fadely.app', 'www.fadely.app', 'localhost:3000', 'localhost'].includes(hostname);
-    
-    if (isMainDomain) {
-      return {
-        id: 0,
-        subdomain: 'main',
-        name: 'Fadely',
-        isMainDomain: true
-      };
+    const forwardedHost = headersList.get("x-forwarded-host") || "";
+    const host = headersList.get("host") || "";
+    const hostname = (forwardedHost || host).replace(/^www\./, "");
+    const isMain =
+      hostname === "fadely.app" ||
+      hostname === "localhost" ||
+      hostname === "localhost:3000";
+
+    if (isMain) {
+      return { id: 0, subdomain: "main", name: "Fadely", isMainDomain: true };
     }
-    
-    if (!barbershopId || !subdomain) {
-      throw new Error('Tenant context not found');
+
+    const parts = hostname.split(".");
+    const isSub = hostname.endsWith("fadely.app") && parts.length > 2;
+    const sub = isSub ? parts[0] : null;
+
+    if (!sub) {
+      return { id: 0, subdomain: "main", name: "Fadely", isMainDomain: true };
     }
-    
-    const cacheKey = `tenant:${barbershopId}`;
+
+    const cacheKey = `tenant:sub:${sub}`;
     const cached = this.cache.get(cacheKey);
-    
     if (cached && Date.now() < cached.expires) {
       return cached.context;
     }
-    
-    // Fetch tenant data
+
     const supabase = await createClient();
-    const { data: tenant, error } = await supabase
-      .from('barbershops')
-      .select('id, name, subdomain')
-      .eq('id', parseInt(barbershopId))
+    const { data: tenant } = await supabase
+      .from("barbershops")
+      .select("id, name, subdomain")
+      .eq("subdomain", sub)
       .single();
-    
-    if (error || !tenant) {
-      throw new Error('Tenant not found');
+
+    if (!tenant) {
+      const context: TenantContext = {
+        id: 0,
+        subdomain: sub,
+        name: sub,
+        isMainDomain: false,
+        notFound: true,
+      };
+      this.cache.set(cacheKey, {
+        context,
+        expires: Date.now() + this.CACHE_TTL,
+      });
+      return context;
     }
-    
+
     const context: TenantContext = {
       id: tenant.id,
       subdomain: tenant.subdomain,
       name: tenant.name,
-      isMainDomain: false
+      isMainDomain: false,
     };
-    
-    this.cache.set(cacheKey, {
-      context,
-      expires: Date.now() + this.CACHE_TTL
-    });
-    
+    this.cache.set(cacheKey, { context, expires: Date.now() + this.CACHE_TTL });
     return context;
   }
-  
+
   async getTenantUser(): Promise<TenantUser | null> {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return null;
     }
-    
+
     const { data: profile } = await supabase
-      .from('profiles')
-      .select('id, barbershop_id, role, is_admin, full_name, email')
-      .eq('id', user.id)
+      .from("profiles")
+      .select("id, barbershop_id, role, is_admin, full_name, email")
+      .eq("id", user.id)
       .single();
-    
+
     if (!profile) {
       return null;
     }
-    
+
     return {
       id: profile.id,
       barbershopId: profile.barbershop_id,
       role: profile.role,
       isAdmin: profile.is_admin || false,
       fullName: profile.full_name,
-      email: profile.email
+      email: profile.email,
     };
   }
-  
+
   clearCache() {
     this.cache.clear();
   }
-  
+
   clearTenantCache(barbershopId: number) {
     this.cache.delete(`tenant:${barbershopId}`);
   }
@@ -136,13 +146,15 @@ export async function useTenantUser(): Promise<TenantUser | null> {
 
 // Utility functions
 export function isMainDomain(hostname: string): boolean {
-  return ['fadely.app', 'www.fadely.app', 'localhost:3000', 'localhost'].includes(hostname);
+  const h = (hostname || "").replace(/^www\./, "");
+  return h === "fadely.app" || h === "localhost" || h === "localhost:3000";
 }
 
 export function extractSubdomain(hostname: string): string | null {
-  if (hostname.includes('.fadely.app') || hostname.includes('.localhost')) {
-    const subdomain = hostname.split('.')[0];
-    return subdomain === 'www' ? null : subdomain;
-  }
-  return null;
+  const h = (hostname || "").replace(/^www\./, "");
+  if (!h.endsWith("fadely.app")) return null;
+  const parts = h.split(".");
+  if (parts.length <= 2) return null;
+  const sub = parts[0];
+  return sub === "www" ? null : sub;
 }

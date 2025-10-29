@@ -4,28 +4,20 @@ import AnimatedGridPattern from "@/components/magicui/animated-grid-pattern";
 import { cn } from "@/lib/utils";
 import LoginForm from "./LoginForm";
 import { login } from "../actions";
-import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
+import { tenantContext } from "@/lib/tenant-context";
 import { Logo } from "@/components/logo";
 
 export default async function LoginPage() {
-  const headersList = await headers();
-  const barbershopId = headersList.get("x-barbershop-id");
-  console.log(
-    "Login page - headers:",
-    Object.fromEntries(headersList.entries())
-  );
-  console.log("Login page - barbershopId:", barbershopId);
-
+  const tenant = await tenantContext.getTenantContext();
   let barbershop = null;
-  if (barbershopId) {
+  if (!tenant.isMainDomain && tenant.id > 0) {
     const supabase = await createClient();
     const { data } = await supabase
       .from("barbershops")
       .select("*")
-      .eq("id", barbershopId)
+      .eq("id", tenant.id)
       .single();
-    console.log("Login page - barbershop data:", data);
     barbershop = data;
   }
 
