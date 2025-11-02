@@ -42,7 +42,8 @@ class TenantContextManager {
     const isMain =
       hostname === "fadely.app" ||
       hostname === "localhost" ||
-      hostname === "localhost:3000";
+      hostname === "localhost:3000" ||
+      hostname === "localhost:3001";
 
     if (isMain) {
       return { id: 0, subdomain: "main", name: "Fadely", isMainDomain: true };
@@ -147,7 +148,7 @@ export async function useTenantUser(): Promise<TenantUser | null> {
 // Utility functions
 export function isMainDomain(hostname: string): boolean {
   const h = (hostname || "").replace(/^www\./, "");
-  return h === "fadely.app" || h === "localhost" || h === "localhost:3000";
+  return h === "fadely.app" || h === "localhost" || h === "localhost:3000" || h === "localhost:3001";
 }
 
 export function extractSubdomain(hostname: string): string | null {
