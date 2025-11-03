@@ -30,14 +30,19 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  if (tenant.isMainDomain || tenant.id <= 0) {
+  const effectiveTenantId =
+    tenant && !tenant.isMainDomain && tenant.id > 0
+      ? tenant.id
+      : userProfile?.barbershop_id || 0;
+
+  if (!effectiveTenantId || effectiveTenantId <= 0) {
     redirect("/login");
   }
 
   const { data: barbershop } = await supabase
     .from("barbershops")
     .select("*")
-    .eq("id", tenant.id)
+    .eq("id", effectiveTenantId)
     .single();
 
   if (!barbershop) {
@@ -54,18 +59,18 @@ export default async function DashboardLayout({
               <SidebarInset>
                 <DashboardHeaderWithBreadcrumbs
                   user={user}
-                  barbershopId={tenant.id}
+                  barbershopId={effectiveTenantId}
                 />
                 {children}
               </SidebarInset>
             </TooltipProvider>
             <CommandPalette
               userId={userProfile?.id}
-              barbershopId={tenant.id.toString()}
+              barbershopId={effectiveTenantId.toString()}
             />
             <SpotlightCommand
               userId={userProfile?.id}
-              barbershopId={tenant.id.toString()}
+              barbershopId={effectiveTenantId.toString()}
             />
           </div>
         </BarbershopProvider>

@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     try {
       // Include name parameter in the RPC call if provided
       const { data, error } = await supabase
-        .rpc('book_appointment_v2', {
+        .rpc('book_appointment_v2_text', {
           p_barber_id: parseInt(barberId.toString(), 10),
           p_user_id: finalUserId,
           p_service_ids: serviceIds,
@@ -80,62 +80,6 @@ export async function POST(request: NextRequest) {
       
       if (error) {
         console.error('Error creating appointment:', error);
-        
-        // If we get a UUID type error, try with a raw insert that respects the type
-        if (error.message.includes('type uuid') && error.message.includes('type text')) {
-          console.log('UUID type mismatch, trying direct insert...');
-          
-          // Calculate end time based on service durations
-          const { data: services } = await supabase
-            .from('services')
-            .select('time')
-            .in('id', serviceIds);
-          
-          const totalDuration = services?.reduce((sum, service) => sum + (service.time || 30), 0) || 30;
-          const timeComponents = time.split(':').map(Number);
-          const baseMinutes = timeComponents[0] * 60 + timeComponents[1];
-          const endMinutes = baseMinutes + totalDuration;
-          const endHour = Math.floor(endMinutes / 60);
-          const endMinute = endMinutes % 60;
-          const endTime = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}:00`;
-          
-          // Direct insert using the from method
-          const { data: insertData, error: insertError } = await supabase
-            .from('appointments')
-            .insert({
-              barber_id: parseInt(barberId.toString(), 10),
-              user_id: finalUserId,
-              service_ids: serviceIds,
-              date: date,
-              time: time,
-              end_time: endTime,
-              name: name,
-              is_cancelled: false,
-              barbershop_id: barbershopId,
-              duration: totalDuration
-            })
-            .select()
-            .single();
-          
-          if (insertError) {
-            console.error('Error with direct insert:', insertError);
-            return NextResponse.json({ error: insertError.message }, { status: 500 });
-          }
-          
-          // Use both revalidation strategies to ensure reliable updates
-          revalidateTag('appointments', 'max'); // Revalidate all requests tagged with 'appointments'
-          
-          // Also revalidate specific paths
-          revalidatePath('/dashboard', 'layout');
-          revalidatePath('/dashboard/appointments');
-          revalidatePath('/dashboard/overview');
-          revalidatePath('/dashboard/appointments/week');
-          revalidatePath('/dashboard/appointments/today');
-          revalidatePath('/appointments');
-          
-          return NextResponse.json({ success: true, appointment: insertData });
-        }
-        
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
       

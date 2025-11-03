@@ -1,22 +1,23 @@
 import 'server-only';
 import { createClient } from "@/utils/supabase/server";
 import { Database } from "@/database.types";
-import { headers } from "next/headers";
+import { tenantContext } from "@/lib/tenant-context";
 
 type Appointment = Database['public']['Tables']['appointments']['Row'];
 type Service = Database['public']['Tables']['services']['Row'];
 type Profile = Database['public']['Tables']['profiles']['Row'];
 type Barber = Database['public']['Tables']['barbers']['Row'];
 
-async function getBarbershopId(): Promise<string | null> {
-  const headersList = await headers();
-  return headersList.get("x-barbershop-id");
+async function getBarbershopId(): Promise<number | null> {
+  const tenant = await tenantContext.getTenantContext();
+  return tenant && !tenant.isMainDomain && tenant.id > 0 ? tenant.id : null;
 }
 
 export async function getTodayAppointments(): Promise<Appointment[]> {
   const supabase = await createClient();
   const today = new Date().toISOString().split('T')[0];
   const barbershopId = await getBarbershopId();
+  if (!barbershopId) return [];
 
   const { data, error } = await supabase
     .from('appointments')
@@ -39,6 +40,7 @@ export async function getCurrentMonthRevenue(): Promise<number> {
   const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
   const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
   const barbershopId = await getBarbershopId();
+  if (!barbershopId) return 0;
 
   // Fetch appointments for the current month
   const { data: appointments, error: appointmentsError } = await supabase
@@ -93,6 +95,7 @@ export async function getWeekAppointments(): Promise<(Appointment & { client: Pr
     
     // Get barbershop ID for filtering
     const barbershopId = await getBarbershopId();
+    if (!barbershopId) return [];
   
     // Query appointments with client profile join with Next.js cache tags using fetch
     const fetchOptions = { next: { tags: ['appointments'], revalidate: 0 } };
@@ -120,6 +123,7 @@ export async function getWeekAppointments(): Promise<(Appointment & { client: Pr
 export async function getDayAppointments(date: string): Promise<(Appointment & { client: Profile })[]> {
   const supabase = await createClient();
   const barbershopId = await getBarbershopId();
+  if (!barbershopId) return [];
 
   // Query with Next.js cache tags
   const { data, error } = await supabase
@@ -143,6 +147,7 @@ export async function getDayAppointments(date: string): Promise<(Appointment & {
 export async function getServicesById(ids: number[]): Promise<Service[]> {
     const supabase = await createClient();
     const barbershopId = await getBarbershopId();
+    if (!barbershopId) return [];
 
     const { data, error } = await supabase
       .from("services")
@@ -161,6 +166,7 @@ export async function getServicesById(ids: number[]): Promise<Service[]> {
 export async function getBarberById(id: number): Promise<Barber | null> {
     const supabase = await  createClient();
     const barbershopId = await getBarbershopId();
+    if (!barbershopId) return null;
 
     const { data, error } = await supabase
       .from("barbers")
@@ -180,6 +186,7 @@ export async function getBarberById(id: number): Promise<Barber | null> {
 export async function getBarbers(): Promise<Barber[]> {
     const supabase = await createClient();
     const barbershopId = await getBarbershopId();
+    if (!barbershopId) return [];
 
     const { data, error } = await supabase
       .from("barbers")
@@ -196,6 +203,7 @@ export async function getBarbers(): Promise<Barber[]> {
 export async function getServices(): Promise<Service[]> {
     const supabase = await createClient();
     const barbershopId = await getBarbershopId();
+    if (!barbershopId) return [];
 
     const { data, error } = await supabase
       .from("services")
@@ -216,6 +224,7 @@ export async function getServices(): Promise<Service[]> {
 export async function getAllAppointments(): Promise<(Appointment & { client: Profile })[]> {
   const supabase = await createClient();
   const barbershopId = await getBarbershopId();
+  if (!barbershopId) return [];
   const today = new Date().toISOString().split('T')[0];
   
   // First get upcoming appointments (today or future dates)

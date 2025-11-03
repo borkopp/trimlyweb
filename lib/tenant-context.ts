@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import { createClient } from "@/utils/supabase/server";
+import { createCachedClient } from "@/utils/supabase/server";
 
 export interface TenantContext {
   id: number;
@@ -63,7 +63,7 @@ class TenantContextManager {
       return cached.context;
     }
 
-    const supabase = await createClient();
+    const supabase = await createCachedClient();
     const { data: tenant } = await supabase
       .from("barbershops")
       .select("id, name, subdomain")

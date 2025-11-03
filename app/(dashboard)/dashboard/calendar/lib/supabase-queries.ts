@@ -11,7 +11,6 @@ interface AppointmentWithRelations {
   end_time: string | null;
   duration: number | null;
   service_ids: number[];
-  is_archived: boolean;
   is_cancelled: boolean;
   is_cancelled_by_barber: boolean;
   cancellation_reason: string | null;
@@ -49,7 +48,6 @@ export async function fetchAppointments(
         end_time,
         duration,
         service_ids,
-        is_archived,
         is_cancelled,
         is_cancelled_by_barber,
         cancellation_reason,
@@ -65,7 +63,6 @@ export async function fetchAppointments(
         )
       `)
       .eq('barbershop_id', barbershopId)
-      .eq('is_archived', false)
       .eq('is_cancelled', false)
       .order('date', { ascending: true })
       .order('time', { ascending: true });

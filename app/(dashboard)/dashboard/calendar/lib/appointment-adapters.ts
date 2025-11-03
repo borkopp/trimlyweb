@@ -11,7 +11,6 @@ export interface DatabaseAppointment {
   end_time: string | null;
   duration: number | null;
   service_ids: number[];
-  is_archived: boolean;
   is_cancelled: boolean;
   is_cancelled_by_barber: boolean;
   cancellation_reason: string | null;

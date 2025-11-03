@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { headers } from "next/headers";
+import { tenantContext } from "@/lib/tenant-context";
 
 export async function createClient() {
   const cookieStore = await cookies();
@@ -11,7 +12,7 @@ export async function createClient() {
   // Extract the domain (e.g., 'fadely.app' or 'localhost:3000')
   const domain = isDevelopment ? 'localhost' : host.split(':')[0].split('.').slice(-2).join('.');
 
-  return createServerClient(
+  const client = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -64,6 +65,55 @@ export async function createClient() {
       },
     }
   );
+
+  try {
+    const tenant = await tenantContext.getTenantContext();
+    console.log("tenantContext", JSON.stringify(tenant));
+    if (!tenant.isMainDomain && tenant.id > 0) {
+      const { error } = await client.rpc('set_tenant_context', { tenant_id: tenant.id });
+      if (error) {
+        console.warn("rpc set_tenant_context failed", JSON.stringify(error));
+      } else {
+        console.log("rpc set_tenant_context ok", tenant.id);
+      }
+    }
+    if (tenant.isMainDomain || tenant.id <= 0) {
+      const { data: { user } } = await client.auth.getUser();
+      console.log("auth user", user ? user.id : null);
+      if (user) {
+        const { data: profile } = await client
+          .from('profiles')
+          .select('barbershop_id')
+          .eq('id', user.id)
+          .single();
+        console.log("profile barbershop_id", profile ? profile.barbershop_id : null);
+        if (profile && profile.barbershop_id && profile.barbershop_id > 0) {
+          const { error } = await client.rpc('set_tenant_context', { tenant_id: profile.barbershop_id });
+          if (error) {
+            console.warn("rpc set_tenant_context(profile) failed", JSON.stringify(error));
+          } else {
+            console.log("rpc set_tenant_context(profile) ok", profile.barbershop_id);
+          }
+        } else {
+          const { error } = await client.rpc('set_tenant_context', { tenant_id: 0 });
+          if (error) {
+            console.warn("rpc set_tenant_context(0) failed", JSON.stringify(error));
+          } else {
+            console.log("rpc set_tenant_context(0) ok");
+          }
+        }
+      } else {
+        const { error } = await client.rpc('set_tenant_context', { tenant_id: 0 });
+        if (error) {
+          console.warn("rpc set_tenant_context(0,no-user) failed", JSON.stringify(error));
+        } else {
+          console.log("rpc set_tenant_context(0,no-user) ok");
+        }
+      }
+    }
+  } catch (_e) {}
+
+  return client;
 }
 
 export async function createCachedClient() {

@@ -47,13 +47,11 @@ type AvailableSlot = {
 
 interface AppointmentDialogProps {
   userId: string;
-  barbershopId?: string;
   children?: ReactNode;
 }
 
 export function AppointmentDialog({
   userId,
-  barbershopId = "1",
   children,
 }: AppointmentDialogProps) {
   // State
@@ -87,12 +85,10 @@ export function AppointmentDialog({
     error: barberError,
     refetch: refetchBarbers,
   } = useQuery({
-    queryKey: ["barbers", barbershopId],
+    queryKey: ["barbers"],
     queryFn: async () => {
       try {
-        const response = await fetch(
-          `/api/barbers?barbershopId=${barbershopId}`
-        );
+        const response = await fetch(`/api/barbers`);
         if (!response.ok) {
           throw new Error(`Failed to fetch barbers: ${response.statusText}`);
         }
@@ -131,6 +127,36 @@ export function AppointmentDialog({
       }
     },
     enabled: !!selectedBarber,
+  });
+
+  // Fetch barbershop settings (buffer and max advance days) for selected barber
+  const { data: shopSettings } = useQuery({
+    queryKey: ["barbershop-settings", selectedBarber],
+    queryFn: async () => {
+      if (!selectedBarber) return { buffer: 30, maxDays: 14 };
+      const res1 = await fetch(`/api/barbers?barberId=${selectedBarber}`);
+      if (!res1.ok) return { buffer: 30, maxDays: 14 };
+      const barbers = await res1.json();
+      const barber = Array.isArray(barbers)
+        ? barbers.find((b: any) => b.id === selectedBarber)
+        : null;
+      let barbershopId = barber?.barbershop_id;
+      if (!barbershopId) {
+        const r = await fetch(`/api/barber-by-id?barberId=${selectedBarber}`).catch(() => null);
+        const j = r && r.ok ? await r.json() : null;
+        barbershopId = j?.barbershop_id;
+      }
+      if (!barbershopId) return { buffer: 30, maxDays: 14 };
+      const res2 = await fetch(`/api/barbershop-settings?id=${barbershopId}`).catch(() => null);
+      if (!res2 || !res2.ok) return { buffer: 30, maxDays: 14 };
+      const shop = await res2.json();
+      return {
+        buffer: shop?.last_minute_booking_buffer ?? 30,
+        maxDays: shop?.max_advance_booking_days ?? 14,
+      };
+    },
+    enabled: !!selectedBarber,
+    staleTime: 1000 * 60 * 10,
   });
 
   // Fetch available dates when services are selected
@@ -239,6 +265,21 @@ export function AppointmentDialog({
     retry: 1,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
+
+  // Client-side filter for last minute buffer and past times
+  const filteredSlots = (() => {
+    if (!selectedDate || availableSlots.length === 0) return availableSlots;
+    const bufferMin = shopSettings?.buffer ?? 30;
+    const now = new Date();
+    const isSameDay = startOfDay(selectedDate).getTime() === startOfDay(now).getTime();
+    if (!isSameDay) return availableSlots;
+    const currentMinutes = now.getHours() * 60 + now.getMinutes() + bufferMin;
+    return availableSlots.filter((slot) => {
+      const [h, m] = slot.time_slot.split(":").map((n) => parseInt(n, 10));
+      const mins = h * 60 + m;
+      return mins >= currentMinutes;
+    });
+  })();
 
   // Handle barber selection
   const handleBarberSelect = (barberId: number) => {
@@ -629,8 +670,13 @@ export function AppointmentDialog({
                         const today = startOfDay(new Date());
                         const targetDate = startOfDay(date);
 
+                        const maxDays = shopSettings?.maxDays ?? 14;
+                        const lastAllowed = new Date(today);
+                        lastAllowed.setDate(today.getDate() + maxDays);
+
                         return (
                           isBefore(targetDate, today) ||
+                          targetDate > lastAllowed ||
                           !availableDate?.has_availability
                         );
                       }}
@@ -680,13 +726,13 @@ export function AppointmentDialog({
                         Retry
                       </Button>
                     </div>
-                  ) : availableSlots.length === 0 ? (
+                  ) : filteredSlots.length === 0 ? (
                     <div className="text-center py-8">
                       No available times for this date
                     </div>
                   ) : (
                     <div className="flex flex-col space-y-1">
-                      {availableSlots.map((slot, index) => (
+                      {filteredSlots.map((slot, index) => (
                         <Button
                           key={index}
                           type="button"

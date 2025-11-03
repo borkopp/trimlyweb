@@ -23,7 +23,7 @@ export async function createAppointment(appointmentData: CreateAppointmentData) 
   const supabase = await createClient()
   
   const { data, error } = await supabase
-    .rpc('book_appointment_v2', {
+    .rpc('book_appointment_v2_text', {
       p_barber_id: appointmentData.barber_id,
       p_user_id: appointmentData.user_id,
       p_service_ids: appointmentData.service_ids,

@@ -91,22 +91,44 @@ export async function getBarberServices(barberId: number): Promise<Service[]> {
  */
 export async function getBarberAvailableDates(
   barberId: number,
-  daysAhead: number = 30
+  daysAhead: number = 30,
+  serviceIds: number[] = []
 ): Promise<AvailableDate[]> {
   const supabase = await createClient();
-  
-  const { data, error } = await supabase
-    .rpc("get_barber_available_dates", {
-      p_barber_id: barberId,
-      p_days_ahead: daysAhead,
-    });
-
-  if (error) {
-    console.error('Error fetching available dates:', error);
-    return [];
+  let totalDuration = 30;
+  if (serviceIds && serviceIds.length > 0) {
+    const { data: svc, error: svcErr } = await supabase
+      .from('services')
+      .select('time')
+      .in('id', serviceIds);
+    if (svcErr) {
+      console.error('Error fetching services:', svcErr);
+      return [];
+    }
+    totalDuration = (svc || []).reduce((sum, s: any) => sum + (s.time || 30), 0) || 30;
   }
-  
-  return data || [];
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const results: AvailableDate[] = [];
+  for (let i = 0; i <= daysAhead; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    const dateStr = d.toISOString().split('T')[0];
+    const { data, error } = await supabase.rpc('available_time_slots', {
+      p_barber_id: barberId,
+      p_date: dateStr,
+      p_duration: totalDuration
+    });
+    if (error) {
+      console.error('Error fetching slots for date', dateStr, error);
+      return [];
+    }
+    const hasAvailability = Array.isArray(data) && data.some((s: any) => s.is_available);
+    results.push({ date_value: dateStr, has_availability: hasAvailability });
+  }
+
+  return results;
 }
 
 /**
@@ -119,11 +141,21 @@ export async function getBarberAvailableSlots(
 ): Promise<AvailableSlot[]> {
   const supabase = await createClient();
   
+  const { data: svc, error: svcErr } = await supabase
+    .from('services')
+    .select('time')
+    .in('id', serviceIds);
+  if (svcErr) {
+    console.error('Error fetching services:', svcErr);
+    return [];
+  }
+  const totalDuration = (svc || []).reduce((sum, s: any) => sum + (s.time || 30), 0) || 30;
+
   const { data, error } = await supabase
-    .rpc('get_barber_available_slots', {
+    .rpc('available_time_slots', {
       p_barber_id: barberId,
       p_date: date,
-      p_service_ids: serviceIds.length > 0 ? serviceIds : null
+      p_duration: totalDuration
     });
   
   if (error) {
@@ -131,8 +163,17 @@ export async function getBarberAvailableSlots(
     return [];
   }
   
-  // Only return slots that are available
-  return data?.filter((slot: AvailableSlot) => slot.is_available) || [];
+  return (data || [])
+    .filter((slot: any) => slot.is_available)
+    .map((slot: any) => {
+      const [h, m] = (slot.time_slot as string).split(':').map((n: string) => parseInt(n, 10));
+      const startMinutes = h * 60 + m;
+      const endMinutes = startMinutes + totalDuration;
+      const eh = Math.floor(endMinutes / 60);
+      const em = endMinutes % 60;
+      const end_time = `${String(eh).padStart(2, '0')}:${String(em).padStart(2, '0')}:00`;
+      return { time_slot: slot.time_slot, end_time, is_available: slot.is_available } as AvailableSlot;
+    });
 }
 
 /**
@@ -157,14 +198,13 @@ export async function createAppointment(
   }
   
   const { data, error } = await supabase
-    .rpc('book_appointment_v2', {
+    .rpc('book_appointment_v2_text', {
       p_barber_id: barberId,
       p_user_id: userId,
       p_service_ids: serviceIds,
       p_date: date,
       p_time: time,
-      p_is_guest: isGuest,
-      p_temporary_user_id: temporaryUserId,
+      p_client_name: isGuest ? 'Guest' : undefined,
       p_check_only: false
     });
   
@@ -200,9 +240,9 @@ export async function checkTimeSlotAvailability(
   const supabase = await createClient();
   
   const { data, error } = await supabase
-    .rpc('book_appointment_v2', {
+    .rpc('book_appointment_v2_text', {
       p_barber_id: barberId,
-      p_user_id: 'check-only',  // This doesn't matter for check_only=true
+      p_user_id: 'check-only',
       p_service_ids: serviceIds,
       p_date: date,
       p_time: time,
@@ -215,6 +255,28 @@ export async function checkTimeSlotAvailability(
   }
   
   return data;
+}
+
+/**
+ * Fetch barbershop booking settings for a given barber
+ */
+export async function getBarbershopSettings(barberId: number): Promise<{ buffer: number; maxDays: number }> {
+  const supabase = await createClient();
+  const { data: barber } = await supabase
+    .from('barbers')
+    .select('barbershop_id')
+    .eq('id', barberId)
+    .single();
+  if (!barber) return { buffer: 30, maxDays: 14 };
+  const { data: shop } = await supabase
+    .from('barbershops')
+    .select('last_minute_booking_buffer, max_advance_booking_days')
+    .eq('id', barber.barbershop_id)
+    .single();
+  return {
+    buffer: shop?.last_minute_booking_buffer ?? 30,
+    maxDays: shop?.max_advance_booking_days ?? 14,
+  };
 }
 
 /**

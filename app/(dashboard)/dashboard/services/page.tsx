@@ -1,22 +1,18 @@
 import {Suspense} from "react";
 import ServicesPageClient from "./ServicesPageClient";
 import {Skeleton} from "@/components/ui/skeleton";
-import {headers} from "next/headers";
+import { tenantContext } from "@/lib/tenant-context";
 import {getServices} from "@/app/actions/dashboard-actions";
 
 export default async function Page() {
-  const headersList = await headers();
-  const barbershopId = headersList.get("x-barbershop-id");
-
-  if (!barbershopId) {
-    throw new Error("No barbershop ID found");
-  }
+  const tenant = await tenantContext.getTenantContext();
+  const barbershopId = tenant && !tenant.isMainDomain && tenant.id > 0 ? tenant.id : null;
 
   const services = await getServices();
 
   return (
     <Suspense fallback={<ServicesSkeleton />}>
-      <ServicesPageClient initialServices={services} barbershopId={parseInt(barbershopId)} refreshServices={getServices} />
+      <ServicesPageClient initialServices={services} barbershopId={(barbershopId as number) || 0} refreshServices={getServices} />
     </Suspense>
   );
 }

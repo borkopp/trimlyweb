@@ -47,8 +47,7 @@ BEGIN
     -- Get dates that have booked appointments
     SELECT date FROM appointments
     WHERE barber_id = p_barber_id
-      AND is_cancelled = FALSE 
-      AND is_archived = FALSE
+      AND is_cancelled = FALSE
   )
   SELECT 
     ds.date_value,
@@ -290,7 +289,6 @@ BEGIN
     service_ids,
     is_cancelled,
     is_cancelled_by_barber,
-    is_archived,
     end_time,
     duration,
     temporary_user_id
@@ -301,7 +299,6 @@ BEGIN
     p_date,
     p_time,
     p_service_ids,
-    FALSE,
     FALSE,
     FALSE,
     v_end_time,

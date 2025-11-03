@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import ClientsPageClient from "./ClientsPageClient";
 import { notFound } from "next/navigation";
 import { Database } from "@/database.types";
-import { headers } from "next/headers";
+import { tenantContext } from "@/lib/tenant-context";
 
 type ServiceAppointment = {
   services: Database["public"]["Tables"]["services"]["Row"];
@@ -20,18 +20,13 @@ type ClientWithAppointments =
 
 export default async function ClientsPage() {
   const supabase = await createClient();
-  const headersList = await headers();
-  const barbershopId = headersList.get("x-barbershop-id");
-
-  if (!barbershopId) {
-    throw new Error("No barbershop ID found");
-  }
+  const tenant = await tenantContext.getTenantContext();
+  const barbershopId = tenant && !tenant.isMainDomain && tenant.id > 0 ? tenant.id : null;
 
   // First get all barber user IDs for this barbershop
   const { data: barbers } = await supabase
     .from("barbers")
-    .select("user_id")
-    .eq("barbershop_id", parseInt(barbershopId));
+    .select("user_id");
 
   const barberIds = barbers?.map((b) => b.user_id).filter(Boolean) || [];
 
@@ -56,7 +51,7 @@ export default async function ClientsPage() {
       )
     `
     )
-    .eq("barbershop_id", parseInt(barbershopId))
+    
     .not("id", "in", `(${barberIds.join(",")})`)
     .order("full_name");
 
