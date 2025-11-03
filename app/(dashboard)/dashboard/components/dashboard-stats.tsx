@@ -25,7 +25,7 @@ export default async function DashboardStats({userId, barbershopId}: {userId: st
           </CardDescription>
         </CardHeader>
         <CardFooter className="mt-6">
-          <AppointmentDialog userId={userId} barbershopId={barbershopId} />
+          <AppointmentDialog userId={userId} />
         </CardFooter>
       </Card>
 

@@ -96,7 +96,7 @@ class TenantContextManager {
   }
 
   async getTenantUser(): Promise<TenantUser | null> {
-    const supabase = await createClient();
+    const supabase = await createCachedClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();

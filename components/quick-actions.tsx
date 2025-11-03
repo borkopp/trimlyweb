@@ -59,7 +59,7 @@ export function QuickActions({
       <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
-          <AppointmentDialog userId={userId} barbershopId={barbershopId}>
+          <AppointmentDialog userId={userId}>
             <SidebarMenuButton
               ref={appointmentDialogRef}
               className="hover:bg-secondary"
