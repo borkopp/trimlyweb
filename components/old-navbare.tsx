@@ -65,22 +65,25 @@ export default function Navbar() {
   return (
     <div
       className={`fixed z-50 transition-all duration-500 ease-in-out transform left-1/2 -translate-x-1/2
-      ${
-        isScrolled
+      ${isScrolled
           ? "h-14 w-[40%]  rounded-full dark:bg-black/70 bg-white backdrop-blur-lg border border-black/10 shadow-lg dark:border-white/10 top-5 px-6"
           : "h-16 w-full top-0 backdrop-blur-none bg-transparent px-4 sm:px-8 md:px-16 lg:px-72"
-      }
+        }
       origin-center`}
     >
       <div className="w-full h-full flex items-center justify-between gap-4 transition-all duration-500 ease-in-out relative">
         {/* Logo */}
         <div className="flex-shrink-0 z-10 flex items-center">
-          <Link
-            href="/"
-            className={`cursor-pointer text-primary transform transition-all duration-500 ease-in-out inline-block`}
-          >
-         {isMobile ? <LogoSVG color="white" /> : <Logo />}
-          </Link>
+          {isMobile ? (
+            <Link
+              href="/"
+              className="cursor-pointer text-primary transform transition-all duration-500 ease-in-out inline-block"
+            >
+              <LogoSVG color="white" />
+            </Link>
+          ) : (
+            <Logo />
+          )}
         </div>
 
         {/* Desktop navigation - centered */}
@@ -101,11 +104,10 @@ export default function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className={`text-sm font-semibold ${
-                  pathname === item.href
+                className={`text-sm font-semibold ${pathname === item.href
                     ? "text-primary"
                     : "text-neutral-500 hover:text-primary"
-                }`}
+                  }`}
               >
                 {item.label}
               </Button>
@@ -155,11 +157,10 @@ export default function Navbar() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`text-sm w-full justify-start mb-2 ${
-                    pathname === item.href
+                  className={`text-sm w-full justify-start mb-2 ${pathname === item.href
                       ? "text-primary"
                       : "text-neutral-500 hover:text-primary"
-                  }`}
+                    }`}
                 >
                   {item.label}
                 </Button>
