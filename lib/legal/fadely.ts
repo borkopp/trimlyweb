@@ -8,13 +8,13 @@ export const fadelyPrivacyPolicy: LegalDocument = {
   effectiveDate: "Effective and last updated: 14 July 2026",
   introduction: [
     'Fadely is a business name operated by Borko Petrevski in Prilep, North Macedonia, pending formal company registration. In this policy, "Fadely", "we", "us", and "our" refer to Borko Petrevski trading as Fadely.',
-    "Fadely is responsible for personal data used to operate fadely.app, answer business enquiries, and manage its own client relationships. Custom applications made for barbershops have separate app-specific privacy policies because the relevant barbershop normally controls its customer and appointment data.",
+    "Fadely is responsible for personal data used to operate fadely.app, answer business enquiries, manage its own client relationships, and operate any Fadely-controlled application identified in an app-specific privacy policy. Each custom application has its own policy explaining whether Fadely or the relevant venue controls particular customer and appointment data.",
   ],
   sections: [
     {
       heading: "1. Scope",
       paragraphs: [
-        "This policy applies to fadely.app, its contact form, communications with Fadely, proposals and client onboarding, and any Fadely account or service that links to this policy. It does not replace the privacy policy of a client-branded mobile application or a separate written agreement with a Fadely client.",
+        "This policy applies to fadely.app, its contact form, communications with Fadely, proposals and client onboarding, and any Fadely account or service that links to this policy. It does not replace the app-specific privacy policy of a custom-branded mobile application or another documented service arrangement.",
       ],
     },
     {
@@ -101,7 +101,7 @@ export const fadelyTerms: LegalDocument = {
   effectiveDate: "Effective and last updated: 14 July 2026",
   introduction: [
     'Fadely is a business name operated by Borko Petrevski in Prilep, North Macedonia, pending formal company registration. These Terms of Service ("Terms") govern your use of fadely.app and your preliminary interactions with Fadely.',
-    "A proposal, order form, development agreement, maintenance agreement, or other written contract accepted by Fadely and a client governs the actual delivery of a custom application. If that agreement conflicts with these Terms, the written client agreement controls for that project.",
+    "An accepted proposal, order form, email or message instruction, development or maintenance agreement, or another documented arrangement may govern delivery of a custom application. If an app-specific or project-specific arrangement conflicts with these public website Terms, that documented arrangement controls for the project.",
   ],
   sections: [
     {
@@ -111,11 +111,11 @@ export const fadelyTerms: LegalDocument = {
       ],
     },
     {
-      heading: "2. Enquiries and client agreements",
+      heading: "2. Enquiries and client arrangements",
       bullets: [
         "You must provide accurate contact and project information and have authority to act for any business you represent.",
-        "A project begins only after the parties agree its scope, fees, responsibilities, timeline, intellectual-property treatment, data-protection terms, and any ongoing hosting or support arrangement in writing.",
-        "Unless a written agreement says otherwise, recurring website prices exclude third-party charges, taxes, app-store fees, custom work outside the agreed scope, and other separately identified costs.",
+        "A project may begin after the client accepts a proposal or instructs Fadely to proceed through email, messages, an order form, or another durable record. The documented arrangement should identify the agreed scope, fees, responsibilities, timeline, intellectual-property treatment, data-protection roles, and ongoing hosting or support.",
+        "Unless an app-specific or project-specific arrangement says otherwise, recurring website prices exclude third-party charges, taxes, app-store fees, custom work outside the agreed scope, and other separately identified costs.",
       ],
     },
     {
@@ -129,7 +129,7 @@ export const fadelyTerms: LegalDocument = {
     {
       heading: "4. Intellectual property",
       paragraphs: [
-        "Borko Petrevski, operating as Fadely, retains ownership of fadely.app, the Fadely brand, reusable software, libraries, tools, designs, know-how, and other pre-existing or generally applicable technology. Clients retain their own branding, business content, and materials. Ownership and license rights for project-specific deliverables are determined by the applicable written client agreement.",
+        "Borko Petrevski, operating as Fadely, retains ownership of fadely.app, the Fadely brand, reusable software, libraries, tools, designs, know-how, and other pre-existing or generally applicable technology. Clients retain their own branding, business content, and materials. Ownership and license rights for project-specific deliverables are determined by the applicable app-specific terms or documented project arrangement.",
         "These Terms give you a limited, revocable, non-transferable right to use the public website for its intended informational and business-enquiry purposes. They do not transfer any software, trademark, design, or other intellectual-property right.",
       ],
     },
@@ -142,15 +142,15 @@ export const fadelyTerms: LegalDocument = {
     {
       heading: "6. Availability and disclaimers",
       paragraphs: [
-        "We may maintain, change, suspend, or discontinue the public website or a feature. We take reasonable care with website information but do not promise that it will always be complete, current, uninterrupted, secure, or error-free. Any warranty or service level for a client project must be stated in the applicable written agreement.",
-        "Client barbershops, not Fadely, provide barbering services, set their service policies, manage appointments, and are responsible for their relationships with end customers unless a written agreement expressly states otherwise.",
+        "We may maintain, change, suspend, or discontinue the public website or a feature. We take reasonable care with website information but do not promise that it will always be complete, current, uninterrupted, secure, or error-free. Any warranty or service level for a client project must be stated in the applicable app-specific terms or documented project arrangement.",
+        "Client barbershops, not Fadely, provide barbering services, set their prices and venue policies, and are responsible for in-person services. Responsibility for operation of a custom app and its data is described in that app's specific privacy policy and terms.",
       ],
     },
     {
       heading: "7. Liability",
       paragraphs: [
         "To the maximum extent permitted by law, Fadely and Borko Petrevski are not liable under these public website Terms for indirect or unforeseeable loss, lost profits, lost opportunities, or losses caused by inaccurate information you provide, third-party services outside our reasonable control, or events outside our reasonable control.",
-        "Nothing in these Terms excludes liability for fraud, intent, gross negligence, death or personal injury caused by negligence, or any consumer right or liability that cannot legally be excluded or limited. Liability relating to a contracted client project is governed by its written agreement.",
+        "Nothing in these Terms excludes liability for fraud, intent, gross negligence, death or personal injury caused by negligence, or any consumer right or liability that cannot legally be excluded or limited. Liability relating to a custom-app project is governed by its app-specific terms or documented project arrangement.",
       ],
     },
     {
