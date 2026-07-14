@@ -1,12 +1,4 @@
 import { cn } from "@/lib/utils";
-import {
-  IconBrandFacebook,
-  IconBrandGithub,
-  IconBrandInstagram,
-  IconBrandLinkedin,
-  IconBrandTwitter,
-} from "@tabler/icons-react";
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { Logo } from "./logo";
@@ -14,49 +6,41 @@ import { Logo } from "./logo";
 export function Footer() {
   const pages = [
     {
-      title: "Products",
-      href: "#",
-    },
-    {
-      title: "Studio",
-      href: "#",
-    },
-    {
-      title: "Clients",
-      href: "#",
+      title: "Features",
+      href: "/#solution",
     },
     {
       title: "Pricing",
-      href: "#",
+      href: "/#pricing",
     },
     {
-      title: "Blog",
-      href: "#",
+      title: "Contact",
+      href: "/contact",
     },
     {
       title: "Privacy",
-      href: "#",
+      href: "/legal/art-barbershop/privacy-policy",
     },
     {
       title: "Terms",
-      href: "#",
+      href: "/legal/art-barbershop/terms-of-service",
     },
   ];
 
   return (
-    <div className="border-t border-neutral-100 dark:border-white/[0.1] px-8 py-20 bg-white dark:bg-neutral-950 w-full relative overflow-hidden">
-      <div className="max-w-7xl mx-auto text-sm text-neutral-500  justify-between items-start  md:px-8">
-        <div className="flex flex-col items-center justify-center w-full relative">
-          <div className="mr-0 md:mr-4  md:flex mb-4">
-            <Logo  />
+    <footer className="relative w-full overflow-hidden border-t border-border bg-background px-8 py-20">
+      <div className="mx-auto max-w-7xl items-start justify-between text-sm text-muted-foreground md:px-8">
+        <div className="relative flex w-full flex-col items-center justify-center">
+          <div className="mb-4 md:mr-4 md:flex">
+            <Logo />
           </div>
 
-          <ul className="transition-colors flex sm:flex-row flex-col hover:text-text-neutral-800 text-neutral-600 dark:text-neutral-300 list-none gap-4">
-            {pages.map((page, idx) => (
-              <li key={"pages" + idx} className="list-none">
+          <ul className="flex list-none flex-col gap-4 sm:flex-row">
+            {pages.map((page) => (
+              <li key={page.title} className="list-none">
                 <Link
-                  className="transition-colors hover:text-text-neutral-800 "
-                  href="/products"
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                  href={page.href}
                 >
                   {page.title}
                 </Link>
@@ -66,30 +50,16 @@ export function Footer() {
 
           <GridLineHorizontal className="max-w-7xl mx-auto mt-8" />
         </div>
-        <div className="flex sm:flex-row flex-col justify-between mt-8 items-center w-full">
-          <p className="text-neutral-500 dark:text-neutral-400 mb-8 sm:mb-0">
-            &copy; fadely 2025 - Website still under construction
+        <div className="mt-8 flex w-full flex-col items-center justify-between sm:flex-row">
+          <p className="mb-8 text-muted-foreground sm:mb-0">
+            &copy; fadely 2026
           </p>
-          <div className="flex gap-4">
-            <Link href="#">
-              <IconBrandTwitter className="h-6 w-6 text-neutral-500 dark:text-neutral-300" />
-            </Link>
-            <Link href="#">
-              <IconBrandLinkedin className="h-6 w-6 text-neutral-500 dark:text-neutral-300" />
-            </Link>
-            <Link href="#">
-              <IconBrandGithub className="h-6 w-6 text-neutral-500 dark:text-neutral-300" />
-            </Link>
-            <Link href="#">
-              <IconBrandFacebook className="h-6 w-6 text-neutral-500 dark:text-neutral-300" />
-            </Link>
-            <Link href="#">
-              <IconBrandInstagram className="h-6 w-6 text-neutral-500 dark:text-neutral-300" />
-            </Link>
-          </div>
+          <p className="text-center text-muted-foreground sm:text-right">
+            Custom-built apps for modern barbershops.
+          </p>
         </div>
       </div>
-    </div>
+    </footer>
   );
 }
 
@@ -127,4 +97,3 @@ const GridLineHorizontal = ({
     ></div>
   );
 };
-

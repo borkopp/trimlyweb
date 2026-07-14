@@ -10,7 +10,10 @@ import { motion } from "motion/react";
 
 export function PricingWithSwitchAndAddOn() {
   return (
-    <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-between border border-neutral-200 pt-10 md:pt-20 dark:border-neutral-800">
+    <div
+      className="relative mx-auto flex max-w-7xl scroll-mt-24 flex-col items-center justify-between border border-neutral-200 pt-10 md:pt-20 dark:border-neutral-800"
+      id="pricing"
+    >
       <Icon className="absolute -left-4 -top-4" />
       <Icon className="absolute -right-4 -top-4" />
       <Icon className="absolute -bottom-4 -left-4" />

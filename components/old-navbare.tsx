@@ -57,8 +57,8 @@ export default function Navbar() {
   };
 
   const navItems = [
-    { href: "#solution", label: "Features" },
-    { href: "#pricing", label: "Pricing" },
+    { href: "/#solution", label: "Features" },
+    { href: "/#pricing", label: "Pricing" },
     { href: "/contact", label: "Contact" },
   ];
 
