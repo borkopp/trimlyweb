@@ -32,7 +32,7 @@ export const artBarbershopPrivacyPolicy: LegalDocument = {
     {
       heading: "3. Why data is used",
       bullets: [
-        "To verify accounts, provide available appointment times, create and manage bookings, show appointment history, and provide owner and staff tools. This is necessary to provide the Fadely-operated app and take the steps you request to arrange an appointment with ART.",
+        "To verify accounts, provide available appointment times, create and manage bookings, show appointment history, and provide owner and staff tools. This is necessary to provide the Fadely-operated app and take the steps you request to arrange an appointment with ART, including disclosing the selected booking details to authorized ART staff at your request.",
         "To send verification messages and, with device permission, appointment confirmations, reminders, changes, and cancellations.",
         "To prevent abuse, protect accounts, troubleshoot problems, maintain reliable operations, and improve shop and app functionality based on legitimate operational and security interests.",
         "To meet accounting, tax, consumer-protection, data-protection, or other legal obligations and to establish or defend legal claims.",
