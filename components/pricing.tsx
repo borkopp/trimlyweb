@@ -7,6 +7,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { motion } from "motion/react";
+import Link from "next/link";
 
 export function PricingWithSwitchAndAddOn() {
   return (
@@ -47,7 +48,7 @@ export function Pricing() {
             className={cn(
               "flex h-full flex-col justify-between bg-neutral-100 px-6 py-8 sm:mx-8 lg:mx-0 dark:bg-neutral-950",
               tier.featured &&
-                "relative bg-white shadow-2xl dark:bg-neutral-900"
+                "relative bg-white shadow-2xl dark:bg-neutral-900",
             )}
           >
             <div className="">
@@ -55,7 +56,7 @@ export function Pricing() {
                 id={tier.id}
                 className={cn(
                   "text-base font-semibold leading-7 text-neutral-700 dark:text-neutral-200",
-                  tier.featured && "text-black dark:text-white"
+                  tier.featured && "text-black dark:text-white",
                 )}
               >
                 {tier.name}
@@ -72,7 +73,7 @@ export function Pricing() {
                   key={active}
                   className={cn(
                     "inline-block text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-200",
-                    tier.featured && "text-black dark:text-white"
+                    tier.featured && "text-black dark:text-white",
                   )}
                 >
                   {active === "monthly" ? tier.priceMonthly : tier.priceYearly}
@@ -81,7 +82,7 @@ export function Pricing() {
               <p
                 className={cn(
                   "mt-6 h-12 text-sm leading-7 text-neutral-600 md:h-12 xl:h-12 dark:text-neutral-300",
-                  tier.featured && "text-neutral-600 dark:text-neutral-300"
+                  tier.featured && "text-neutral-600 dark:text-neutral-300",
                 )}
               >
                 {tier.description}
@@ -90,7 +91,7 @@ export function Pricing() {
                 role="list"
                 className={cn(
                   "mt-2 space-y-3 text-sm leading-6 text-neutral-600 sm:mt-4 dark:text-neutral-300",
-                  tier.featured && "text-neutral-600 dark:text-neutral-300"
+                  tier.featured && "text-neutral-600 dark:text-neutral-300",
                 )}
               >
                 {tier.features.map((feature) => (
@@ -98,7 +99,7 @@ export function Pricing() {
                     <IconCircleCheckFilled
                       className={cn(
                         "h-6 w-5 flex-none text-neutral-700 dark:text-neutral-400",
-                        tier.featured && "text-black dark:text-white"
+                        tier.featured && "text-black dark:text-white",
                       )}
                       aria-hidden="true"
                     />
@@ -108,15 +109,15 @@ export function Pricing() {
               </ul>
             </div>
             <div>
-              <button
-                onClick={tier.onClick}
+              <Link
+                href={tier.href}
                 aria-describedby={tier.id}
                 className={cn(
-                  "mt-8 block w-full rounded-lg bg-gradient-to-b from-primary to-primary/80 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-[0px_2px_0px_0px_rgba(255,255,255,0.5)_inset] transition duration-200 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10"
+                  "mt-8 block w-full rounded-lg bg-gradient-to-b from-primary to-primary/80 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-[0px_2px_0px_0px_rgba(255,255,255,0.5)_inset] transition duration-200 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10",
                 )}
               >
                 {tier.cta}
-              </button>
+              </Link>
             </div>
           </div>
         ))}
@@ -205,7 +206,7 @@ const GridLineHorizontal = ({
         "[mask-composite:exclude]",
         "z-30",
         "dark:bg-[linear-gradient(to_right,var(--color-dark),var(--color-dark)_50%,transparent_0,transparent)]",
-        className
+        className,
       )}
     ></div>
   );
@@ -240,7 +241,7 @@ const GridLineVertical = ({
         "[mask-composite:exclude]",
         "z-30",
         "dark:bg-[linear-gradient(to_bottom,var(--color-dark),var(--color-dark)_50%,transparent_0,transparent)]",
-        className
+        className,
       )}
     ></div>
   );
@@ -256,39 +257,39 @@ export type Tier = {
   features: string[];
   featured: boolean;
   cta: string;
-  onClick: () => void;
 };
 
 export const tiers: Tier[] = [
   {
     name: "Basic",
     id: "tier-basic",
-    href: "#",
-    priceMonthly: "$79/mo",
-    priceYearly: "$79/yr",
+    href: "/contact",
+    priceMonthly: "€59/month",
+    priceYearly: "€59/month",
     description: "Best for getting started with digital presence",
     features: [
       "iOS App",
       "Android App",
       "Appointment scheduler & reminders",
       "Gallery",
+      "Up to 3 barbers",
     ],
     featured: false,
     cta: "Get Started",
-    onClick: () => {},
   },
   {
     name: "Pro",
     id: "tier-pro",
-    href: "#",
-    priceMonthly: "$129/mo",
-    priceYearly: "$129/yr",
+    href: "/contact",
+    priceMonthly: "€99/month",
+    priceYearly: "€99/month",
     description: "Elevate your barbershop to the next level",
     features: [
       "iOS App",
       "Android App",
       "Appointment scheduler & reminders",
       "Gallery",
+      "Unlimited barbers",
       "Dashboard",
       "Analytics",
       "Rating system",
@@ -297,13 +298,12 @@ export const tiers: Tier[] = [
     ],
     featured: true,
     cta: "Get Started",
-    onClick: () => {},
   },
 
   {
     name: "One-time payment",
     id: "tier-enterprise",
-    href: "#",
+    href: "/contact",
     priceMonthly: "Contact Us",
     priceYearly: "Contact Us",
     description: "Best for the big dogs in the industry",
@@ -320,7 +320,6 @@ export const tiers: Tier[] = [
     ],
     featured: false,
     cta: "Contact Us",
-    onClick: () => {},
   },
 ];
 
@@ -334,7 +333,7 @@ export const Icon = ({ className, ...rest }: React.SVGProps<SVGSVGElement>) => {
       stroke="currentColor"
       className={cn(
         "h-4 w-4 text-neutral-400 md:h-8 md:w-8 dark:text-neutral-600",
-        className
+        className,
       )}
       {...rest}
     >

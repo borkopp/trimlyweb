@@ -1,8 +1,8 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { IconMessageCircleQuestion } from "@tabler/icons-react";
 import React from "react";
 import { HiArrowRight } from "react-icons/hi2";
+import Link from "next/link";
 
 export function CTAWithDashedGridLines() {
   return (
@@ -23,19 +23,15 @@ export function CTAWithDashedGridLines() {
         </p>
 
         <div>
-          <div className="flex items-start sm:items-center flex-col sm:flex-row sm:gap-4">
-            <button className="mt-8 flex space-x-2 items-center group text-base px-4 py-2 rounded-lg bg-gradient-to-b from-primary to-primary/80 text-white shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset]">
+          <div className="flex flex-col items-start sm:flex-row sm:items-center sm:gap-4">
+            <Link
+              href="/contact"
+              className="group mt-8 flex items-center space-x-2 rounded-lg bg-gradient-to-b from-primary to-primary/80 px-4 py-2 text-base text-white shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset]"
+            >
               <span>Get started</span>
               <HiArrowRight className="text-white group-hover:translate-x-1 stroke-[1px] h-3 w-3 mt-0.5 transition-transform duration-200" />
-            </button>
-            <button className="mt-8 flex space-x-2 items-center group text-base px-4 py-2 rounded-lg  text-black dark:text-white border border-neutral-200 dark:border-neutral-800 shadow-[0px_2px_0px_0px_rgba(255,255,255,0.3)_inset]">
-              <span>Book a Call</span>
-              <IconMessageCircleQuestion className="text-black dark:text-white group-hover:translate-x-1 stroke-[1px] h-3 w-3 mt-0.5 transition-transform duration-200" />
-            </button>
+            </Link>
           </div>
-          <p className="text-left text-neutral-500 mt-6 font-montserrat dark:text-neutral-200 text-xl md:text-2xl  font-medium">
-            Coming soon
-          </p>
         </div>
       </div>
       <div className="border-t md:border-t-0 md:border-l border-dashed p-8 md:p-14">
@@ -86,7 +82,7 @@ const GridLineHorizontal = ({
         "[mask-composite:exclude]",
         "z-30",
         "dark:bg-[linear-gradient(to_right,var(--color-dark),var(--color-dark)_50%,transparent_0,transparent)]",
-        className
+        className,
       )}
     ></div>
   );
@@ -121,7 +117,7 @@ const GridLineVertical = ({
         "[mask-composite:exclude]",
         "z-30",
         "dark:bg-[linear-gradient(to_bottom,var(--color-dark),var(--color-dark)_50%,transparent_0,transparent)]",
-        className
+        className,
       )}
     ></div>
   );

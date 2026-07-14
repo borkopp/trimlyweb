@@ -1,8 +1,7 @@
 import React from "react";
 import WordPullUp from "./ui/word-pull-up";
 import Link from "next/link";
-import {Button} from "./ui/button";
-import {CalendarScript} from "./CalendarScript";
+import { Button } from "./ui/button";
 export function Hero() {
   return (
     <div className="h-[35rem] w-full rounded-md bg-background p-10 lg:p-20 relative flex flex-col items-center justify-center antialiased">
@@ -20,8 +19,13 @@ export function Hero() {
           className="relative text-5xl md:text-6xl tracking-normal lg:text-7xl text-center font-lato font-semibold"
           words="The upgrade your barbershop needs"
         />
-        <p data-aos="fade-up" data-aos-delay="300" className="text-neutral-500 text-[1.2rem] max-w-xl mx-auto mt-10 text-center font-inter relative">
-          Empowering barbershops to shine with their own branded app. <br /> Simplify scheduling and attract more clients!
+        <p
+          data-aos="fade-up"
+          data-aos-delay="300"
+          className="text-neutral-500 text-[1.2rem] max-w-xl mx-auto mt-10 text-center font-inter relative"
+        >
+          Empowering barbershops to shine with their own branded app. <br />{" "}
+          Simplify scheduling and attract more clients!
         </p>
         <div className="flex flex-row gap-4 justify-center mt-12">
           {/* <button data-aos="fade-up" data-aos-delay="300" data-aos-duration="1000" className="herobutton font-inter font-semibold">
@@ -67,18 +71,14 @@ export function Hero() {
             </Button>
           </Link>
           <Button
-            data-aos="fade-up"
-            data-aos-delay="400"
+            asChild
             variant="outline"
             className="px-8 bg-secondary hover:bg-secondary/80"
-            data-cal-link="fadely/30min"
-            data-cal-namespace="30min"
-            data-cal-config='{"layout":"month_view"}'>
-            Book a call
+          >
+            <Link href="/contact">Get started</Link>
           </Button>
         </div>
       </div>
-      <CalendarScript />
     </div>
   );
 }

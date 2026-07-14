@@ -79,10 +79,10 @@ export function HeroSectionWithBeamsAndGrid() {
           Learn more
         </Link>
         <Link
-          href="#"
+          href="/contact"
           className="shadow-input group relative z-20 flex h-10 w-full cursor-pointer items-center justify-center space-x-2 rounded-lg bg-white p-px px-4 py-2 text-sm font-semibold leading-6 text-black no-underline transition duration-200 hover:-translate-y-0.5 sm:w-52 dark:bg-neutral-800 dark:text-white"
         >
-          Coming Soon
+          Get started
         </Link>
       </div>
       <div
@@ -233,7 +233,7 @@ const CollisionMechanism = React.forwardRef<
         }}
         className={cn(
           "absolute left-96 top-20 m-auto h-14 w-px rounded-full bg-gradient-to-t from-orange-500 via-yellow-500 to-transparent",
-          beamOptions.className
+          beamOptions.className,
         )}
       />
       <AnimatePresence>
@@ -315,7 +315,7 @@ const GridLineVertical = ({
         "[mask-composite:exclude]",
         "z-30",
         "dark:bg-[linear-gradient(to_bottom,var(--color-dark),var(--color-dark)_50%,transparent_0,transparent)]",
-        className
+        className,
       )}
     ></div>
   );

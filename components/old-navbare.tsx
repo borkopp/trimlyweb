@@ -7,7 +7,6 @@ import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/client";
 import { signOut } from "@/app/(auth)/actions";
 import { Menu, X, ArrowRightIcon } from "lucide-react";
-import { CalendarScript } from "./CalendarScript";
 import InteractiveHoverButton from "./ui/interactive-hover-button";
 import { ModeToggle } from "./theme-toggle";
 import Image from "next/image";
@@ -40,7 +39,7 @@ export default function Navbar() {
 
   const handleNavigation = (
     e: React.MouseEvent<HTMLAnchorElement>,
-    path: string
+    path: string,
   ) => {
     e.preventDefault();
     if (pathname !== "/") {
@@ -65,10 +64,11 @@ export default function Navbar() {
   return (
     <div
       className={`fixed z-50 transition-all duration-500 ease-in-out transform left-1/2 -translate-x-1/2
-      ${isScrolled
+      ${
+        isScrolled
           ? "h-14 w-[40%]  rounded-full dark:bg-black/70 bg-white backdrop-blur-lg border border-black/10 shadow-lg dark:border-white/10 top-5 px-6"
           : "h-16 w-full top-0 backdrop-blur-none bg-transparent px-4 sm:px-8 md:px-16 lg:px-72"
-        }
+      }
       origin-center`}
     >
       <div className="w-full h-full flex items-center justify-between gap-4 transition-all duration-500 ease-in-out relative">
@@ -104,10 +104,11 @@ export default function Navbar() {
               <Button
                 variant="ghost"
                 size="sm"
-                className={`text-sm font-semibold ${pathname === item.href
+                className={`text-sm font-semibold ${
+                  pathname === item.href
                     ? "text-primary"
                     : "text-neutral-500 hover:text-primary"
-                  }`}
+                }`}
               >
                 {item.label}
               </Button>
@@ -121,15 +122,12 @@ export default function Navbar() {
         >
           <ModeToggle />
           <Button
-            disabled
+            asChild
             size="sm"
             variant="outline"
             className="px-3 text-xs font-semibold"
-            data-cal-link="fadely/30min"
-            data-cal-namespace="30min"
-            data-cal-config='{"layout":"month_view"}'
           >
-            Coming soon
+            <Link href="/contact">Get started</Link>
           </Button>
         </div>
 
@@ -157,19 +155,24 @@ export default function Navbar() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className={`text-sm w-full justify-start mb-2 ${pathname === item.href
+                  className={`text-sm w-full justify-start mb-2 ${
+                    pathname === item.href
                       ? "text-primary"
                       : "text-neutral-500 hover:text-primary"
-                    }`}
+                  }`}
                 >
                   {item.label}
                 </Button>
               </Link>
             ))}
+            <Button asChild size="sm" className="w-full">
+              <Link href="/contact" onClick={() => setIsMenuOpen(false)}>
+                Get started
+              </Link>
+            </Button>
           </div>
         )}
       </div>
-      <CalendarScript />
     </div>
   );
 }
