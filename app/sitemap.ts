@@ -15,16 +15,34 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: "https://fadely.app/legal/art-barbershop/privacy-policy",
+      url: "https://fadely.app/privacy-policy",
       lastModified: new Date("2026-07-14"),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     },
     {
-      url: "https://fadely.app/legal/art-barbershop/terms-of-service",
+      url: "https://fadely.app/terms",
       lastModified: new Date("2026-07-14"),
       changeFrequency: "monthly" as const,
       priority: 0.6,
+    },
+    {
+      url: "https://fadely.app/apps/art-barbershop/privacy-policy",
+      lastModified: new Date("2026-07-14"),
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    },
+    {
+      url: "https://fadely.app/apps/art-barbershop/terms",
+      lastModified: new Date("2026-07-14"),
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    },
+    {
+      url: "https://fadely.app/apps/art-barbershop/account-deletion",
+      lastModified: new Date("2026-07-14"),
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
     },
   ];
 }

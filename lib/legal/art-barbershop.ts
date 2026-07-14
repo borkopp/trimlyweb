@@ -1,131 +1,107 @@
-export type LegalSection = {
-  heading: string;
-  paragraphs?: string[];
-  bullets?: string[];
-};
-
-export type LegalDocument = {
-  title: string;
-  eyebrow: string;
-  summary: string;
-  effectiveDate: string;
-  introduction: string[];
-  sections: LegalSection[];
-  contact: {
-    heading: string;
-    text: string;
-    email: string;
-    authority?: {
-      label: string;
-      href: string;
-    };
-  };
-};
+import type { LegalDocument } from "@/lib/legal/types";
 
 export const artBarbershopPrivacyPolicy: LegalDocument = {
   title: "Privacy Policy",
-  eyebrow: "ART Barbershop legal",
+  eyebrow: "ART Barbershop app legal",
   summary:
-    "How ART Barbershop collects, uses, stores, and protects personal data in its mobile booking application.",
+    "How personal data is handled in the ART Barbershop mobile booking application.",
   effectiveDate: "Effective and last updated: 14 July 2026",
   introduction: [
-    'ART Barbershop ("we", "us", or "our") operates the ART Barbershop mobile application and booking service. This Privacy Policy explains what personal data we process, why we process it, how long we keep it, and the choices and rights available to you.',
-    "ART Barbershop is the controller of personal data used to provide salon and booking services. The technology providers named below process data on our behalf where necessary to operate the service.",
+    'ART Barbershop ("ART", "we", "us", or "our") operates the barbershop and determines why customer, booking, staff, and shop information is used. ART is the controller of that personal data.',
+    "Fadely developed, licenses, hosts, and maintains the ART Barbershop application for ART. Fadely is a business name operated by Borko Petrevski in Prilep, North Macedonia, pending formal company registration. Borko Petrevski is the developer identified for the application, and Fadely normally processes app data on ART's instructions as its technology provider.",
   ],
   sections: [
     {
-      heading: "1. Scope",
+      heading: "1. Scope and responsibilities",
       paragraphs: [
-        "This policy applies when you browse the app, create or use an account, book or manage appointments, upload an image, submit a rating, receive notifications, contact support, or use staff and owner tools. It does not cover third-party websites or apps that you open from the service.",
+        "This policy applies when you create or use an account, view services and availability, book or manage appointments, upload an image, submit a rating, receive notifications, contact support, or use authorized staff tools in the ART Barbershop app.",
+        "ART controls the customer relationship, appointment purposes, barber services, staff access, and shop records. Fadely provides and secures the technology under ART's instructions. Where Fadely must use limited business, support, or security records for its own legal obligations or to establish or defend a claim, it is responsible for that limited use.",
       ],
     },
     {
-      heading: "2. Data we collect",
+      heading: "2. Data handled by the app",
       bullets: [
-        "Account and contact data: your name, verified phone number, account role, verification time, and, if you provide them, an email address and profile photo.",
-        "Booking data: selected barber and services, date and time, price and duration, appointment status, booking notes, cancellation notes, and rescheduling history reflected in the appointment record.",
-        "Staff and shop data: barber profile, title, biography, service assignments, working hours, breaks, time off and optional reason, schedule changes, and operational appointment analytics.",
-        "User content: profile or service images that authorized users choose to upload and ratings connected to completed appointments.",
-        "Notification data: notification preferences and an Expo push token associated with the signed-in account and device.",
-        "Security and technical data: authentication sessions, SMS verification events, short-lived phone-based rate-limit records, and basic request information processed by our hosting providers to keep the service reliable and secure.",
-        "Local device data: your language preference and authentication or notification credentials stored securely on your device. We do not receive your address book, microphone recordings, camera feed, or precise device location.",
+        "Account and contact data: your name, verified phone number, account role, verification time, and any email address or profile image you choose to provide.",
+        "Booking data: selected barber and services, appointment date and time, displayed price and duration, status, booking or cancellation notes, and rescheduling information.",
+        "Staff and shop data: barber profiles, service assignments, working hours, breaks, time off, schedules, shop content, and operational appointment analytics.",
+        "User content: profile or service images uploaded by authorized users and ratings associated with completed appointments.",
+        "Notification and technical data: notification preferences, Expo push tokens, authentication sessions, SMS verification events, security and rate-limit records, IP or request information, device or app version information, and diagnostic records needed to operate and secure the service.",
+        "Local device data: language preferences and authentication or notification credentials stored on your device. The app does not receive your address book, microphone recordings, camera feed, or precise device location unless a future feature clearly requests that access and this policy is updated.",
       ],
     },
     {
-      heading: "3. How we use data and our legal bases",
+      heading: "3. Why data is used",
       bullets: [
-        "To create and secure your account, verify your phone number, provide available times, make and manage bookings, show appointment history, and provide staff tools. This is necessary to perform our service agreement or take steps you request before a booking.",
-        "To send appointment confirmations, changes, cancellations, and optional reminders. Push notifications are used only after device permission is granted, and you can disable them in Settings or your device settings.",
-        "To prevent misuse, protect accounts, troubleshoot problems, maintain records, and improve salon operations. We rely on our legitimate interests in operating a safe and effective booking service, balanced against your rights.",
-        "To keep records or respond to authorities when required by tax, accounting, consumer-protection, data-protection, or other applicable law.",
-        "Where processing depends on consent, such as optional notifications or an optional upload, you may withdraw that consent at any time. Withdrawal does not affect processing already carried out lawfully.",
+        "To verify accounts, provide available appointment times, create and manage bookings, show appointment history, and provide owner and staff tools. This supports the service you request and ART's agreement with you.",
+        "To send verification messages and, with device permission, appointment confirmations, reminders, changes, and cancellations.",
+        "To prevent abuse, protect accounts, troubleshoot problems, maintain reliable operations, and improve shop and app functionality based on legitimate operational and security interests.",
+        "To meet accounting, tax, consumer-protection, data-protection, or other legal obligations and to establish or defend legal claims.",
+        "Where processing relies on consent, you may withdraw it at any time without affecting earlier lawful processing.",
       ],
     },
     {
-      heading: "4. Who can see data and service providers",
+      heading: "4. Access, service providers, and sharing",
       paragraphs: [
-        "Authorized ART Barbershop owners and barbers can see the client and appointment details reasonably needed to provide and manage the booked service. We do not sell personal data and do not use it for third-party behavioral advertising.",
-        "We use selected providers to run the service. They may process only the data needed for their role and are expected to protect it consistently with applicable law and our instructions.",
+        "Authorized ART owners and barbers can see the client and appointment details reasonably needed to provide and manage services. ART and Fadely do not sell app personal data or use it for third-party behavioral advertising.",
       ],
       bullets: [
-        "Convex provides the application backend, database, authentication infrastructure, and scheduled jobs.",
-        "Twilio sends and verifies one-time SMS codes and receives the phone number and verification request needed for that purpose.",
-        "Expo provides push-notification delivery and receives device push tokens and notification delivery data.",
+        "Fadely, operated by Borko Petrevski, provides the licensed application, technical support, maintenance, and infrastructure management for ART.",
+        "Convex provides backend, database, authentication infrastructure, and scheduled processing.",
+        "Twilio sends and verifies one-time SMS codes using the phone number and verification request needed for that purpose.",
+        "Expo provides push-notification delivery using device push tokens and related delivery information.",
         "An S3-compatible object-storage provider stores uploaded profile and service images.",
-        "Professional advisers, authorities, or a successor operator may receive limited data where legally required or necessary to protect rights, complete a business transfer, or resolve a claim.",
+        "Formspree processes requests submitted through the public account-deletion form.",
+        "Professional advisers, authorities, courts, or a successor operator may receive limited data where legally required or reasonably necessary to protect rights, resolve a claim, or complete a lawful business transfer.",
       ],
     },
     {
-      heading: "5. Images and information visible to others",
-      paragraphs: [
-        "Barber profiles, service details, service images, prices, availability, and aggregated ratings are shown to app users. Uploaded profile and service images are stored at public object URLs so they can be displayed in the app. Do not upload confidential, unlawful, or sensitive material. Client booking notes and contact details are not public, but are visible to authorized staff who manage the appointment.",
-      ],
-    },
-    {
-      heading: "6. International processing",
-      paragraphs: [
-        "Some technology providers may process data outside North Macedonia or the European Economic Area. Where applicable law requires it, we use contractual or other lawful safeguards intended to protect data during these transfers. You may contact us for more information about the safeguards relevant to your data.",
-      ],
-    },
-    {
-      heading: "7. Retention and deletion",
+      heading: "5. Retention and account deletion",
       bullets: [
-        "Account and profile data are kept while the account is active and then deleted or anonymized after a verified deletion request, normally within 30 days, unless a longer period is legally required.",
-        "Appointment, transaction, and operational records are kept for as long as reasonably needed to provide the service, resolve disputes, prevent abuse, and meet accounting, tax, consumer, or other legal recordkeeping obligations. When direct identification is no longer needed, we delete or anonymize it where feasible.",
-        "Push tokens are removed when you securely sign out, disable the registration, or request account deletion; invalid tokens are also removed when reported by the push provider.",
-        "Phone-specific SMS rate-limit records are automatically removed after they become stale. Authentication and security records are retained only as needed to secure the service and meet legal obligations.",
-        "Uploaded images are retained while used by the relevant profile or service and are deleted or made inaccessible as part of the applicable deletion process, subject to backups and legal retention needs.",
+        "Account and profile information is kept while the account is active and is then deleted or anonymized after a verified deletion request, normally within 30 days, unless limited retention is legally required.",
+        "Appointment and operational records are kept as long as reasonably needed to provide services, resolve disputes, prevent abuse, and satisfy ART's accounting, tax, consumer, or other recordkeeping duties. Direct identifiers are removed or anonymized when they are no longer needed where feasible.",
+        "Push tokens, uploaded images, and other account-linked information are deleted or made inaccessible through the applicable deletion process, subject to limited backups and lawful retention.",
+        "Security, verification, and rate-limit records are retained only for the period reasonably needed to secure the service or meet legal obligations.",
+      ],
+      paragraphs: [
+        "You may request deletion through the ART Barbershop account-deletion page or by emailing the address below. We may verify your identity before completing a request and will explain if a limited record must be retained.",
       ],
     },
     {
-      heading: "8. Security",
+      heading: "6. Visibility and international processing",
       paragraphs: [
-        "We use access controls, verified phone authentication, encrypted network connections, restricted backend functions, short-lived signed upload links, and provider security controls. No system can be guaranteed completely secure. Please protect access to your phone and tell us promptly if you believe your account has been misused.",
+        "Barber profiles, service details, images, prices, availability, and aggregated ratings may be visible to app users. Client contact details and booking notes are not public but are visible to authorized ART staff managing the appointment.",
+        "Some providers may process information outside North Macedonia or the European Economic Area. Where applicable law requires it, ART and Fadely rely on contractual or other lawful safeguards intended to protect personal data during those transfers.",
       ],
     },
     {
-      heading: "9. Your choices and rights",
+      heading: "7. Security",
       paragraphs: [
-        "Depending on applicable law, including the Law on Personal Data Protection of the Republic of North Macedonia and, where applicable, the GDPR, you may have rights to access, correct, delete, restrict, or receive a copy of your data, and to object to certain processing. You may also withdraw consent and complain to the competent data-protection authority.",
+        "The service uses access controls, verified phone authentication, encrypted network connections, restricted backend functions, short-lived signed upload links, backups, and provider security controls. No system can guarantee absolute security. Protect access to your phone and verification codes and report suspected misuse promptly.",
+      ],
+    },
+    {
+      heading: "8. Your choices and rights",
+      paragraphs: [
+        "Depending on applicable law, including the Law on Personal Data Protection of the Republic of North Macedonia and, where applicable, the GDPR, you may request access, correction, deletion, restriction, or a copy of your data, object to certain processing, withdraw consent, or complain to a competent supervisory authority.",
       ],
       bullets: [
-        "Edit your name and profile in Settings.",
-        "Change reminder preferences or disable push notifications in Settings and in device settings.",
-        "Start account deletion from Settings > Delete account. We may verify your identity and will tell you if limited records must be retained by law.",
-        "Email us to exercise another privacy right. We may ask for reasonable verification and will respond within the period required by applicable law.",
+        "Edit available profile information in the app.",
+        "Change reminder preferences or disable push notifications in the app and device settings.",
+        "Use the public account-deletion page or email us to request account and associated data deletion.",
+        "Email us to exercise another privacy right. Reasonable identity verification may be required.",
       ],
     },
     {
-      heading: "10. Children, automated decisions, and changes",
+      heading: "9. Children and policy changes",
       paragraphs: [
-        "The service is not directed to children under 16. A person under 16 should use it only with authorization from a parent or legal guardian. We do not make decisions producing legal or similarly significant effects based solely on automated processing.",
-        "We may update this policy when the app, our providers, or legal requirements change. We will update the date above and provide additional notice when a change materially affects your rights or how we use personal data.",
+        "The app is not directed to children under 16. A person under 16 should use it only with authorization and supervision from a parent or legal guardian. The service does not make decisions producing legal or similarly significant effects based solely on automated processing.",
+        "This policy may be updated when the app, providers, or legal requirements change. The date above will be revised and additional notice will be provided where a change materially affects your rights or how data is used.",
       ],
     },
   ],
   contact: {
-    heading: "11. Contact and complaints",
-    text: "Contact ART Barbershop with privacy questions or requests. ART Barbershop is based in the Republic of North Macedonia. You may also lodge a complaint with the Agency for Personal Data Protection or another supervisory authority competent for where you live.",
+    heading: "10. Contact and complaints",
+    text: "Privacy requests for the ART Barbershop app may be sent to ART through its technology provider, Fadely, operated by Borko Petrevski in Prilep, North Macedonia. Fadely will support ART in verifying and responding to the request. You may also complain to the Agency for Personal Data Protection or another competent supervisory authority.",
     email: "hello@digilence.io",
     authority: {
       label: "Agency for Personal Data Protection",
@@ -136,103 +112,144 @@ export const artBarbershopPrivacyPolicy: LegalDocument = {
 
 export const artBarbershopTerms: LegalDocument = {
   title: "Terms of Service",
-  eyebrow: "ART Barbershop legal",
+  eyebrow: "ART Barbershop app legal",
   summary:
-    "The terms that govern use of the ART Barbershop mobile application and appointment-booking service.",
+    "The terms that govern use of the ART Barbershop mobile booking application.",
   effectiveDate: "Effective and last updated: 14 July 2026",
   introduction: [
-    'These Terms of Service ("Terms") govern your use of the ART Barbershop application and booking service. They form an agreement between you and ART Barbershop. By using the service, creating an account, or booking an appointment, you agree to these Terms.',
-    "If you do not agree, do not use the service. Mandatory consumer rights under applicable law continue to apply and are not limited by these Terms.",
+    'These Terms of Service ("Terms") govern your use of the ART Barbershop application and booking service. Your appointment and barbering-service agreement is with ART Barbershop. By creating an account, booking an appointment, or using the app, you agree to these Terms.',
+    "Fadely, operated by Borko Petrevski in Prilep, North Macedonia pending formal company registration, developed and licenses the app technology to ART. Fadely does not provide barbering services and is not the barbershop responsible for carrying out appointments.",
   ],
   sections: [
     {
       heading: "1. The service",
       paragraphs: [
-        "The app lets users view shop information, services, barbers, prices and availability; book, review, reschedule, or cancel appointments; receive service messages; and manage account preferences. Authorized staff may use additional tools for schedules, services, appointments, and shop operations.",
+        "The app lets users view ART's shop information, services, barbers, prices, and availability; book, review, reschedule, or cancel appointments; receive service messages; and manage account preferences. Authorized ART staff may use additional tools for schedules, services, appointments, and shop operations.",
       ],
     },
     {
       heading: "2. Eligibility and accounts",
       bullets: [
-        "You must be at least 16, or use the service with permission and supervision from a parent or legal guardian.",
+        "You must be at least 16 or use the service with permission and supervision from a parent or legal guardian.",
         "You must provide accurate information, use a phone number you are authorized to access, and keep your device and verification codes secure.",
-        "You are responsible for activity carried out through your account. Tell us promptly if you suspect unauthorized access.",
-        "Staff and owner functions may be used only by people authorized by ART Barbershop. You must not attempt to obtain or use a role that was not assigned to you.",
+        "You are responsible for activity through your account and should report suspected unauthorized access promptly.",
+        "Owner and staff functions may be used only by people authorized by ART. You must not attempt to obtain or use a role that was not assigned to you.",
       ],
     },
     {
       heading: "3. Appointments, prices, and payment",
       paragraphs: [
-        "An appointment is accepted when it appears as confirmed or upcoming in the app. Availability can change before a booking is completed. Please check the service, barber, date, time, duration, and price before confirming.",
-        "Displayed prices are in Macedonian denars (MKD) unless stated otherwise. The app does not currently process payments. Payment is made directly to the shop unless ART Barbershop separately tells you otherwise. The final price may change only when you request or agree to a different service, or where correction of an obvious display error is permitted by law.",
+        "An appointment is accepted when it appears as confirmed or upcoming in the app. Availability can change before booking is completed. Check the service, barber, date, time, duration, and price before confirming.",
+        "Displayed prices are in Macedonian denars (MKD) unless stated otherwise. The app does not currently process payments; payment is made directly to ART unless ART clearly states otherwise. ART is responsible for its services, prices, receipts, and applicable consumer obligations.",
       ],
     },
     {
       heading: "4. Changes, cancellations, and no-shows",
       paragraphs: [
-        "Use the app to reschedule or cancel when those options are available, or contact the shop as soon as possible. ART Barbershop may change or cancel an appointment because of staff absence, schedule changes, safety concerns, errors, events outside reasonable control, or another legitimate operational reason. We will try to notify you and offer a reasonable alternative where possible.",
-        "Repeated abusive bookings or no-shows may result in booking restrictions or account suspension. Any cancellation fee or special shop policy applies only if it was clearly disclosed before the booking or separately agreed and is lawful.",
+        "Use the available app controls or contact ART as soon as possible to change or cancel an appointment. ART may change or cancel an appointment because of staff absence, schedule changes, safety concerns, errors, events outside reasonable control, or another legitimate operational reason and will try to provide reasonable notice.",
+        "Repeated abusive bookings or no-shows may lead to booking restrictions or account suspension. A cancellation fee or special shop policy applies only if ART disclosed it before booking or separately agreed it with you and it is lawful.",
       ],
     },
     {
-      heading: "5. Communications",
+      heading: "5. Communications and your content",
       paragraphs: [
-        "SMS messages are used to verify your phone number and may be subject to your mobile provider's normal charges. Optional push notifications may include confirmations, reminders, schedule changes, and cancellations. You can disable push notifications, but essential information may still be shown in the app or communicated by another reasonable method.",
+        "SMS is used for phone verification and may be subject to normal mobile-provider charges. Optional push notifications may include confirmations, reminders, changes, and cancellations. You can disable push notifications, but essential appointment information may still appear in the app or be communicated by another reasonable method.",
+        "You keep ownership of content you own, but grant ART and its technology provider a non-exclusive, worldwide, royalty-free license to host, copy, display, and process it only as needed to provide, secure, and support the service. You must have the right to submit that content, and it must not be unlawful, abusive, misleading, infringing, malicious, or improperly disclose another person's information.",
       ],
     },
     {
-      heading: "6. Your content",
-      paragraphs: [
-        "You may provide a name, booking notes, ratings, profile images, and, if authorized, service images or other shop content. You keep ownership of content you own, but give ART Barbershop a non-exclusive, worldwide, royalty-free license to host, copy, display, and process it only as needed to operate, secure, and improve the service.",
-        "You must have the right to submit the content. It must not be unlawful, misleading, abusive, infringing, malicious, or contain another person's confidential or sensitive information without authorization. We may remove content that violates these Terms or the law.",
-      ],
-    },
-    {
-      heading: "7. Acceptable use",
+      heading: "6. Acceptable use",
       bullets: [
         "Do not impersonate another person, submit false bookings, harass staff or clients, or use the service for unlawful activity.",
-        "Do not probe, disrupt, overload, reverse engineer, bypass access controls, introduce malicious code, scrape personal data, or attempt unauthorized access.",
-        "Do not copy or commercially exploit the app, branding, listings, or content except where the law expressly allows it.",
+        "Do not probe, disrupt, overload, scrape, reverse engineer, bypass access controls, introduce malicious code, or attempt unauthorized access except where applicable law expressly permits it.",
+        "Do not copy or commercially exploit the application, branding, listings, or content without permission or another lawful basis.",
       ],
     },
     {
-      heading: "8. Privacy and third-party services",
+      heading: "7. Privacy and third-party services",
       paragraphs: [
-        "Our Privacy Policy explains how we process personal data and is incorporated into these Terms. The service relies on third-party hosting, SMS, notification, storage, map, phone, and app-store services. Their own terms and privacy policies may apply when you interact directly with them. We are not responsible for third-party sites or apps that we do not control.",
+        "The ART Barbershop Privacy Policy explains how personal data is handled and forms part of these Terms. The app relies on Fadely and selected third-party hosting, authentication, SMS, notification, storage, and app-store services. Their terms may apply where you interact with them directly.",
       ],
     },
     {
-      heading: "9. Availability and intellectual property",
+      heading: "8. Ownership and license",
       paragraphs: [
-        "We may maintain, change, suspend, or discontinue all or part of the service. We do not promise uninterrupted or error-free availability, but this does not affect obligations that cannot legally be excluded.",
-        "The app, software, design, ART Barbershop branding, and shop-provided content are owned by ART Barbershop or its licensors and are protected by applicable intellectual-property laws. These Terms give you a limited, personal, revocable, non-transferable right to use the service for its intended purpose.",
+        "ART owns its name, branding, shop content, service information, and customer relationship. Borko Petrevski, operating as Fadely, owns and licenses the application software, design system, reusable components, tools, and underlying technology, except where a written agreement states otherwise. Other provider materials remain owned by their respective owners.",
+        "You receive a limited, personal, revocable, non-exclusive, non-transferable right to use the app for its intended purpose while these Terms apply. No source code, trademark, design, or other intellectual-property ownership is transferred to you.",
       ],
     },
     {
-      heading: "10. Responsibility and liability",
+      heading: "9. Availability and responsibility",
       paragraphs: [
-        "You are responsible for checking appointment details and for arriving on time. Hair and grooming services are provided in person by the shop, not by the software platform itself. Tell the barber about relevant allergies, sensitivities, health conditions, or preferences before a service.",
-        "To the maximum extent permitted by law, we are not liable for indirect or unforeseeable loss, loss caused by inaccurate information you provide, third-party services outside our control, or events outside our reasonable control. Nothing in these Terms excludes liability for fraud, intent, gross negligence, death or personal injury caused by negligence, or any consumer right or liability that cannot legally be excluded or limited.",
+        "ART and Fadely may maintain, change, suspend, or discontinue all or part of the app. Uninterrupted or error-free availability is not promised, but this does not affect obligations that cannot legally be excluded.",
+        "ART, not Fadely, performs barbering services and is responsible for appointment performance, shop policies, and in-person services. Tell the barber about relevant allergies, sensitivities, health conditions, or preferences before a service.",
       ],
     },
     {
-      heading: "11. Suspension, deletion, and termination",
+      heading: "10. Liability",
       paragraphs: [
-        "You may stop using the service or request account deletion in Settings. We may restrict or suspend access where reasonably necessary to protect users, the shop, or the service; investigate misuse; comply with law; or address a material breach of these Terms. Where appropriate, we will provide notice and an opportunity to resolve the issue.",
-        "Terms that by their nature should continue after termination—including ownership, lawful record retention, disclaimers, liability limits, and dispute provisions—will remain effective.",
+        "To the maximum extent permitted by law, ART, Fadely, and Borko Petrevski are not liable for indirect or unforeseeable loss, loss caused by inaccurate information you provide, third-party services outside reasonable control, or events outside reasonable control. Fadely and Borko Petrevski are not liable for the performance or result of barbering services provided by ART.",
+        "Nothing in these Terms excludes liability for fraud, intent, gross negligence, death or personal injury caused by negligence, or a consumer right or liability that cannot legally be excluded or limited.",
       ],
     },
     {
-      heading: "12. Changes, governing law, and disputes",
+      heading: "11. Suspension, deletion, and changes",
       paragraphs: [
-        "We may update these Terms to reflect service or legal changes. We will update the date above and provide reasonable notice of material changes. Continuing to use the service after the change takes effect means you accept the updated Terms, where permitted by law.",
-        "These Terms are governed by the laws of the Republic of North Macedonia. Courts with jurisdiction where ART Barbershop is established will hear disputes, unless mandatory consumer law gives you the right to use another court or law. Please contact us first so we can try to resolve a concern informally.",
+        "You may stop using the service or request account deletion through the public account-deletion page. ART or Fadely may restrict or suspend access where reasonably necessary to protect users or the service, investigate misuse, comply with law, or address a material breach.",
+        "These Terms may be updated to reflect service or legal changes. The date above will be revised, and reasonable notice will be provided for material changes where required. Provisions that should logically continue after termination—including ownership, lawful retention, disclaimers, liability limits, and dispute terms—remain effective.",
+      ],
+    },
+    {
+      heading: "12. Governing law and disputes",
+      paragraphs: [
+        "These Terms are governed by the laws of the Republic of North Macedonia. Competent courts in North Macedonia will hear disputes unless mandatory consumer law gives you the right to use another court or law. Contact us first so the concern can be reviewed informally.",
       ],
     },
   ],
   contact: {
     heading: "13. Contact",
-    text: "Questions about these Terms or the service can be sent to ART Barbershop, Republic of North Macedonia.",
+    text: "Questions about the app or these Terms may be sent to ART through Fadely, operated by Borko Petrevski, Prilep, North Macedonia. Questions about appointments or barbering services remain ART's responsibility.",
+    email: "hello@digilence.io",
+  },
+};
+
+export const artBarbershopAccountDeletion: LegalDocument = {
+  title: "Account Deletion",
+  eyebrow: "ART Barbershop privacy choices",
+  summary:
+    "Request permanent deletion of an ART Barbershop app account and associated personal data.",
+  effectiveDate: "Effective and last updated: 14 July 2026",
+  introduction: [
+    "This page applies to accounts created in the ART Barbershop mobile application. ART is responsible for the customer and appointment records, and Fadely processes the request as ART's technology provider.",
+    "Submit the form below using the phone number connected to your account. We will use your contact email to verify the request and keep you informed. Never send a password or SMS verification code.",
+  ],
+  sections: [
+    {
+      heading: "1. How deletion works",
+      bullets: [
+        "Submit the deletion request form below or email hello@digilence.io with the subject “ART Barbershop account deletion”.",
+        "We will verify that you control the account, which may require a response from the account phone number or other reasonable confirmation.",
+        "Verified requests are normally completed within 30 days. You will be told if more time is legally permitted and required.",
+      ],
+    },
+    {
+      heading: "2. Data deleted or anonymized",
+      bullets: [
+        "Your account profile, authentication association, contact details, preferences, and active push-notification token.",
+        "Profile images and other account content that is no longer required for the service.",
+        "Ratings, appointment notes, and other account-linked records are deleted or anonymized where they do not need to be retained lawfully.",
+      ],
+    },
+    {
+      heading: "3. Limited records that may remain",
+      paragraphs: [
+        "ART may retain limited appointment, transaction, fraud-prevention, security, or legal records where required by law or reasonably necessary to resolve disputes and establish or defend claims. Those records will be restricted, kept only for the required period, and not used to keep the deleted account active. Temporary backup copies may remain until the relevant backup cycle expires.",
+      ],
+    },
+  ],
+  contact: {
+    heading: "4. Need help?",
+    text: "Contact ART through Fadely, operated by Borko Petrevski in Prilep, North Macedonia, if you cannot submit the form or have a question about deletion.",
     email: "hello@digilence.io",
   },
 };

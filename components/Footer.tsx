@@ -19,11 +19,11 @@ export function Footer() {
     },
     {
       title: "Privacy",
-      href: "/legal/art-barbershop/privacy-policy",
+      href: "/privacy-policy",
     },
     {
       title: "Terms",
-      href: "/legal/art-barbershop/terms-of-service",
+      href: "/terms",
     },
   ];
 
@@ -92,7 +92,7 @@ const GridLineHorizontal = ({
         "[mask-composite:exclude]",
         "z-30",
         "dark:bg-[linear-gradient(to_right,var(--color-dark),var(--color-dark)_50%,transparent_0,transparent)]",
-        className
+        className,
       )}
     ></div>
   );

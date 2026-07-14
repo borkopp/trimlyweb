@@ -1,6 +1,7 @@
-import type { LegalDocument } from "@/lib/legal/art-barbershop";
+import type { LegalDocument } from "@/lib/legal/types";
 import { ArrowUpRight, Mail } from "lucide-react";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 type LegalDocumentPageProps = {
   document: LegalDocument;
@@ -8,11 +9,18 @@ type LegalDocumentPageProps = {
     href: string;
     label: string;
   };
+  additionalDocuments?: Array<{
+    href: string;
+    label: string;
+  }>;
+  children?: ReactNode;
 };
 
 export function LegalDocumentPage({
   document,
   relatedDocument,
+  additionalDocuments = [],
+  children,
 }: LegalDocumentPageProps) {
   return (
     <div className="relative overflow-hidden bg-background">
@@ -36,13 +44,18 @@ export function LegalDocumentPage({
           </div>
           <div className="flex flex-col gap-3 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <p>{document.effectiveDate}</p>
-            <Link
-              className="inline-flex items-center gap-1.5 font-medium text-foreground transition-colors hover:text-primary"
-              href={relatedDocument.href}
-            >
-              {relatedDocument.label}
-              <ArrowUpRight aria-hidden="true" />
-            </Link>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+              {[relatedDocument, ...additionalDocuments].map((item) => (
+                <Link
+                  className="inline-flex items-center gap-1.5 font-medium text-foreground transition-colors hover:text-primary"
+                  href={item.href}
+                  key={item.href}
+                >
+                  {item.label}
+                  <ArrowUpRight aria-hidden="true" />
+                </Link>
+              ))}
+            </div>
           </div>
         </header>
 
@@ -112,6 +125,8 @@ export function LegalDocumentPage({
                 ) : null}
               </section>
             ))}
+
+            {children}
 
             <section
               className="scroll-mt-28 flex flex-col gap-5 rounded-2xl border border-border bg-muted/30 p-6 sm:p-8"
