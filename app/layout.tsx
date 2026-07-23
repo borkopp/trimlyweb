@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import localFont from "next/font/local";
-import { Montserrat, Lato, Inter, Orbitron } from "next/font/google";
+import { Montserrat, Lato, Inter, Orbitron, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -32,8 +31,8 @@ const lato = Lato({
   variable: "--font-lato",
 });
 
-const filmfiction = localFont({
-  src: "../public/fonts/FilmFiction-Bold.otf",
+const fontFF = Space_Grotesk({
+  subsets: ["latin"],
   variable: "--font-ff",
 });
 
@@ -151,7 +150,7 @@ export default async function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${inter.variable} ${filmfiction.variable} ${montserrat.variable} ${lato.variable} ${orbitron.variable} font-inter`}
+        className={`${inter.variable} ${fontFF.variable} ${montserrat.variable} ${lato.variable} ${orbitron.variable} font-inter`}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           {barbershop ? (
